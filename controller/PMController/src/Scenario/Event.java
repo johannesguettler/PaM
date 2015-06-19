@@ -1,5 +1,6 @@
 /**
  * Container-Class for the events
+ *
  * @author Johannes
  * February 2015
  * johannes.scherle@gmail.com
@@ -12,63 +13,75 @@ import com.google.gson.GsonBuilder;
 
 
 public class Event {
-	
+
   // An index to identify the event.
   public Integer _index;
-  
+
   // Variables for the heart rate and pattern.
-  public Integer _heartRateTo;
-  public Integer _time;
+  public Integer heartRateTo;
+  public Integer time;
+
   public enum HeartPattern {
-    SINE, ARRYTHMIC, AVBLOCK, LEFTBLOCK, LEFTBLOCKAA, STEMI, PACE, 
+    SINE, ARRYTHMIC, AVBLOCK, LEFTBLOCK, LEFTBLOCKAA, STEMI, PACE,
     VENTFLUTTER, VENTFIBRI, CPR, ASYSTOLE
-  }  
-  public HeartPattern _heartPattern;
-  public boolean _heartOn;
-  
+  }
+
+  public HeartPattern heartPattern;
+  public boolean heartOn;
+
   // Variables for the blood pressure.
-  public Integer _bloodPressureSys;
-  public Integer _bloodPressureDias;
+  public Integer bloodPressureSys;
+  public Integer bloodPressureDias;
+
   public enum BloodPressPattern {
-	  NORMAL, BP2
+    NORMAL, BP2
   }
-  public BloodPressPattern _bpPattern;
-  public boolean _bpOn;
-  public boolean _cuffOn;  
-  
+
+  public BloodPressPattern bpPattern;
+  public boolean bpOn;
+  public boolean cuffOn;
+
   // Variables for the oxygen
-  public Integer _oxygenTo;
+  public Integer oxygenTo;
+
   public enum O2Pattern {
-	    NORMAL, COLDFINGER
-  }	  
-  public O2Pattern _oxyPattern;
-  
+    NORMAL, COLDFINGER
+  }
+
+  public O2Pattern oxyPattern;
+
   // Variables for Respiration  
-  public boolean _oxyOn;  
-  public Integer _respRate;
-  public enum RespPattern{
-	  NORMAL, RESP1
+  public boolean oxyOn;
+  public Integer respRate;
+
+  public enum RespPattern {
+    NORMAL, RESP1
   }
-  public RespPattern _respPattern;
-  public boolean _respOn;
-  
+
+  public RespPattern respPattern;
+  public boolean respOn;
+
   // Variables for the CO2
-  public Integer _carbTo;  
-  public boolean _carbOn;  
-  public enum CarbPattern{
-	  NORMAL, CARB1
+  public Integer carbTo;
+  public boolean carbOn;
+
+  public enum CarbPattern {
+    NORMAL, CARB1
   }
-  public CarbPattern _carbPattern;  
-  
+
+  public CarbPattern carbPattern;
+
   // Variables for the timing.
-  public Integer _timeStamp;
-  public boolean _syncTimer;
-  public boolean _flag;
+  public Integer timeStamp;
+  public boolean syncTimer;
+  public boolean flag;
+
   public enum TimerState {
-	  RUN, START, PAUSE, STOP, RESET
+    RUN, START, PAUSE, STOP, RESET
   }
-  public TimerState _timerState;
-  
+
+  public TimerState timerState;
+
   /**
    * Constructor
    * @param time
@@ -94,88 +107,90 @@ public class Event {
    * @param flag
    * @param timerState
    */
-  public Event(Integer time, Integer heartRateTo, 
-        HeartPattern heartPattern, Integer bloodPressureSys,
-        Integer bloodPressureDias, BloodPressPattern bloodPressurePattern,
-        Integer oxygenTo, O2Pattern oxyPattern, Integer respRate, 
-        RespPattern respPattern, Integer carbTo, CarbPattern carbPattern,
-        Integer timeStamp, boolean heartOn, boolean bpOn, boolean cuffOn,
-        boolean oxyOn, boolean carbOn, boolean respOn, boolean syncTimer,
-        boolean flag, TimerState timerState) {
-	    	  
-    this._time = time;
-    this._heartRateTo = heartRateTo;
-    this._heartPattern = heartPattern;	  
-    this._bloodPressureSys = bloodPressureSys;
-    this._bloodPressureDias = bloodPressureDias;
-    this._bpPattern = bloodPressurePattern;
-    this._oxygenTo = oxygenTo;
-    this._oxyPattern = oxyPattern;
-    this._respRate = respRate;
-    this._respPattern = respPattern;
-    this._carbTo = carbTo;
-    this._carbPattern = carbPattern;    
-    this._timeStamp = timeStamp;
-    this._heartOn = heartOn;
-    this._bpOn = bpOn;
-    this._oxyOn = oxyOn;
-    this._carbOn = carbOn;
-    this._cuffOn = cuffOn;
-    this._respOn = respOn;
-    this._syncTimer = syncTimer;
-    this._flag = flag;
-    this._timerState = timerState;
-  };
-  
+  public Event(Integer time, Integer heartRateTo,
+               HeartPattern heartPattern, Integer bloodPressureSys,
+               Integer bloodPressureDias, BloodPressPattern bloodPressurePattern,
+               Integer oxygenTo, O2Pattern oxyPattern, Integer respRate,
+               RespPattern respPattern, Integer carbTo, CarbPattern carbPattern,
+               Integer timeStamp, boolean heartOn, boolean bpOn, boolean cuffOn,
+               boolean oxyOn, boolean carbOn, boolean respOn, boolean syncTimer,
+               boolean flag, TimerState timerState) {
+
+    this.time = time;
+    this.heartRateTo = heartRateTo;
+    this.heartPattern = heartPattern;
+    this.bloodPressureSys = bloodPressureSys;
+    this.bloodPressureDias = bloodPressureDias;
+    this.bpPattern = bloodPressurePattern;
+    this.oxygenTo = oxygenTo;
+    this.oxyPattern = oxyPattern;
+    this.respRate = respRate;
+    this.respPattern = respPattern;
+    this.carbTo = carbTo;
+    this.carbPattern = carbPattern;
+    this.timeStamp = timeStamp;
+    this.heartOn = heartOn;
+    this.bpOn = bpOn;
+    this.oxyOn = oxyOn;
+    this.carbOn = carbOn;
+    this.cuffOn = cuffOn;
+    this.respOn = respOn;
+    this.syncTimer = syncTimer;
+    this.flag = flag;
+    this.timerState = timerState;
+  }
+
+  ;
+
   /**
    * Typical toString method.
    */
   @Override
   public String toString() {
-    String string = "Scheduler: " + this._time.toString() + "\n" +
-    		        "BPSys: " + this._bloodPressureSys.toString() + ",  " + 
-    		        "BPDias: " + this._bloodPressureDias.toString() + ",  " +
-    		        "Pattern: " + this._bpPattern.toString() + ",  " +
-    		        "Curve BP: " + ((this._bpOn) ? "On" : "Off") + "\n" +
-    		        "HR: " + this._heartRateTo.toString() + ",  " + 
-    		        "Pattern: " + this._heartPattern.toString() + ",  " + 
-                    "Curve HR: " + ((this._heartOn) ? "On" : "Off") + "\n" +
-    		        "Oxy: " + this._oxygenTo.toString() + ",  " + 
-                    "Pattern: " + this._oxyPattern.toString() + ",  " +
-                    "Curve O2: " + ((this._oxyOn) ? "On" : "Off") + "\n" +
-                    "Resp: " + this._respRate.toString() + ",  " +
-                    "Pattern: " + this._respPattern.toString() + "\n" +                    
-                    "Curve Resp: " + ((this._respOn) ? "On" : "Off") + "\n" +
-                    "Carb: " + this._carbTo.toString() + ",  " +
-                    "Curve Carb: " + ((this._carbOn) ? "On" : "Off") + ",  " +  
-                    "Pattern: " + this._carbPattern.toString() + "\n" +    
-    		        "CuffCorrect: " + ((this._cuffOn) ? "Yes" : "No") + "\n" +                  
-                    "TimeStamp: " + this._timeStamp.toString() + "\n" +
-                    "SyncTimer: " + ((this._syncTimer) ? "Yes" : "No") + "\n" +
-                    "Flag: " + ((this._flag) ? "Yes" : "No" + "\n" +
-                    "Timer State: " + this._timerState.toString());
-	return string;    
+    String string = "Scheduler: " + this.time.toString() + "\n" +
+        "BPSys: " + this.bloodPressureSys.toString() + ",  " +
+        "BPDias: " + this.bloodPressureDias.toString() + ",  " +
+        "Pattern: " + this.bpPattern.toString() + ",  " +
+        "Curve BP: " + ((this.bpOn) ? "On" : "Off") + "\n" +
+        "HR: " + this.heartRateTo.toString() + ",  " +
+        "Pattern: " + this.heartPattern.toString() + ",  " +
+        "Curve HR: " + ((this.heartOn) ? "On" : "Off") + "\n" +
+        "Oxy: " + this.oxygenTo.toString() + ",  " +
+        "Pattern: " + this.oxyPattern.toString() + ",  " +
+        "Curve O2: " + ((this.oxyOn) ? "On" : "Off") + "\n" +
+        "Resp: " + this.respRate.toString() + ",  " +
+        "Pattern: " + this.respPattern.toString() + "\n" +
+        "Curve Resp: " + ((this.respOn) ? "On" : "Off") + "\n" +
+        "Carb: " + this.carbTo.toString() + ",  " +
+        "Curve Carb: " + ((this.carbOn) ? "On" : "Off") + ",  " +
+        "Pattern: " + this.carbPattern.toString() + "\n" +
+        "CuffCorrect: " + ((this.cuffOn) ? "Yes" : "No") + "\n" +
+        "TimeStamp: " + this.timeStamp.toString() + "\n" +
+        "SyncTimer: " + ((this.syncTimer) ? "Yes" : "No") + "\n" +
+        "Flag: " + ((this.flag) ? "Yes" : "No" + "\n" +
+        "Timer State: " + this.timerState.toString());
+    return string;
   }
-  
+
   /**
    * Convert an Event to JSon String.
    * @return JSon String
    */
   public String toJson() {
-	  GsonBuilder builder = new GsonBuilder();
-      builder.setPrettyPrinting().serializeNulls();
-      Gson gson = builder.create();      
-      System.out.println(gson.toJson(this));	  
-	  return gson.toJson(this);
+    GsonBuilder builder = new GsonBuilder();
+    builder.setPrettyPrinting().serializeNulls();
+    Gson gson = builder.create();
+    System.out.println(gson.toJson(this));
+    return gson.toJson(this);
   }
-  
+
   /**
    * Convert a JSon String to an event.
    * @param g JSon String to parse
    * @return The parsed Event.
    */
   static public Event fromJsonEvent(String g) {
-	  Gson gson = new Gson();
-	  return gson.fromJson(g, Event.class);	  
+    Gson gson = new Gson();
+    return gson.fromJson(g, Event.class);
   }
 }

@@ -305,12 +305,12 @@ public class ControllerActivity extends Activity {
       return true;
       // If protocol icon pressed, open protocol activity
     } else if (id == R.id.action_protocoll) {
-      ProtocollActivity._scenarioHelper = scenarioHelper;
+      ProtocollActivity.scenarioHelper = scenarioHelper;
       startActivity(new Intent(this, ProtocollActivity.class));
       return true;
       // If scenario pressed, open scenario activity
     } else if (id == R.id.action_scenario) {
-      ScenarioActivity._scenarioHelper = scenarioHelper;
+      ScenarioActivity.scenarioHelper = scenarioHelper;
       startActivity(new Intent(this, ScenarioActivity.class));
       return true;
     }

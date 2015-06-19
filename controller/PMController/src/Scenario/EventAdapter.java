@@ -84,48 +84,48 @@ public class EventAdapter extends ArrayAdapter<Event>{
 
 		// Set the UI-Elements.
 		Event Event = data[position];
-		holder.ekgVariable.setText(String.valueOf(Event._heartRateTo));
-		holder.rrSys.setText(String.valueOf(Event._bloodPressureSys));
-		holder.rrDias.setText(String.valueOf(Event._bloodPressureDias));
-		holder.o2Variable.setText(String.valueOf(Event._oxygenTo));
-		holder.co2Variable.setText(String.valueOf(Event._carbTo));
-		holder.resp.setText(String.valueOf(Event._respRate));
-		holder.time.setText(String.valueOf(Event._time));
-		int minutesTens = Event._timeStamp / 600;
-		int minutesOnes = Event._timeStamp / 60;
+		holder.ekgVariable.setText(String.valueOf(Event.heartRateTo));
+		holder.rrSys.setText(String.valueOf(Event.bloodPressureSys));
+		holder.rrDias.setText(String.valueOf(Event.bloodPressureDias));
+		holder.o2Variable.setText(String.valueOf(Event.oxygenTo));
+		holder.co2Variable.setText(String.valueOf(Event.carbTo));
+		holder.resp.setText(String.valueOf(Event.respRate));
+		holder.time.setText(String.valueOf(Event.time));
+		int minutesTens = Event.timeStamp / 600;
+		int minutesOnes = Event.timeStamp / 60;
 		holder.timeStampMinutesTens.setText(String.valueOf(minutesTens));
 		holder.timeStampMinutesOnes.setText(String.valueOf(minutesOnes));
-		int seconds = (Event._timeStamp % 60);
-		int secondsOnes = (Event._timeStamp % 60) % 10;
+		int seconds = (Event.timeStamp % 60);
+		int secondsOnes = (Event.timeStamp % 60) % 10;
 		int secondsTens = seconds / 10;
 		holder.timeStampSecondsTens.setText(String.valueOf(secondsTens));
 		holder.timeStampSecondsOnes.setText(String.valueOf(secondsOnes));        
 		// Set the icons for curve on/off.
-		if (Event._heartOn) {
+		if (Event.heartOn) {
 			holder.heartPattern.setVisibility(View.VISIBLE);
 			setHpPicture(Event, holder);
 		} else {
 			holder.heartPattern.setVisibility(View.INVISIBLE);
 		}
-		if (Event._oxyOn) {
+		if (Event.oxyOn) {
 			holder.o2Pattern.setVisibility(View.VISIBLE);
 			seto2Picture(Event, holder);
 		} else {
 			holder.o2Pattern.setVisibility(View.INVISIBLE);
 		}
-		if (Event._bpOn)
+		if (Event.bpOn)
 			holder.bpPattern.setVisibility(View.VISIBLE);
 		else
 			holder.bpPattern.setVisibility(View.INVISIBLE);
-		if (Event._carbOn)
+		if (Event.carbOn)
 			holder.co2Pattern.setVisibility(View.VISIBLE);
 		else
 			holder.co2Pattern.setVisibility(View.INVISIBLE);
-		if (Event._respOn)
+		if (Event.respOn)
 			holder.respPattern.setVisibility(View.VISIBLE);
 		else
 			holder.respPattern.setVisibility(View.INVISIBLE);
-		if (Event._cuffOn)
+		if (Event.cuffOn)
 			holder.cuff.setVisibility(View.VISIBLE);
 		else
 			holder.cuff.setVisibility(View.INVISIBLE);
@@ -139,7 +139,7 @@ public class EventAdapter extends ArrayAdapter<Event>{
 				getLayoutParams();
 
 		paramsFlag.weight = 0.0f;
-		if (Event._flag) {        
+		if (Event.flag) {
 			// Set the red line to visible.
 			holder.redLine.setVisibility(View.VISIBLE);        	
 			paramsFlag.height = LayoutParams.WRAP_CONTENT;        	
@@ -169,7 +169,7 @@ public class EventAdapter extends ArrayAdapter<Event>{
 	 * @param eh holder, that holds the UI Elements
 	 */
 	private void setHpPicture(Event e, EventHolder eh) {
-		switch(e._heartPattern) {
+		switch(e.heartPattern) {
 		case SINE:
 			eh.heartPattern.setImageResource(R.drawable.hr_sine);
 			break;
@@ -215,7 +215,7 @@ public class EventAdapter extends ArrayAdapter<Event>{
 	 * @author Johannes
 	 */
 	private void seto2Picture(Event e, EventHolder eh) {
-		switch (e._oxyPattern) {
+		switch (e.oxyPattern) {
 		case NORMAL:
 			eh.o2Pattern.setImageResource(R.drawable.o2_normal);
 			break;

@@ -359,7 +359,7 @@ public class MonitorMainScreen extends Activity {
     handler = new Handler();
 
     // Set the MainScreen in Client.
-    EnterScreen._client.setMonitorMainScreen(this);
+    EnterScreen.client.setMonitorMainScreen(this);
 
     // Set curve-view.
     glActivity = new GLActivity(this);
@@ -575,7 +575,7 @@ public class MonitorMainScreen extends Activity {
     // Create a timer for a stop watch in the status bar which shows the time since the
     // start of the monitor. Not needed at the moment.
     /*Timer stopTimer = new Timer();
-		stopTimer.schedule(new TimerTask() {
+    stopTimer.schedule(new TimerTask() {
         	public void run(){
         		runOnUiThread(new Runnable() {
         			public void run() {

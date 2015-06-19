@@ -14,7 +14,7 @@ import com.google.gson.GsonBuilder;
 public class Event {
 	
   // An index to identify the event.
-  public Integer _index;
+  public Integer index;
 
   // Variables for the heart rate and pattern.
   public Integer heartRateTo;

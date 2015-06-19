@@ -19,9 +19,9 @@ import Scenario.Event.RespPattern;
 import Scenario.Event.TimerState;
 
 public class Scenario {
-	private boolean _runnable;
-	private String _name;
-	private List<Event> _eventList;
+	private boolean runnable;
+	private String name;
+	private List<Event> eventList;
 
 	/**
 	 * Constructor
@@ -29,8 +29,8 @@ public class Scenario {
 	 * @param runnable
 	 */
 	public Scenario(String name, boolean runnable) {
-		this._name = name;
-		this._runnable = runnable;
+		this.name = name;
+		this.runnable = runnable;
 	}
 
 	/**
@@ -40,9 +40,9 @@ public class Scenario {
 	 * @param eventList
 	 */
 	public Scenario(String name, boolean runnable, List<Event> eventList) {
-		this._name = name;
-		this._runnable = runnable;
-		this._eventList = eventList;
+		this.name = name;
+		this.runnable = runnable;
+		this.eventList = eventList;
 	}
 
 	/**
@@ -167,43 +167,43 @@ public class Scenario {
 
 	// Add an event to a scenario
 	public void addEvent(Event e) {
-		if(this._eventList == null)
-			this._eventList = new ArrayList<Event>();
-		this._eventList.add(e);
+		if(this.eventList == null)
+			this.eventList = new ArrayList<Event>();
+		this.eventList.add(e);
 	}
 
 	// Getter for the scenario name
 	public String getName() {
-		return this._name;
+		return this.name;
 	}
 
 	// Get for the event list
 	public List<Event> getEventList() {
-		return this._eventList;
+		return this.eventList;
 	}
 
 	// Set event list
 	public void setEventList(List<Event> theEventList) {
-		this._eventList = theEventList;
+		this.eventList = theEventList;
 	}
 
 	// Getter for the runnable value.
 	public boolean isRunnable() {
-		return this._runnable;
+		return this.runnable;
 	}
 
 	// To string method.
 	public String toString() {
-		return this._name;
+		return this.name;
 	}
 
 	// Clears the event list.
 	public void clearEvents() {
-		this._eventList = null;
+		this.eventList = null;
 	}
 
 	// Setter for runnable
 	public void setRunnable(boolean runnable) {
-		this._runnable = runnable;
+		this.runnable = runnable;
 	}
 }
