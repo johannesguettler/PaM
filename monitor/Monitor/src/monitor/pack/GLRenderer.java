@@ -28,6 +28,42 @@ public class GLRenderer implements Renderer {
   private final float[] viewMatrix = new float[16];
 
   public GLRenderer() {
+    // initialize Lines do this before onSurfaceCreated() is called, therfore
+    // it's in the constructor
+    //Init HeartLine
+    if (lineHeart == null) {
+      lineHeart = new Line(500, true);
+      lineHeart.setColor(0f, 1f, 0f);
+    }
+    //Init BloodLine
+    if (lineBlood == null) {
+      lineBlood = new Line(500, true);
+      lineBlood.setColor(1f, 0f, 0f);
+    }
+    //Init O2Line
+    if (lineO2 == null) {
+      lineO2 = new Line(500, true);
+      lineO2.setColor(1f, 1f, 0f);
+    }
+    //Init CO2Line
+    if (lineCO2 == null) {
+      lineCO2 = new Line(500, true);
+      lineCO2.setColor(0.5f, 0.5f, 0.5f);
+      lineCO2.setFill(true);
+    }
+    //Init AFLine
+    if (lineAF == null) {
+      lineAF = new Line(500, true);
+      lineAF.setColor(1f, 1f, 0f);
+    }
+    //Init Line between curves
+    if (lineTrenner == null) {
+      lineTrenner = new Line(2, false);
+      lineTrenner.setColor(0.1f, 0.1f, 0.1f);
+      lineTrenner.setValue(0);
+      lineTrenner.setValue(0);
+      lineTrenner.setDrawAble(true);
+    }
 
   }
 
@@ -199,42 +235,6 @@ public class GLRenderer implements Renderer {
     gl.glEnable(GL10.GL_LINE_SMOOTH);
     gl.glEnable(GL10.GL_BLEND);
     gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-    //Init HeartLine
-    if (lineHeart == null) {
-      lineHeart = new Line(500, true);
-      lineHeart.setColor(0f, 1f, 0f);
-    }
-    //Init BloodLine
-    if (lineBlood == null) {
-      lineBlood = new Line(500, true);
-      lineBlood.setColor(1f, 0f, 0f);
-    }
-    //Init O2Line
-    if (lineO2 == null) {
-      lineO2 = new Line(500, true);
-      lineO2.setColor(1f, 1f, 0f);
-    }
-    //Init CO2Line
-    if (lineCO2 == null) {
-      lineCO2 = new Line(500, true);
-      lineCO2.setColor(0.5f, 0.5f, 0.5f);
-      lineCO2.setFill(true);
-    }
-    //Init AFLine
-    if (lineAF == null) {
-      lineAF = new Line(500, true);
-      lineAF.setColor(1f, 1f, 0f);
-    }
-    //Init Line between curves
-    if (lineTrenner == null) {
-      lineTrenner = new Line(2, false);
-      lineTrenner.setColor(0.1f, 0.1f, 0.1f);
-      lineTrenner.setValue(0);
-      lineTrenner.setValue(0);
-      lineTrenner.setDrawAble(true);
-    }
-
-
   }
 
   //Setter SignalServer

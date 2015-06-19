@@ -231,55 +231,6 @@ public class MonitorMainScreen extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    // Hide the title-bar.
-    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-    // Minimize the System-Bar and hide the Action-Bar if necessary.
-    final View decorView = getWindow().getDecorView();
-    if (Build.VERSION.SDK_INT >= 19) {
-      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-    } else if (Build.VERSION.SDK_INT >= 16) {
-      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-    } else {
-      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-    }
-
-    // Minimize the System-Bar (and the Action-Bar) again after hideSystemBarDelay ms after a click on it.
-    decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-      @Override
-      public void onSystemUiVisibilityChange(int visibility) {
-        new Handler().postDelayed(new Runnable() {
-          public void run() {
-            if (Build.VERSION.SDK_INT >= 19) {
-              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-            } else if (Build.VERSION.SDK_INT >= 16) {
-              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-            } else {
-              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-            }
-          }
-        }, hideSystemBarDelay);
-      }
-    });
-
-    setContentView(R.layout.activity_monitor_main_screen);
 
     // Initialize some members.
 
@@ -349,6 +300,28 @@ public class MonitorMainScreen extends Activity {
     // And deactivate the timer at start.
     timerActive = false;
 
+
+    // Hide the title-bar.
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    // Minimize the System-Bar and hide the Action-Bar if necessary.
+    final View decorView = getWindow().getDecorView();
+    if (Build.VERSION.SDK_INT >= 19) {
+      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+    } else if (Build.VERSION.SDK_INT >= 16) {
+      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+    } else {
+      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+    }
+
     // Create the instances.
     settingsLayout = (LinearLayout) this.findViewById(R.id.settingsLayout);
     defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
@@ -357,6 +330,35 @@ public class MonitorMainScreen extends Activity {
     soundHandler = new SoundHandler(this);
     randomGenerator = new Random();
     handler = new Handler();
+
+    // Minimize the System-Bar (and the Action-Bar) again after hideSystemBarDelay ms after a click on it.
+    decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+      @Override
+      public void onSystemUiVisibilityChange(int visibility) {
+        new Handler().postDelayed(new Runnable() {
+          public void run() {
+            if (Build.VERSION.SDK_INT >= 19) {
+              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            } else if (Build.VERSION.SDK_INT >= 16) {
+              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            } else {
+              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            }
+          }
+        }, hideSystemBarDelay);
+      }
+    });
+
+    setContentView(R.layout.activity_monitor_main_screen);
 
     // Set the MainScreen in Client.
     EnterScreen.client.setMonitorMainScreen(this);
