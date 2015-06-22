@@ -28,43 +28,6 @@ public class GLRenderer implements Renderer {
   private final float[] viewMatrix = new float[16];
 
   public GLRenderer() {
-    // initialize Lines do this before onSurfaceCreated() is called, therfore
-    // it's in the constructor
-    //Init HeartLine
-    if (lineHeart == null) {
-      lineHeart = new Line(500, true);
-      lineHeart.setColor(0f, 1f, 0f);
-    }
-    //Init BloodLine
-    if (lineBlood == null) {
-      lineBlood = new Line(500, true);
-      lineBlood.setColor(1f, 0f, 0f);
-    }
-    //Init O2Line
-    if (lineO2 == null) {
-      lineO2 = new Line(500, true);
-      lineO2.setColor(1f, 1f, 0f);
-    }
-    //Init CO2Line
-    if (lineCO2 == null) {
-      lineCO2 = new Line(500, true);
-      lineCO2.setColor(0.5f, 0.5f, 0.5f);
-      lineCO2.setFill(true);
-    }
-    //Init AFLine
-    if (lineAF == null) {
-      lineAF = new Line(500, true);
-      lineAF.setColor(1f, 1f, 0f);
-    }
-    //Init Line between curves
-    if (lineTrenner == null) {
-      lineTrenner = new Line(2, false);
-      lineTrenner.setColor(0.1f, 0.1f, 0.1f);
-      lineTrenner.setValue(0);
-      lineTrenner.setValue(0);
-      lineTrenner.setDrawAble(true);
-    }
-
   }
 
   //Loads OpenGL Shaders
@@ -107,31 +70,38 @@ public class GLRenderer implements Renderer {
     float[] drawMatrix = new float[16];
     // Calculate the projection and view transformation
     Matrix.multiplyMM(mvPMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
-    if (signalServer == null) return;
+    if (signalServer == null) {
+      return;
+    }
     //Get Data from SignalServer
     while (deltaTime > 1000f / 60f) {
       deltaTime -= 1000f / 60f;
       //EKG
-      if (lineHeart.getDrawAble())
+      if (lineHeart.getDrawAble()) {
         lineHeart.setValue((float) signalServer.getHeartRateValue() / 250);
-      else
+      } else {
         lineHeart.setValue(0);
+      }
       //Bloodpressure
-      if (lineBlood.getDrawAble())
+      if (lineBlood.getDrawAble()) {
         lineBlood.setValue((float) signalServer.getBloodPressureValue() / 170);
-      else
+      } else {
         lineBlood.setValue(0);
+      }
       //ETCO2
       if (lineCO2.getDrawAble())
-        //lineCO2.setValue(50);
+      //lineCO2.setValue(50);
+      {
         lineCO2.setValue((float) signalServer.getCO2Value() / 250);
-      else
+      } else {
         lineCO2.setValue(0);
+      }
       //SpO2
-      if (lineO2.getDrawAble())
+      if (lineO2.getDrawAble()) {
         lineO2.setValue((float) signalServer.getO2Value() / 250);
-      else
+      } else {
         lineO2.setValue(0);
+      }
       signalServer.increment();
     }
 
@@ -179,6 +149,8 @@ public class GLRenderer implements Renderer {
   //Called if Size of RenderWindow changes
   @Override
   public void onSurfaceChanged(GL10 gl, int width, int height) {
+
+
     GLES20.glViewport(0, 0, width, height);
     this.width = width;
     this.height = height;
@@ -192,18 +164,24 @@ public class GLRenderer implements Renderer {
 
   //Change Color of given Curve in r,g,b(0-1)
   public void SetColor(LineType line, float r, float g, float b) {
-    if (line == LineType.AF)
+    if (line == LineType.AF) {
       lineAF.setColor(r, g, b);
-    if (line == LineType.Blood)
+    }
+    if (line == LineType.Blood) {
       lineBlood.setColor(r, g, b);
-    if (line == LineType.CO2)
+    }
+    if (line == LineType.CO2) {
       lineCO2.setColor(r, g, b);
-    if (line == LineType.Heart)
+    }
+    if (line == LineType.Heart) {
       lineHeart.setColor(r, g, b);
-    if (line == LineType.O2)
+    }
+    if (line == LineType.O2) {
       lineO2.setColor(r, g, b);
-    if (line == LineType.Trenner)
+    }
+    if (line == LineType.Trenner) {
       lineTrenner.setColor(r, g, b);
+    }
     if (line == LineType.Background) {
       bgColor[0] = r;
       bgColor[1] = g;
@@ -214,16 +192,21 @@ public class GLRenderer implements Renderer {
 
   //Enable/Disable Line
   public void ToogleLine(LineType line, boolean draw) {
-    if (line == LineType.AF)
+    if (line == LineType.AF) {
       lineAF.setDrawAble(draw);
-    if (line == LineType.Blood)
+    }
+    if (line == LineType.Blood) {
       lineBlood.setDrawAble(draw);
-    if (line == LineType.CO2)
+    }
+    if (line == LineType.CO2) {
       lineCO2.setDrawAble(draw);
-    if (line == LineType.Heart)
+    }
+    if (line == LineType.Heart) {
       lineHeart.setDrawAble(draw);
-    if (line == LineType.O2)
+    }
+    if (line == LineType.O2) {
       lineO2.setDrawAble(draw);
+    }
   }
 
   //Initialze RenderWindow and Curves
@@ -235,6 +218,46 @@ public class GLRenderer implements Renderer {
     gl.glEnable(GL10.GL_LINE_SMOOTH);
     gl.glEnable(GL10.GL_BLEND);
     gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+    //Init HeartLine
+    if (lineHeart == null) {
+      lineHeart = new Line(500, true);
+      lineHeart.setColor(0f, 1f, 0f);
+      lineHeart.setDrawAble(false);
+    }
+    //Init BloodLine
+    if (lineBlood == null) {
+      lineBlood = new Line(500, true);
+      lineBlood.setColor(1f, 0f, 0f);
+      lineBlood.setDrawAble(false);
+    }
+    //Init O2Line
+    if (lineO2 == null) {
+      lineO2 = new Line(500, true);
+      lineO2.setColor(1f, 1f, 0f);
+      lineO2.setDrawAble(false);
+    }
+    //Init CO2Line
+    if (lineCO2 == null) {
+      lineCO2 = new Line(500, true);
+      lineCO2.setColor(0.5f, 0.5f, 0.5f);
+      lineCO2.setFill(true);
+      lineCO2.setDrawAble(false);
+    }
+    //Init AFLine
+    if (lineAF == null) {
+      lineAF = new Line(500, true);
+      lineAF.setColor(1f, 1f, 0f);
+      lineAF.setDrawAble(false);
+    }
+    //Init Line between curves
+    if (lineTrenner == null) {
+      lineTrenner = new Line(2, false);
+      lineTrenner.setColor(0.1f, 0.1f, 0.1f);
+      lineTrenner.setValue(0);
+      lineTrenner.setValue(0);
+      lineTrenner.setDrawAble(true);
+    }
   }
 
   //Setter SignalServer

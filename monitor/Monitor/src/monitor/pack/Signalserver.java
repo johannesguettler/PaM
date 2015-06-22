@@ -128,7 +128,7 @@ public class Signalserver {
     aapeakcalc = false;
     avblockpeak = 0;
     heartrhythm = Event.HeartPattern.SINE;
-    nextrhythm = Event.HeartPattern.AVBLOCK;
+    nextrhythm = Event.HeartPattern.SINE;
     coldfinger = false;
     // -------------------
     // CREATE SINE PATTERN

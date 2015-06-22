@@ -231,6 +231,55 @@ public class MonitorMainScreen extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    // Hide the title-bar.
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    // Minimize the System-Bar and hide the Action-Bar if necessary.
+    final View decorView = getWindow().getDecorView();
+    if (Build.VERSION.SDK_INT >= 19) {
+      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+    } else if (Build.VERSION.SDK_INT >= 16) {
+      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+    } else {
+      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+    }
+
+    // Minimize the System-Bar (and the Action-Bar) again after hideSystemBarDelay ms after a click on it.
+    decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+      @Override
+      public void onSystemUiVisibilityChange(int visibility) {
+        new Handler().postDelayed(new Runnable() {
+          public void run() {
+            if (Build.VERSION.SDK_INT >= 19) {
+              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            } else if (Build.VERSION.SDK_INT >= 16) {
+              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            } else {
+              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            }
+          }
+        }, hideSystemBarDelay);
+      }
+    });
+
+    setContentView(R.layout.activity_monitor_main_screen);
 
     // Initialize some members.
 
@@ -300,28 +349,6 @@ public class MonitorMainScreen extends Activity {
     // And deactivate the timer at start.
     timerActive = false;
 
-
-    // Hide the title-bar.
-    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-    // Minimize the System-Bar and hide the Action-Bar if necessary.
-    final View decorView = getWindow().getDecorView();
-    if (Build.VERSION.SDK_INT >= 19) {
-      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-    } else if (Build.VERSION.SDK_INT >= 16) {
-      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-          | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-    } else {
-      decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-    }
-
     // Create the instances.
     settingsLayout = (LinearLayout) this.findViewById(R.id.settingsLayout);
     defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
@@ -330,35 +357,6 @@ public class MonitorMainScreen extends Activity {
     soundHandler = new SoundHandler(this);
     randomGenerator = new Random();
     handler = new Handler();
-
-    // Minimize the System-Bar (and the Action-Bar) again after hideSystemBarDelay ms after a click on it.
-    decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-      @Override
-      public void onSystemUiVisibilityChange(int visibility) {
-        new Handler().postDelayed(new Runnable() {
-          public void run() {
-            if (Build.VERSION.SDK_INT >= 19) {
-              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-            } else if (Build.VERSION.SDK_INT >= 16) {
-              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LOW_PROFILE);
-            } else {
-              decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-            }
-          }
-        }, hideSystemBarDelay);
-      }
-    });
-
-    setContentView(R.layout.activity_monitor_main_screen);
 
     // Set the MainScreen in Client.
     EnterScreen.client.setMonitorMainScreen(this);
@@ -635,8 +633,8 @@ public class MonitorMainScreen extends Activity {
    */
   private void nibpAutoTimeChange(int progress) {
     // Old calculation -> Not needed at the moment.
-		/*nibpAutoTime = 20 + progress * 2;
-		int timeMin = nibpAutoTime / 60;
+    /*nibpAutoTime = 20 + progress * 2;
+    int timeMin = nibpAutoTime / 60;
 		int timeSec = nibpAutoTime % 60;
 		TextView nibpAutoTimeTextView = (TextView) this.findViewById(R.id.nibpAutoTimeTextView);
 		if (timeSec < 10) {
@@ -669,7 +667,9 @@ public class MonitorMainScreen extends Activity {
     nibpAutoTimeTextView.setText("" + timeMin + " min");
     // Update a running NIBP with a new auto repeat time if necessary.
     if (autoNIBPRunning) {
-      if (autoNibpTimer != null) autoNibpTimer.cancel();
+      if (autoNibpTimer != null) {
+        autoNibpTimer.cancel();
+      }
       autoNibpTimer = new Timer();
       autoNibpTimer.scheduleAtFixedRate(new TimerTask() {
         public void run() {
@@ -949,7 +949,9 @@ public class MonitorMainScreen extends Activity {
     runOnUiThread(new Runnable() {
       public void run() {
         final TextView ekgValueTextView = (TextView) findViewById(R.id.ekgValueTextView);
-        if (ekgActive) ekgValueTextView.setVisibility(View.INVISIBLE);
+        if (ekgActive) {
+          ekgValueTextView.setVisibility(View.INVISIBLE);
+        }
         new Handler().postDelayed(new Runnable() {
           public void run() {
             runOnUiThread(new Runnable() {
@@ -972,9 +974,15 @@ public class MonitorMainScreen extends Activity {
         final TextView ekgValueTextView = (TextView) findViewById(R.id.ekgValueTextView);
         final TextView ibpValueTextView = (TextView) findViewById(R.id.ibpValueTextView);
         final TextView o2ValueTextView = (TextView) findViewById(R.id.o2ValueTextView);
-        if (ekgActive) ekgValueTextView.setVisibility(View.INVISIBLE);
-        if (rrActive) ibpValueTextView.setVisibility(View.INVISIBLE);
-        if (o2Active) o2ValueTextView.setVisibility(View.INVISIBLE);
+        if (ekgActive) {
+          ekgValueTextView.setVisibility(View.INVISIBLE);
+        }
+        if (rrActive) {
+          ibpValueTextView.setVisibility(View.INVISIBLE);
+        }
+        if (o2Active) {
+          o2ValueTextView.setVisibility(View.INVISIBLE);
+        }
         new Handler().postDelayed(new Runnable() {
           public void run() {
             runOnUiThread(new Runnable() {
@@ -1082,7 +1090,9 @@ public class MonitorMainScreen extends Activity {
       nibpAutoButton.setBackgroundResource(R.drawable.green_button);
       nibpAutoButton.setText("Start A.-NIBP");
       autoNIBPRunning = false;
-      if (autoNibpTimer != null) autoNibpTimer.cancel();
+      if (autoNibpTimer != null) {
+        autoNibpTimer.cancel();
+      }
     } else {
       if (!nibpRunning) {
         // If no measurement is running, schedule a measurement task every nibpAutoTime and indicate
@@ -1090,7 +1100,9 @@ public class MonitorMainScreen extends Activity {
         nibpAutoButton.setBackgroundResource(R.drawable.red_button);
         nibpAutoButton.setText("Stop A.-NIBP");
         autoNIBPRunning = true;
-        if (autoNibpTimer != null) autoNibpTimer.cancel();
+        if (autoNibpTimer != null) {
+          autoNibpTimer.cancel();
+        }
         autoNibpTimer = new Timer();
         autoNibpTimer.scheduleAtFixedRate(new TimerTask() {
           public void run() {
@@ -2096,7 +2108,9 @@ public class MonitorMainScreen extends Activity {
     // Schedule an automatic increase after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
     firstAlarmUpperTHUpButtonPressed = true;
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2155,7 +2169,9 @@ public class MonitorMainScreen extends Activity {
     // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
     firstAlarmUpperTHDownButtonPressed = true;
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2214,7 +2230,9 @@ public class MonitorMainScreen extends Activity {
     // Schedule an automatic increase after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
     firstAlarmLowerTHUpButtonPressed = true;
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2279,7 +2297,9 @@ public class MonitorMainScreen extends Activity {
     // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
     firstAlarmLowerTHDownButtonPressed = true;
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2344,7 +2364,9 @@ public class MonitorMainScreen extends Activity {
     secondAlarmUpperTHUpButtonPressed = true;
     // Schedule an automatic increase after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2391,7 +2413,9 @@ public class MonitorMainScreen extends Activity {
     // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
     secondAlarmUpperTHDownButtonPressed = true;
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2438,7 +2462,9 @@ public class MonitorMainScreen extends Activity {
     // Schedule an automatic increase after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
     secondAlarmLowerTHUpButtonPressed = true;
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2485,7 +2511,9 @@ public class MonitorMainScreen extends Activity {
     // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
     // until the button is released.
     secondAlarmLowerTHDownButtonPressed = true;
-    if (incDecTimer != null) incDecTimer.cancel();
+    if (incDecTimer != null) {
+      incDecTimer.cancel();
+    }
     incDecTimer = new Timer();
     incDecTimer.scheduleAtFixedRate(new TimerTask() {
       public void run() {
@@ -2748,12 +2776,13 @@ public class MonitorMainScreen extends Activity {
    * Increase the energy of the defibrilator.
    */
   public void defiEnergyUp(View view) {
-    if (defiEnergy + 10 <= defiEnergyThr)
+    if (defiEnergy + 10 <= defiEnergyThr) {
       defiEnergy = ((defiEnergy + 10 == defiEnergyUpperBound)
           ? defiEnergyUpperBound : defiEnergy + 10);
-    else
+    } else {
       defiEnergy = ((defiEnergy + 50 >= defiEnergyUpperBound)
           ? defiEnergyUpperBound : defiEnergy + 50);
+    }
     TextView energy = (TextView) this.findViewById(R.id.defiEnergy);
     energy.setText(String.valueOf(defiEnergy) + " J");
   }
@@ -2762,12 +2791,13 @@ public class MonitorMainScreen extends Activity {
    * Decrease the energy of the defibrilator.
    */
   public void defiEnergyDown(View view) {
-    if (defiEnergy - 10 <= defiEnergyThr)
+    if (defiEnergy - 10 <= defiEnergyThr) {
       defiEnergy = ((defiEnergy - 10 <= defiEnergyLowerBound)
           ? defiEnergyLowerBound : defiEnergy - 10);
-    else
+    } else {
       defiEnergy = ((defiEnergy - 50 <= defiEnergyLowerBound)
           ? defiEnergyLowerBound : defiEnergy - 50);
+    }
     TextView energy = (TextView) this.findViewById(R.id.defiEnergy);
     energy.setText(String.valueOf(defiEnergy) + " J");
   }
@@ -2843,10 +2873,11 @@ public class MonitorMainScreen extends Activity {
         // TODO Auto-generated method stub
         ImageButton shockButton = (ImageButton)
             findViewById(R.id.defiShockButton);
-        if (defiCharged)
+        if (defiCharged) {
           shockButton.setBackgroundResource(R.drawable.roundedbutton_green);
-        else
+        } else {
           shockButton.setBackgroundResource(R.drawable.roundedbutton);
+        }
       }
     });
   }
