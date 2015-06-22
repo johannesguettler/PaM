@@ -222,19 +222,19 @@ public class GLRenderer implements Renderer {
     //Init HeartLine
     if (lineHeart == null) {
       lineHeart = new Line(500, true);
-      lineHeart.setColor(0f, 1f, 0f);
+      lineHeart.setColor(0f, 0f, 0f);
       lineHeart.setDrawAble(false);
     }
     //Init BloodLine
     if (lineBlood == null) {
       lineBlood = new Line(500, true);
-      lineBlood.setColor(1f, 0f, 0f);
+      lineBlood.setColor(0f, 0f, 0f);
       lineBlood.setDrawAble(false);
     }
     //Init O2Line
     if (lineO2 == null) {
       lineO2 = new Line(500, true);
-      lineO2.setColor(1f, 1f, 0f);
+      lineO2.setColor(0f, 0f, 0f);
       lineO2.setDrawAble(false);
     }
     //Init CO2Line

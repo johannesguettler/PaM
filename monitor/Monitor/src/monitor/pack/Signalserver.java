@@ -276,10 +276,11 @@ public class Signalserver {
       bloodpressure[i - 1 + 52] = Math.sin(i * pi / 48);
     }
     for (int i = 1; i <= 50; ++i) {
-      if (i - 1 + 95 > 99)
+      if (i - 1 + 95 > 99) {
         bloodpressure[i - 1 + 95 - 100] = 0.5 * Math.sin((39 + i) * pi / 90);
-      else
+      } else {
         bloodpressure[i - 1 + 95] = 0.5 * Math.sin((39 + i) * pi / 90);
+      }
     }
     bloodpressure[95] = 0.38;
     bloodpressure[96] = 0.41;
@@ -296,10 +297,11 @@ public class Signalserver {
       SPO2[i - 1] = Math.sin(i * pi / 48);
     }
     for (int i = 1; i <= 70; ++i) {
-      if (i >= 25 && i <= 33)
+      if (i >= 25 && i <= 33) {
         SPO2[i - 1 + 30] = 0.9 * (1 + 0.005 * i) * Math.exp(-0.4 * (i - 1) * 2 * pi / 72);
-      else
+      } else {
         SPO2[i - 1 + 30] = 0.9 * Math.exp(-0.4 * (i - 1) * 2 * pi / 72);
+      }
     }
     // ------------------
     // CREATE CO2 PATTERN
@@ -342,10 +344,11 @@ public class Signalserver {
 
   // Sets the O2pattern to normal oder coldfinger.
   public void changeO2pattern(Event.O2Pattern pattern) {
-    if (pattern == Event.O2Pattern.COLDFINGER)
+    if (pattern == Event.O2Pattern.COLDFINGER) {
       coldfinger = true;
-    else
+    } else {
       coldfinger = false;
+    }
   }
 
   // Sets the oxygen saturation to a new value.
@@ -371,13 +374,15 @@ public class Signalserver {
     double inc;
     // The heartrate determines how fast it is gone through the array. There also some rhythms/patterns in which the heartrate setting
     // has to be ignored because the heartrate is fixed. This is the case in CPR, Asystole and ventricular flutter or fibrillation.
-    if (heartrhythm == Event.HeartPattern.CPR || heartrhythm == Event.HeartPattern.VENTFLUTTER || heartrhythm == Event.HeartPattern.VENTFIBRI)
+    if (heartrhythm == Event.HeartPattern.CPR || heartrhythm == Event.HeartPattern.VENTFLUTTER || heartrhythm == Event.HeartPattern.VENTFIBRI) {
       inc = 1;
-    else if (heartrhythm == Event.HeartPattern.ASYSTOLE)
+    } else if (heartrhythm == Event.HeartPattern.ASYSTOLE) {
       inc = 0.3;
-    else
-      // Calculate how the counter has to be incremented to achieve the current heartrate.
+    } else
+    // Calculate how the counter has to be incremented to achieve the current heartrate.
+    {
       inc = ((double) heartrate) / basicheartrate;
+    }
     // Increment the index counter.
     index += inc;
     // Calculate how the counter has to be incremented to achieve the current respiration rate.
@@ -392,8 +397,9 @@ public class Signalserver {
       // In the AV Block rhythm every fourth peak is skipped. The counter therefore is counted up here if the end
       // of the array is reached.
       ++avblockpeak;
-      if (avblockpeak > 3)
+      if (avblockpeak > 3) {
         avblockpeak = 0;
+      }
       // Call randomvariationfunctions in monitor for heartrate, blood pressure, O2 and CO2 curve.
       // Skip if pattern is asystole, ventflutter or fibrillation because the value in the monitor is 0 for these patterns.
       if (heartrhythm != Event.HeartPattern.ASYSTOLE && heartrhythm != Event.HeartPattern.VENTFLUTTER && heartrhythm != Event.HeartPattern.VENTFIBRI) {
@@ -404,8 +410,9 @@ public class Signalserver {
       }
     }
     // If the CO2 index counter reached the end of the array, set it back to the beginning of the array.
-    if (CO2index > (arraysize - 1))
+    if (CO2index > (arraysize - 1)) {
       CO2index = CO2index - (arraysize - 1);
+    }
   }
 
   // Calculates the output value of a heart pattern. Uses a heart pattern and a position of the array as input.
@@ -419,8 +426,9 @@ public class Signalserver {
       value = pattern[(int) Math.floor(position)] + (pattern[(int) Math.ceil(position)] - pattern[(int) Math.floor(position)]) / (Math.ceil(position) - Math.floor(position)) * (position - Math.floor(position)) * scale;
     }
     // Otherwise just read out the value of the heart rate array if index is a natural number.
-    else
+    else {
       value = pattern[(int) position] * scale;
+    }
     return value;
   }
 
@@ -433,8 +441,9 @@ public class Signalserver {
       value = (bloodpressure[(int) Math.floor(position)] + (bloodpressure[(int) Math.ceil(position)] - bloodpressure[(int) Math.floor(position)]) / (Math.ceil(position) - Math.floor(position)) * (position - Math.floor(position))) * 0.55 * (maxbloodpressure - minbloodpressure);
     }
     // Otherwise just read out the value of the blood pressure array if index is a natural number.
-    else
+    else {
       value = bloodpressure[(int) position] * 0.55 * (maxbloodpressure - minbloodpressure);
+    }
     return value;
   }
 
@@ -447,8 +456,9 @@ public class Signalserver {
       value = (SPO2[(int) Math.floor(position)] + (SPO2[(int) Math.ceil(position)] - SPO2[(int) Math.floor(position)]) / (Math.ceil(position) - Math.floor(position)) * (position - Math.floor(position))) * O2MaxValue;
     }
     // Otherwise just read out the value of the SPO2 array if index is a natural number.
-    else
+    else {
       value = SPO2[(int) position] * O2MaxValue;
+    }
     return value;
   }
 
@@ -482,8 +492,9 @@ public class Signalserver {
       }
     } else {
       // Reset flag for the next peak.
-      if (O2Value <= threshold)
+      if (O2Value <= threshold) {
         O2peak = false;
+      }
     }
   }
 
@@ -523,11 +534,14 @@ public class Signalserver {
           double newindex = index + 48;
           // Differentiate between AA and LBBBAA.
           if (heartrhythm == Event.HeartPattern.ARRYTHMIC)
-            // Absolute Arrythmia with sine pattern.
+          // Absolute Arrythmia with sine pattern.
+          {
             heartratevalue = calcHeartRateValue(sinerhythm, newindex);
-          else
-            // Absolute Arrythmia with left bundle branch block pattern.
+          } else
+          // Absolute Arrythmia with left bundle branch block pattern.
+          {
             heartratevalue = calcHeartRateValue(lbbbrhythm, newindex);
+          }
         }
         // Or simulate atrial fibrillation with random values.
         else {
@@ -542,16 +556,20 @@ public class Signalserver {
         else {
           // Differentiate between AA and LBBBAA.
           if (heartrhythm == Event.HeartPattern.ARRYTHMIC)
-            // Absolute Arrythmia with sine pattern.
+          // Absolute Arrythmia with sine pattern.
+          {
             heartratevalue = calcHeartRateValue(sinerhythm, index);
-          else
-            // Absolute Arrythmia with left bundle branch block pattern.
+          } else
+          // Absolute Arrythmia with left bundle branch block pattern.
+          {
             heartratevalue = calcHeartRateValue(lbbbrhythm, index);
+          }
         }
       }
       // Between the peaks always fibrillate with random values.
-      else
+      else {
         heartratevalue = (Math.random() * 7 - 3.5);
+      }
       // Trigger acoustic signal and heart blinking in monitor object.
       triggerBeepBlink(heartratevalue, threshold);
     }
@@ -560,25 +578,29 @@ public class Signalserver {
       // The fourth peak gets skipped
       if (avblockpeak == 3) {
         // QRS Peak starts at index 49 in the array. After this point we just insert zeros.
-        if (index > 48)
+        if (index > 48) {
           heartratevalue = 0;
-          // We have to make sure the T zone of the pattern doesn't get cut if we shift the pattern to the right,
-          // so we insert the end of the last pattern in the beginning of the current one.
-        else if (index < ((avblockpeak - 1) * 6))
+        }
+        // We have to make sure the T zone of the pattern doesn't get cut if we shift the pattern to the right,
+        // so we insert the end of the last pattern in the beginning of the current one.
+        else if (index < ((avblockpeak - 1) * 6)) {
           heartratevalue = calcHeartRateValue(sinerhythm, index + 99 - ((avblockpeak - 1) * 6));
-        else
+        } else {
           heartratevalue = calcHeartRateValue(sinerhythm, index);
+        }
       }
       // avblockpeak counts up from zero to three. Every time the array is looped, the QRS Peak gets delayed more.
       else {
-        if (index > 48)
+        if (index > 48) {
           heartratevalue = calcHeartRateValue(sinerhythm, index - (avblockpeak * 6));
-          // We have to make sure the T zone of the pattern doesn't get cut if we shift the pattern to the right,
-          // so we insert the end of the last pattern in the beginning of the current one.
-        else if (index < ((avblockpeak - 1) * 6))
+        }
+        // We have to make sure the T zone of the pattern doesn't get cut if we shift the pattern to the right,
+        // so we insert the end of the last pattern in the beginning of the current one.
+        else if (index < ((avblockpeak - 1) * 6)) {
           heartratevalue = calcHeartRateValue(sinerhythm, index + 99 - ((avblockpeak - 1) * 6));
-        else
+        } else {
           heartratevalue = calcHeartRateValue(sinerhythm, index);
+        }
       }
       // Trigger acoustic signal and heart blinking in monitor object.
       triggerBeepBlink(heartratevalue, threshold);
@@ -606,8 +628,9 @@ public class Signalserver {
           pacepulse = true;
         }
       } else {
-        if (index <= 10)
+        if (index <= 10) {
           pacepulse = false;
+        }
       }
       // Trigger acoustic signal and heart blinking in monitor object.
       triggerBeepBlink(heartratevalue, threshold);
@@ -627,8 +650,9 @@ public class Signalserver {
     // ------ CALCULATION FOR HEARTRATEVALUE WITH ASYSTOLE ------
     else if (heartrhythm == Event.HeartPattern.ASYSTOLE) {
       heartratevalue = asystolicrhythm[(int) index];
-    } else
+    } else {
       heartratevalue = 0;
+    }
     return heartratevalue;
   }
 
@@ -643,8 +667,9 @@ public class Signalserver {
           value = calcBloodPressureValue(index);
         } else {
           double newindex = index + 52;
-          if (newindex > (arraysize - 1))
+          if (newindex > (arraysize - 1)) {
             newindex = newindex - (arraysize - 1);
+          }
           value = calcBloodPressureValue(newindex);
         }
       } else if (aapeak >= 0.5 && aapreviouspeak < 0.5 && index < 50) {
@@ -656,14 +681,17 @@ public class Signalserver {
     // For AVBlock rhythm, every fourth amplitude has to be skipped.
     else if (heartrhythm == Event.HeartPattern.AVBLOCK) {
       // The amplitude starts at index 52 so this value has to be zero.
-      if (avblockpeak == 3 && index > 51)
+      if (avblockpeak == 3 && index > 51) {
         value = 0;
-        // The end of the amplitude is in the beginning of the array, this also has to be zero.
-      else if (avblockpeak == 0 && index < 50)
+      }
+      // The end of the amplitude is in the beginning of the array, this also has to be zero.
+      else if (avblockpeak == 0 && index < 50) {
         value = 0;
-        // For all the other amplitudes the standard calculation we used in the sine rhythm works just fine.
-      else
+      }
+      // For all the other amplitudes the standard calculation we used in the sine rhythm works just fine.
+      else {
         value = calcBloodPressureValue(index);
+      }
     }
     // If the heartrhythm is ventflutter nearly no blood gets pumped at all. The shrinked
     // ventflutter heartrate pattern itself can be used to simulate the bloodemission.
@@ -680,15 +708,17 @@ public class Signalserver {
       value = Math.abs((calcHeartRateValue(cprrhythm, index)) / 10);
     }
     // If there is no heart contraction no blood gets pumped through the body and no BP curve is visible.
-    else if (heartrhythm == Event.HeartPattern.ASYSTOLE)
+    else if (heartrhythm == Event.HeartPattern.ASYSTOLE) {
       value = 0;
-      // Else show the normal bloodpressure curve.
+    }
+    // Else show the normal bloodpressure curve.
     else {
       value = calcBloodPressureValue(index);
     }
     // If maxbloodpressure is under 50 make curve even flatter.
-    if ((maxbloodpressure) <= 50)
+    if ((maxbloodpressure) <= 50) {
       value = value / 2;
+    }
     // Return the value of the curve shifted by diastolic bloodpressure.
     return value + minbloodpressure * 0.55;
   }
@@ -700,10 +730,11 @@ public class Signalserver {
     int threshold = O2MaxValue - O2MaxValue / 10;
     // In case of ventricular flutter or fibrillation and also in asystole the SPO2 sensor
     // doesn't messure a oxygen saturation so the value stays on zero.
-    if (heartrhythm == Event.HeartPattern.VENTFLUTTER || heartrhythm == Event.HeartPattern.VENTFIBRI || heartrhythm == Event.HeartPattern.ASYSTOLE)
+    if (heartrhythm == Event.HeartPattern.VENTFLUTTER || heartrhythm == Event.HeartPattern.VENTFIBRI || heartrhythm == Event.HeartPattern.ASYSTOLE) {
       value = 0;
-      // In case of a reanimation the blood gets pumped with the pushing frequenzy of the reanimator. The
-      // oxygen saturation is low.
+    }
+    // In case of a reanimation the blood gets pumped with the pushing frequenzy of the reanimator. The
+    // oxygen saturation is low.
     else if (heartrhythm == Event.HeartPattern.CPR) {
       value = Math.abs((calcHeartRateValue(cprrhythm, index)) / 25);
       // Trigger blink and random variation.
@@ -720,18 +751,21 @@ public class Signalserver {
           value = calcSPO2Value(newindex);
         }
         // Case 2: One standard peak -> return usual oxygen value as used in sine pattern.
-        else
+        else {
           value = calcSPO2Value(index);
+        }
       } else {
         // Case 3: Skip a standard peak. Return one value for index > 63.
-        if (aapeak >= 0.5 && index > 63)
+        if (aapeak >= 0.5 && index > 63) {
           value = 8;
-          // Case 4: A shifted peak before the usual peak in the standard pattern.
+        }
+        // Case 4: A shifted peak before the usual peak in the standard pattern.
         else {
           // Newindex shifts the subsiding part of the pattern to the beginning of the array.
           double newindex = index - 63;
-          if (newindex < 0)
+          if (newindex < 0) {
             newindex = newindex + (arraysize - 1);
+          }
           value = calcSPO2Value(newindex);
         }
       }
@@ -743,11 +777,13 @@ public class Signalserver {
     else if (heartrhythm == Event.HeartPattern.AVBLOCK) {
       // The fourth heart peak which is skipped is at avblock == 3, the oxygen sensor measures this one array
       // later so it is at avblock == 0.
-      if (avblockpeak == 0)
+      if (avblockpeak == 0) {
         value = 8;
-        // All other oxygen saturation peaks are plotted as normal.
-      else
+      }
+      // All other oxygen saturation peaks are plotted as normal.
+      else {
         value = calcSPO2Value(index);
+      }
       // Trigger Blink and randomvariation.
       triggerO2peak(value, threshold);
     }
@@ -758,8 +794,9 @@ public class Signalserver {
       triggerO2peak(value, threshold);
     }
     // If the patient has a low bloodpressure the O2 saturation gets shrinked.
-    if (maxbloodpressure < 70 || coldfinger == true)
+    if (maxbloodpressure < 70 || coldfinger == true) {
       value = value / 20;
+    }
     // Return the value.
     return value;
   }
@@ -768,17 +805,18 @@ public class Signalserver {
   public double getCO2Value() {
     double value;
     // If there's no respiration the sensor measures no CO2 value
-    if (respirationrate == 0)
+    if (respirationrate == 0) {
       value = 0;
-    else {
+    } else {
       // Interpolate if index is a double.
       if (Math.floor(CO2index) != Math.ceil(CO2index)) {
         value = (CO2[(int) Math.floor(CO2index)] + (CO2[(int) Math.ceil(CO2index)] - CO2[(int) Math.floor(CO2index)]) / (Math.ceil(CO2index) - Math.floor(CO2index)) * (CO2index - Math.floor(CO2index))) * CO2MaxValue * 1.1;
         return value;
       }
       // Otherwise just read out the value of the CO2 array if index is a natural number.
-      else
+      else {
         value = CO2[(int) CO2index] * CO2MaxValue * 1.1;
+      }
     }
     return value;
   }

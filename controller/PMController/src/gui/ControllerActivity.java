@@ -1228,6 +1228,12 @@ public class ControllerActivity extends Activity {
           || blood_pressure_pattern != spinner_blood_pressure.getSelectedItemPosition()) {
         enableButtons();
       }
+
+      // in case of asystole set RR to zero
+      if (parent.getAdapter().equals(adapter_heart_rate) && position == 10) {
+        blood_pressure_diastolic_slider.setProgress(0);
+        blood_pressure_systolic_slider.setProgress(0);
+      }
     }
   }
 }

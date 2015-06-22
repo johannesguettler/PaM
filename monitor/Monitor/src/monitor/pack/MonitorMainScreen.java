@@ -585,6 +585,35 @@ public class MonitorMainScreen extends Activity {
         		});
     		}
     	}, 1000, 1000);*/
+    // set backround to white
+    changeBackColor(R.id.backColorSelectionWhiteButton);
+/*    // set linecolors to black
+    // EKG
+    menuSelection = 0;
+    changeColor(R.id.colorSelectionBlackButton);
+    // RR
+    menuSelection = 1;
+    changeColor(R.id.colorSelectionBlackButton);
+    // O2
+    menuSelection = 2;
+    changeColor(R.id.colorSelectionBlackButton);
+    // CO2
+    menuSelection = 3;
+    changeColor(R.id.colorSelectionBlackButton);*/
+    // set parameter textfields to black
+
+    TextView ekgValueTextView = (TextView) this.findViewById(R.id.ekgValueTextView);
+    TextView ibpValueTextView = (TextView) this.findViewById(R.id.ibpValueTextView);
+    TextView nibpValueTextView = (TextView) this.findViewById(R.id.nibpValueTextView);
+    TextView o2ValueTextView = (TextView) this.findViewById(R.id.o2ValueTextView);
+    TextView co2ValueTextView = (TextView) this.findViewById(R.id.co2ValueTextView);
+    TextView afValueTextView = (TextView) this.findViewById(R.id.afValueTextView);
+    ekgValueTextView.setTextColor(Color.BLACK);
+    ibpValueTextView.setTextColor(Color.BLACK);
+    nibpValueTextView.setTextColor(Color.BLACK);
+    o2ValueTextView.setTextColor(Color.BLACK);
+    co2ValueTextView.setTextColor(Color.BLACK);
+    afValueTextView.setTextColor(Color.BLACK);
   }
 
   /**
@@ -1892,29 +1921,36 @@ public class MonitorMainScreen extends Activity {
    * @param view which called the method.
    */
   public void changeColor(View view) {
+    int id = view.getId();
+    performChangeColor(id);
+  }
+  public void changeColor(int id) {
+    performChangeColor(id);
+  }
+  private void performChangeColor(int id) {
     // Distinguish which color was selected and save it.
     int color = 0;
     int red = 0;
     int green = 0;
     int blue = 0;
-    if (view.getId() == R.id.colorSelectionRedButton) {
+    if (id == R.id.colorSelectionRedButton) {
       color = Color.RED;
       red = 255;
-    } else if (view.getId() == R.id.colorSelectionBlueButton) {
+    } else if (id == R.id.colorSelectionBlueButton) {
       color = Color.BLUE;
       blue = 255;
-    } else if (view.getId() == R.id.colorSelectionGreenButton) {
+    } else if (id == R.id.colorSelectionGreenButton) {
       color = Color.GREEN;
       green = 255;
-    } else if (view.getId() == R.id.colorSelectionYellowButton) {
+    } else if (id == R.id.colorSelectionYellowButton) {
       color = Color.YELLOW;
       red = 255;
       green = 255;
-    } else if (view.getId() == R.id.colorSelectionGrayButton) {
-      color = Color.GRAY;
-      red = 128;
-      green = 128;
-      blue = 128;
+    } else if (id == R.id.colorSelectionBlackButton) {
+      color = Color.BLACK;
+      red = 0;
+      green = 0;
+      blue = 0;
     }
     // Change the color of the parameters/curve of the currently selected vital-parameter.
     if (menuSelection == 0) {
@@ -1951,6 +1987,13 @@ public class MonitorMainScreen extends Activity {
    * @param view which called the method.
    */
   public void changeBackColor(View view) {
+    int id = view.getId();
+    performChangeBackColor(id);
+  }
+  public void changeBackColor(int id) {
+    performChangeBackColor(id);
+  }
+  private void performChangeBackColor(int id) {
     // Get all relevant layout-elements.
     RelativeLayout ekgParamLayout = (RelativeLayout) this.findViewById(R.id.ekgParamLayout);
     RelativeLayout ibpParamLayout = (RelativeLayout) this.findViewById(R.id.ibpParamLayout);
@@ -1977,13 +2020,13 @@ public class MonitorMainScreen extends Activity {
     int color = 0;
     int defiEngergyColor = 0;
     int drawable = 0;
-    if (view.getId() == R.id.backColorSelectionWhiteButton) {
+    if (id == R.id.backColorSelectionWhiteButton) {
       color = Color.BLACK;
       defiEngergyColor = Color.WHITE;
       drawable = R.drawable.border_white_back;
       // Change background color of GL-part.
       glActivity.SetColor(GLRenderer.LineType.Background, 255, 255, 255);
-    } else if (view.getId() == R.id.backColorSelectionBlackButton) {
+    } else if (id == R.id.backColorSelectionBlackButton) {
       color = Color.WHITE;
       defiEngergyColor = Color.BLACK;
       drawable = R.drawable.border_black_back;

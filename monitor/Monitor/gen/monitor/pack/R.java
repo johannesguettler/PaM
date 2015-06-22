@@ -1704,7 +1704,7 @@ containing a value of this type.
         public static final int co2ValueTextView=0x7f06008a;
         public static final int collapseActionView=0x7f06000f;
         public static final int colorSelectionBlueButton=0x7f060055;
-        public static final int colorSelectionGrayButton=0x7f060058;
+        public static final int colorSelectionBlackButton =0x7f060058;
         public static final int colorSelectionGreenButton=0x7f060056;
         public static final int colorSelectionRedButton=0x7f060053;
         public static final int colorSelectionTitleTextView=0x7f060054;

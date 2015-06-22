@@ -192,7 +192,7 @@
                 android:onClick="changeColor" />
             
             <Button
-                android:id="@+id/colorSelectionGrayButton"
+                android:id="@+id/colorSelectionBlackButton"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
