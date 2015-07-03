@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="15"
         android:targetSdkVersion="21" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -38,6 +38,14 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_monitor_main_screen"
             android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settingsTitle"
+            android:parentActivityName=".MonitorMainScreen">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MonitorMainScreen" />
         </activity>
     </application>
 

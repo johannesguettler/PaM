@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="line_color_values">
+        <item>red</item>
+        <item>blue</item>
+        <item>green</item>
+        <item>yellow</item>
+        <item>grey</item>
+        <item>black</item>
+    </string-array>
+    <string-array name="line_color_options">
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Yellow</item>
+        <item>Grey</item>
+        <item>Black</item>
+    </string-array>
+    <string-array name="background_color_options">
+        <item>white</item>
+        <item>black</item>
+    </string-array>
+    <string-array name="background_color_values">
+        <item>white</item>
+        <item>black</item>
+    </string-array>
+</resources>

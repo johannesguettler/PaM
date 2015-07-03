@@ -98,8 +98,9 @@ public class Line {
     // set the buffer to read the first coordinate
     vertexBuffer.position(0);
     pos++;
-    if (pos >= resolution)
+    if (pos >= resolution) {
       pos = 0;
+    }
   }
 
   /**
@@ -109,8 +110,9 @@ public class Line {
    *                  this shape.
    */
   public void draw(float[] mvpMatrix) {
-    if (!draw)
+    if (!draw) {
       return;
+    }
     // Add program to OpenGL environment
     GLES20.glUseProgram(program);
 
@@ -148,31 +150,38 @@ public class Line {
           //Nothing to Fill
           if (lineCoords[i * 3 + 1] == 0) {
             //Loop through all points which equals 0
-            while (i < resolution - 1 && lineCoords[i * 3 + 1] == 0 && !(i >= pos && i < pos + resolution / 100))
+            while (i < resolution - 1 && lineCoords[i * 3 + 1] == 0 && !(i >= pos && i < pos + resolution / 100)) {
               i++;
+            }
 
             vertexBuffer.put(lineCoords, start * 3, (i - start) * 3);
             vertexBuffer.position(0);
-            if (pos >= resolution)
+            if (pos >= resolution) {
               pos = 0;
+            }
             GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, (i - start));
           } else {
             //We got something to fill
             //Add Vertex as central Point of all Triangles
-            vertexBuffer.put(new float[]{-1F + (2f * i / (resolution - 1)), 0, 0});
-            while (i < resolution - 1 && lineCoords[i * 3 + 1] != 0 && !(i >= pos && i < pos + resolution / 100))
+            vertexBuffer.put(new float[]{-1F + (2f * i / (resolution -1)),0,0});
+            while(i < resolution -1 && lineCoords[i*3+1] != 0 && !(i >=
+                pos && i < pos + resolution/100))
               i++;
-            vertexBuffer.put(lineCoords, start * 3, (i - start) * 3);
+            /*vertexBuffer.put(new float[]{-1F + (2f * i / (resolution -1)),0,
+                0});*/
+            vertexBuffer.put(lineCoords,start*3,(i-start)*3);
             //Add HelperVertex to fill whole Curve
-            vertexBuffer.put(new float[]{-1F + (2f * i / (resolution - 1)), 0, 0});
+            vertexBuffer.put(new float[]{-1F + (2f * i / (resolution -1)),0,
+                0});
             vertexBuffer.position(0);
-            GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, (i - start) + 2);
+            GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, i);
             //We need at least 3 Vertexes for a triangle
-            if (i - start > 2)
-              GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, (i - start) + 2);
+            if(i - start > 2)
+              GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, i);
           }
-          while (i >= pos && i < pos + resolution / 100)
+          while (i >= pos && i < pos + resolution / 100) {
             i++;
+          }
         }
       } else {
         int startPos = pos + resolution / 100;
@@ -183,11 +192,15 @@ public class Line {
         GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, startPos, pos - startPos);
         //Check if we need a line after gap
         if (tempPos < resolution)
-          //Draw Line after Gap
+        //Draw Line after Gap
+        {
           GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, tempPos, vertexCount - tempPos);
+        }
       }
     } else //No GAP
+    {
       GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, vertexCount);
+    }
     // Disable vertex array
     GLES20.glDisableVertexAttribArray(positionHandle);
 

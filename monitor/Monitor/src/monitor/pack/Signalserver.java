@@ -1,6 +1,9 @@
 
 package monitor.pack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * A signalserver, which provides patterns for heartrhythm,
  * blood pressure, O2 saturation and respiration.
@@ -306,20 +309,49 @@ public class Signalserver {
     // ------------------
     // CREATE CO2 PATTERN
     // ------------------
+    double maxCo2 = 0;
+    double minCo2 = 0;
     for (int i = 1; i <= 100; ++i) {
       CO2[i - 1] = 0;
     }
     for (int i = 1; i <= 19; ++i) {
+      double temp = i * 0.048;
       CO2[i - 1 + 44] = i * 0.048;
+      if (temp > maxCo2) {
+        maxCo2 = temp;
+      }
+      if (temp < minCo2) {
+        minCo2 = temp;
+      }
+
     }
     for (int i = 1; i <= 28; ++i) {
+      double temp = 0.9 + (i * 0.003);
       CO2[i - 1 + 63] = 0.9 + (i * 0.003);
+      if (temp > maxCo2) {
+        maxCo2 = temp;
+      }
+      if (temp < minCo2) {
+        minCo2 = temp;
+      }
     }
     for (int i = 1; i <= 9; ++i) {
+      double temp = 1 - (i * 1.0 / 9.0);
       CO2[i - 1 + 91] = 1 - (i * 1.0 / 9.0);
+      if (temp > maxCo2) {
+        maxCo2 = temp;
+      }
+      if (temp < minCo2) {
+        minCo2 = temp;
+      }
     }
-  }
+    System.out.println("MinCO2 value: " + minCo2
+        + "\nMaxCo2 value: " + maxCo2);
 
+
+    CO2 = new double[]{0.000000, 0.000039, 0.000024, 0.006194, 0.023405, 0.053559, 0.098557, 0.160301, 0.240693, 0.339068, 0.446680, 0.553197, 0.648286, 0.721720, 0.769993, 0.800164, 0.820212, 0.836167, 0.849183, 0.859668, 0.868027, 0.874666, 0.879994, 0.884415, 0.888335, 0.892040, 0.895573, 0.898948, 0.902180, 0.905284, 0.908274, 0.911166, 0.913975, 0.916714, 0.919399, 0.922045, 0.924666, 0.927277, 0.929893, 0.932528, 0.935198, 0.937910, 0.940663, 0.943455, 0.946285, 0.949151, 0.952051, 0.954985, 0.957950, 0.960944, 0.963967, 0.967016, 0.970090, 0.973187, 0.976306, 0.979444, 0.982601, 0.985752, 0.988859, 0.991884, 0.994785, 0.997525, 1.000000, 0.992076, 0.944846, 0.854502, 0.736439, 0.606433, 0.480263, 0.371633, 0.282611, 0.211211, 0.155441, 0.113309, 0.082825, 0.061998, 0.048835, 0.041346, 0.037540, 0.035425, 0.033260, 0.030985, 0.028724, 0.026451, 0.024137, 0.021754, 0.019274, 0.016669, 0.013929, 0.011138, 0.008415, 0.005880, 0.003652, 0.001852, 0.000597, 0.000008, 0.000007, -0.000020, -0.000068, -0.000000};
+    System.out.println("\n\nArraysize Co2: " + CO2.length + "\n\n");
+  }
   // Changes the heart rhythm curve to a new pattern.
   // If the current heart rhythm is Asystole the heart rhythm gets changed immediately.
   public void changeHeartRhythm(Event.HeartPattern rhythm) {

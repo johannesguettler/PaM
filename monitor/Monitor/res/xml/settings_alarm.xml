@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen
+        android:title="@string/settings_ecg_alarms_title">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="key_ecg_alarm"
+            android:title="@string/settings_ecg_alarm_title"
+            android:summary="@string/settings_summ_ecg_alarm"/>
+        <ListPreference
+            android:key="key_ecg_thesholds"
+            android:title="@string/settings_ecg_color_title"
+            android:defaultValue="black"
+            android:entries="@array/line_color_options"
+            android:entryValues="@array/line_color_values"></ListPreference>
+    </PreferenceScreen>
+
+    <ListPreference
+        android:key="key_rr_color"
+        android:title="@string/settings_rr_color_title"
+        android:defaultValue="black"
+        android:entries="@array/line_color_options"
+        android:entryValues="@array/line_color_values"></ListPreference>
+    <ListPreference
+        android:key="key_spo2_color"
+        android:title="@string/settings_spo2_color_title"
+        android:defaultValue="black"
+        android:entries="@array/line_color_options"
+        android:entryValues="@array/line_color_values"></ListPreference>
+    <ListPreference
+        android:key="key_etco2_color"
+        android:title="@string/settings_etco2_color_title"
+        android:defaultValue="black"
+        android:entries="@array/line_color_options"
+        android:entryValues="@array/line_color_values"></ListPreference>
+
+</PreferenceScreen>

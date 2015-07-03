@@ -82,4 +82,18 @@
     <string name="done">Done</string>
     <string name="conNameText">The session name is: \"PaM_Session\"</string>
     <string name="change">Change</string>
+    <string name="settingsTitleKey">settingsList</string>
+    <string name="settings_background_title">Background</string>
+    <string name="settings_summ_background">Change the background color</string>
+    <string name="settings_colors_title">Colors</string>
+    <string name="settings_summ_colors">Change line-colors</string>
+    <string name="settings_ecg_color_title">ECG</string>
+    <string name="settings_rr_color_title">RR</string>
+    <string name="settings_spo2_color_title">SpO2</string>
+    <string name="settings_etco2_color_title">EtCO2</string>
+    <string name="settings_summ_alarms">Set alarm and thresholds</string>
+    <string name="settings_alarms_title">Alarms</string>
+    <string name="settings_summ_ecg_alarm">Enable / disable ECG-alarm</string>
+    <string name="settings_ecg_alarm_title">Alarm</string>
+    <string name="settings_ecg_alarms_title">ECG</string>
 </resources>

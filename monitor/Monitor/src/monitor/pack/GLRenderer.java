@@ -236,6 +236,7 @@ public class GLRenderer implements Renderer {
       lineO2 = new Line(500, true);
       lineO2.setColor(0f, 0f, 0f);
       lineO2.setDrawAble(false);
+      lineO2.setFill(true);
     }
     //Init CO2Line
     if (lineCO2 == null) {

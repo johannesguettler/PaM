@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+    <header
+        android:fragment="monitor.pack.SettingsFragment"
+        android:summary="@string/settings_summ_colors"
+        android:title="@string/settings_colors_title">
+        <extra
+            android:name="settings"
+            android:value="colors"></extra>
+    </header>
+    <header
+        android:fragment="monitor.pack.SettingsFragment"
+        android:summary="@string/settings_summ_alarms"
+        android:title="@string/settings_alarms_title"
+        >
+        <extra
+            android:name="settings"
+            android:value="alarms"></extra>
+    </header>
+</preference-headers>

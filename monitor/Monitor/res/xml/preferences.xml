@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_height="match_parent"
+                  android:layout_width="match_parent"
+                  android:orientation="vertical">
+    <EditTextPreference
+        android:title="@string/settingsTitle"
+        android:key="@string/settingsTitleKey"
+        android:defaultValue="@string/settingsTitle"/>
+
+
+        <PreferencesCategory
+            android:title = "@string/settingsTitle" >
+            <CheckBoxPreference
+                android:key="checkbox_preference"
+                android:title="test"
+                android:summary="testsummary" />
+
+        </PreferencesCategory>
+
+
+</PreferenceScreen>
+
+    <!-- Layout for the settings. Width controlled with weight-factor. -->
+    <!--<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/settingsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.0001"
+        android:background="@color/gray"
+        android:orientation="vertical" >
+
+        &lt;!&ndash; Layout for the settings-title. &ndash;&gt;
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@color/gray" >
+
+            <TextView
+                android:id="@+id/settingsTitletextView"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/settingsTitle" />
+
+        </RelativeLayout>-->
+
+    <!--&lt;!&ndash; Layout for the backgroud-color-settings. &ndash;&gt;
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_white" >
+
+        <TextView
+            android:id="@+id/backColorSettingsTitletextView"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="7dp"
+            android:text="@string/backColorSettingsTitle" />
+
+        <Button
+            android:id="@+id/backColorSelectionWhiteButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="66dp"
+            android:layout_height="55dp"
+            android:layout_toLeftOf="@+id/backColorSelectionBlackButton"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="5dp"
+            android:background="@color/white"
+            android:onClick="changeBackColor" />
+
+        <Button
+            android:id="@+id/backColorSelectionBlackButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="66dp"
+            android:layout_height="55dp"
+            android:layout_alignTop="@+id/backColorSelectionWhiteButton"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="7dp"
+            android:background="@color/black"
+            android:onClick="changeBackColor" />
+
+    </RelativeLayout>
+
+    &lt;!&ndash; Layout for the setting-selection. &ndash;&gt;
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp" >
+
+        <Button
+            android:id="@+id/ekgSettingsButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="7dp"
+            android:textSize="23sp"
+            android:textColor="@color/black"
+            android:text="@string/ekgSettigsButtonTitle"
+            android:onClick="showEKGSettings" />
+
+        <Button
+            android:id="@+id/ibpSettingsButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_alignTop="@+id/ekgSettingsButton"
+            android:layout_toRightOf="@+id/ekgSettingsButton"
+            android:textSize="23sp"
+            android:text="@string/ibpSettigsButtonTitle"
+            android:onClick="showIBPSettings" />
+
+        <Button
+            android:id="@+id/o2SettingsButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_alignTop="@+id/ibpSettingsButton"
+            android:layout_toRightOf="@+id/ibpSettingsButton"
+            android:textSize="23sp"
+            android:text="@string/o2SettigsButtonTitle"
+            android:onClick="showO2Settings" />
+
+        <Button
+            android:id="@+id/co2SettingsButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="70dp"
+            android:layout_height="60dp"
+            android:layout_alignTop="@+id/o2SettingsButton"
+            android:layout_toRightOf="@+id/o2SettingsButton"
+            android:textSize="23sp"
+            android:text="@string/co2SettigsButtonTitle"
+            android:onClick="showCO2Settings" />
+
+        <ImageView
+            android:id="@+id/settingsPointingArrowImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="17dp"
+            android:layout_marginBottom="-20dp"
+            android:src="@drawable/triangle"
+            android:contentDescription="@string/settingsPointingArrowDesc" />
+
+    </RelativeLayout>
+
+    &lt;!&ndash; Layout for the color selection. &ndash;&gt;
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_white" >
+
+        <Button
+            android:id="@+id/colorSelectionRedButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="52dp"
+            android:layout_height="55dp"
+            android:layout_below="@+id/colorSelectionTitleTextView"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="7dp"
+            android:background="@color/red"
+            android:onClick="changeColor" />
+
+        <Button
+            android:id="@+id/colorSelectionBlueButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="52dp"
+            android:layout_height="55dp"
+            android:layout_alignTop="@+id/colorSelectionRedButton"
+            android:layout_toRightOf="@+id/colorSelectionRedButton"
+            android:layout_marginLeft="5dp"
+            android:background="@color/blue"
+            android:onClick="changeColor" />
+
+        <Button
+            android:id="@+id/colorSelectionGreenButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="52dp"
+            android:layout_height="55dp"
+            android:layout_alignTop="@+id/colorSelectionBlueButton"
+            android:layout_toRightOf="@+id/colorSelectionBlueButton"
+            android:layout_marginLeft="5dp"
+            android:background="@color/green"
+            android:onClick="changeColor" />
+
+        <Button
+            android:id="@+id/colorSelectionYellowButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="52dp"
+            android:layout_height="55dp"
+            android:layout_alignTop="@+id/colorSelectionGreenButton"
+            android:layout_toRightOf="@+id/colorSelectionGreenButton"
+            android:layout_marginLeft="5dp"
+            android:background="@color/yellow"
+            android:onClick="changeColor" />
+
+        <Button
+            android:id="@+id/colorSelectionBlackButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="52dp"
+            android:layout_height="55dp"
+            android:layout_alignTop="@+id/colorSelectionYellowButton"
+            android:layout_toRightOf="@+id/colorSelectionYellowButton"
+            android:layout_marginLeft="5dp"
+            android:background="@color/black"
+            android:onClick="changeColor" />
+
+        <TextView
+            android:id="@+id/colorSelectionTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="-5dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="28sp"
+            android:text="@string/colorSelectionTitle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </RelativeLayout>
+
+    &lt;!&ndash; Layout for the alarm settings. &ndash;&gt;
+    <RelativeLayout
+        android:id="@+id/alarmSettingsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_white" >
+
+        <TextView
+            android:id="@+id/alarmSettingsTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="-5dp"
+            android:layout_marginLeft="7dp"
+            android:textSize="28sp"
+            android:text="@string/alarmSettingsTitle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/alarmOnOffButton"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/alarmSettingsTitleTextView"
+            android:layout_marginRight="7dp"
+            android:text="@string/OnOffButtonTitle"
+            android:onClick="triggerAlarm" />
+
+        <TextView
+            android:id="@+id/firstAlarmTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/alarmSettingsTitleTextView"
+            android:layout_below="@+id/alarmOnOffButton"
+            android:text="@string/firstAlarmTitle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/firstAlarmUpperTHTextView"
+            android:layout_width="106dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/firstAlarmTitleTextView"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="7dp"
+            android:text="@string/alarmUpperTH"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/firstAlarmUpperTHValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/firstAlarmUpperTHTextView"
+            android:layout_toLeftOf="@+id/firstAlarmUpperTHUpButton"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="25sp"
+            android:text="@string/firstAlarmUpperTHValueDefault"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/firstAlarmUpperTHUpButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignRight="@+id/alarmOnOffButton"
+            android:layout_alignTop="@+id/firstAlarmUpperTHDownButton"
+            android:textSize="30sp"
+            android:text="@string/upButtonTitle"
+            android:onClick="startIncFirstAlarmUpTH" />
+
+        <Button
+            android:id="@+id/firstAlarmUpperTHDownButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignBottom="@+id/firstAlarmUpperTHTextView"
+            android:layout_toRightOf="@+id/firstAlarmUpperTHTextView"
+            android:layout_marginLeft="3dp"
+            android:textSize="30sp"
+            android:text="@string/downButtonTitle"
+            android:onClick="startDecFirstAlarmUpTH" />
+
+        <TextView
+            android:id="@+id/firstAlarmLowerTHTextView"
+            android:layout_width="106dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/firstAlarmUpperTHTextView"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="7dp"
+            android:text="@string/alarmLowerTH"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/firstAlarmLowerTHValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/firstAlarmLowerTHTextView"
+            android:layout_toLeftOf="@+id/firstAlarmLowerTHUpButton"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="25sp"
+            android:text="@string/firstAlarmLowerTHValueDefault"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/firstAlarmLowerTHUpButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignRight="@+id/alarmOnOffButton"
+            android:layout_alignTop="@+id/firstAlarmLowerTHDownButton"
+            android:textSize="30sp"
+            android:text="@string/upButtonTitle"
+            android:onClick="startIncFirstAlarmLowTH" />
+
+        <Button
+            android:id="@+id/firstAlarmLowerTHDownButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignBottom="@+id/firstAlarmLowerTHTextView"
+            android:layout_toRightOf="@+id/firstAlarmLowerTHTextView"
+            android:layout_marginLeft="3dp"
+            android:textSize="30sp"
+            android:text="@string/downButtonTitle"
+            android:onClick="startDecFirstAlarmLowTH" />
+
+        <TextView
+            android:id="@+id/secondAlarmTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/alarmSettingsTitleTextView"
+            android:layout_below="@+id/firstAlarmLowerTHTextView"
+            android:layout_marginTop="15dp"
+            android:text="@string/secondAlarmTitle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/secondAlarmUpperTHTextView"
+            android:layout_width="106dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/secondAlarmTitleTextView"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="7dp"
+            android:text="@string/alarmUpperTH"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/secondAlarmUpperTHValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/secondAlarmUpperTHTextView"
+            android:layout_toLeftOf="@+id/secondAlarmUpperTHUpButton"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="25sp"
+            android:text="@string/secondAlarmUpperTHValueDefault"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/secondAlarmUpperTHUpButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignRight="@+id/alarmOnOffButton"
+            android:layout_alignTop="@+id/secondAlarmUpperTHDownButton"
+            android:textSize="30sp"
+            android:text="@string/upButtonTitle"
+            android:onClick="startIncSecondAlarmUpTH" />
+
+        <Button
+            android:id="@+id/secondAlarmUpperTHDownButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignBottom="@+id/secondAlarmUpperTHTextView"
+            android:layout_toRightOf="@+id/secondAlarmUpperTHTextView"
+            android:layout_marginLeft="3dp"
+            android:textSize="30sp"
+            android:text="@string/downButtonTitle"
+            android:onClick="startDecSecondAlarmUpTH" />
+
+        <TextView
+            android:id="@+id/secondAlarmLowerTHTextView"
+            android:layout_width="106dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/secondAlarmUpperTHTextView"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="7dp"
+            android:text="@string/alarmLowerTH"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/secondAlarmLowerTHValueTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/secondAlarmLowerTHTextView"
+            android:layout_toLeftOf="@+id/secondAlarmLowerTHUpButton"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="25sp"
+            android:text="@string/secondAlarmLowerTHValueDefault"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/secondAlarmLowerTHUpButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignRight="@+id/alarmOnOffButton"
+            android:layout_alignTop="@+id/secondAlarmLowerTHDownButton"
+            android:textSize="30sp"
+            android:text="@string/upButtonTitle"
+            android:onClick="startIncSecondAlarmLowTH" />
+
+        <Button
+            android:id="@+id/secondAlarmLowerTHDownButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_alignBottom="@+id/secondAlarmLowerTHTextView"
+            android:layout_toRightOf="@+id/secondAlarmLowerTHTextView"
+            android:layout_marginLeft="3dp"
+            android:textSize="30sp"
+            android:text="@string/downButtonTitle"
+            android:onClick="startDecSecondAlarmLowTH" />
+
+    </RelativeLayout>
+
+    &lt;!&ndash; Layout for the sound settings. &ndash;&gt;
+    <RelativeLayout
+        android:id="@+id/soundSettingsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_white" >
+
+        <TextView
+            android:id="@+id/soundSettingsTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="7dp"
+            android:textSize="28sp"
+            android:text="@string/soundSettingsTitle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/soundOnOffButton"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/soundSettingsTitleTextView"
+            android:layout_marginRight="7dp"
+            android:text="@string/OnOffButtonTitle"
+            android:onClick="triggerSound" />
+
+    </RelativeLayout>
+
+</LinearLayout>-->

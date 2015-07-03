@@ -1,5 +1,5 @@
 /*
- * Copyright: Universität Freiburg, 2015
+ * Copyright: Universitï¿½t Freiburg, 2015
  * Authors: Marc Pfeifer <pfeiferm@tf.uni-freiburg.de> Everthing, except Defibirllator
  * 			Johannes Scherle <johannes.scherle@googlemail.com> Defibrillator
  */
@@ -7,6 +7,7 @@
 package monitor.pack;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -256,6 +257,9 @@ public class MonitorMainScreen extends Activity {
     decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
       @Override
       public void onSystemUiVisibilityChange(int visibility) {
+        if (visibility != View.VISIBLE) {
+          return;
+        }
         new Handler().postDelayed(new Runnable() {
           public void run() {
             if (Build.VERSION.SDK_INT >= 19) {
@@ -1050,6 +1054,15 @@ public class MonitorMainScreen extends Activity {
    * @param view which called the method.
    */
   public void openCloseSettings(View view) {
+    // new: settingsActivity
+    startActivity(new Intent(this, SettingsActivity.class));
+
+    // settingsFragment?
+/*    getFragmentManager().beginTransaction()
+        .replace(android.R.id.content, new SettingsFragment())
+        .commit();*/
+    // original settings starter
+/*
     LinearLayout.LayoutParams loParamsSettings = (LinearLayout.LayoutParams) settingsLayout.getLayoutParams();
     Button openCloseSettingsButton = (Button) this.findViewById(R.id.openCloseSettingsButton);
     if (settingsHidden) {
@@ -1072,6 +1085,7 @@ public class MonitorMainScreen extends Activity {
       openCloseSettingsButton.setText("Settings >");
     }
     settingsLayout.setLayoutParams(loParamsSettings);
+*/
   }
 
   /**
@@ -1924,9 +1938,11 @@ public class MonitorMainScreen extends Activity {
     int id = view.getId();
     performChangeColor(id);
   }
+
   public void changeColor(int id) {
     performChangeColor(id);
   }
+
   private void performChangeColor(int id) {
     // Distinguish which color was selected and save it.
     int color = 0;
@@ -1990,9 +2006,11 @@ public class MonitorMainScreen extends Activity {
     int id = view.getId();
     performChangeBackColor(id);
   }
+
   public void changeBackColor(int id) {
     performChangeBackColor(id);
   }
+
   private void performChangeBackColor(int id) {
     // Get all relevant layout-elements.
     RelativeLayout ekgParamLayout = (RelativeLayout) this.findViewById(R.id.ekgParamLayout);
@@ -2867,7 +2885,7 @@ public class MonitorMainScreen extends Activity {
         }
       }, 4000);
     }
-		
+
 		/*
 	    _defiTimerInterval = (int) (((double) _defi1kTime * ((double)defiEnergy / 1000)) / (double)_defiFrequencySteps);
 	    _defiSoundIncrement = (int) (((double)_defi1kFrequency * ((double)(defiEnergy) / 1000)) / (double)_defiFrequencySteps);
