@@ -1,26 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceScreen
-        android:title="@string/settings_ecg_alarms_title">
-        <CheckBoxPreference
+        android:title="@string/settings_ecg_alarms_title"
+        android:key="settings_category_ecg_alarms_key">
+        <SwitchPreference
             android:defaultValue="true"
-            android:key="key_ecg_alarm"
+            android:key="@string/key_ecg_alarm"
             android:title="@string/settings_ecg_alarm_title"
-            android:summary="@string/settings_summ_ecg_alarm"/>
-        <ListPreference
-            android:key="key_ecg_thesholds"
-            android:title="@string/settings_ecg_color_title"
-            android:defaultValue="black"
-            android:entries="@array/line_color_options"
-            android:entryValues="@array/line_color_values"></ListPreference>
+            android:summaryOn="@string/settings_summ_ecg_alarm"
+            android:switchTextOn="@string/settings_alarmswitch_on"
+            android:switchTextOff="@string/settings_alarmswitch_off"/>
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_ecg_upper_threshold"
+            android:title="@string/settings_alarm_upper_threshold_title"
+            app:numberPickerDefaultValue="110"
+            android:defaultValue="110"
+            app:numberPickerMinValue ="30"
+            app:numberPickerMaxValue ="180"/>
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_ecg_lower_threshold"
+            android:title="@string/settings_alarm_lower_threshold_title"
+            app:numberPickerDefaultValue="55"
+            android:defaultValue="55"
+            app:numberPickerMinValue ="30"
+            app:numberPickerMaxValue ="180"/>
+
     </PreferenceScreen>
 
-    <ListPreference
-        android:key="key_rr_color"
-        android:title="@string/settings_rr_color_title"
-        android:defaultValue="black"
-        android:entries="@array/line_color_options"
-        android:entryValues="@array/line_color_values"></ListPreference>
+    <PreferenceScreen
+        android:title="@string/settings_rr_alarms_title"
+        android:key="settings_category_rr_alarms_key">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/key_rr_alarm"
+            android:title="@string/settings_alarm_switch_title"
+            android:summaryOn="@string/settings_summ_rr_alarm_on"
+            android:summaryOff="@string/settings_summ_rr_alarm_off"
+            android:switchTextOn="@string/settings_alarmswitch_on"
+            android:switchTextOff="@string/settings_alarmswitch_off"/>
+        <PreferenceCategory
+            android:title="@string/settings_category_rr_alarms_systolic"
+            android:key="key_rr_alarm_category_systolic">
+        <monitor.pack.NumberPickerPreference
+        android:key="@string/key_rr_systolic_upper_threshold"
+        android:title="@string/settings_alarm_upper_threshold_title"
+        app:numberPickerDefaultValue="140"
+        android:defaultValue="140"
+        app:numberPickerMinValue ="60"
+        app:numberPickerMaxValue ="250"/>
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_rr_systolic_lower_threshold"
+            android:title="@string/settings_alarm_lower_threshold_title"
+            app:numberPickerDefaultValue="100"
+            android:defaultValue="100"
+            app:numberPickerMinValue ="60"
+            app:numberPickerMaxValue ="250"/>
+        </PreferenceCategory>
+        <PreferenceCategory
+            android:title="@string/settings_category_rr_alarms_diastolic"
+            android:key="key_rr_alarm_category_diastolic">
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_rr_diastolic_upper_threshold"
+            android:title="@string/settings_alarm_upper_threshold_title"
+            app:numberPickerDefaultValue="90"
+            android:defaultValue="90"
+            app:numberPickerMinValue ="30"
+            app:numberPickerMaxValue ="180"/>
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_rr_diastolic_lower_threshold"
+            android:title="@string/settings_alarm_lower_threshold_title"
+            app:numberPickerDefaultValue="60"
+            android:defaultValue="60"
+            app:numberPickerMinValue ="30"
+            app:numberPickerMaxValue ="180"/>
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+
+    <PreferenceScreen
+        android:title="@string/settings_ecg_alarms_title"
+        android:key="settings_category_spo2_alarms_key">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/key_spo2_alarm"
+            android:title="@string/settings_spo2_alarm_title"
+            android:summaryOn="@string/settings_summ_spo2_alarm_on"
+            android:summaryOff="@string/settings_summ_spo2_alarm_off"
+            android:switchTextOn="@string/settings_alarmswitch_on"
+            android:switchTextOff="@string/settings_alarmswitch_off"/>
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_ecg_upper_threshold"
+            android:title="Upper threshold"
+            app:numberPickerDefaultValue="110"
+            android:defaultValue="110"
+            app:numberPickerMinValue ="30"
+            app:numberPickerMaxValue ="180"/>
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_ecg_lower_threshold"
+            android:title="Lower threshold"
+            app:numberPickerDefaultValue="55"
+            android:defaultValue="55"
+            app:numberPickerMinValue ="30"
+            app:numberPickerMaxValue ="180"/>
+        ></PreferenceScreen>
     <ListPreference
         android:key="key_spo2_color"
         android:title="@string/settings_spo2_color_title"

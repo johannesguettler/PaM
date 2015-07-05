@@ -42,7 +42,8 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/settingsTitle"
-            android:parentActivityName=".MonitorMainScreen">
+            android:parentActivityName=".MonitorMainScreen"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.ActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MonitorMainScreen" />

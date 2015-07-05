@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
     <ListPreference
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:key="key_background_color"
+        android:key="@string/key_background_color"
         android:title="@string/settings_background_title"
         android:defaultValue="white"
         android:entries="@array/background_color_options"
         android:entryValues="@array/background_color_values"></ListPreference>
     <ListPreference
-        android:key="key_ecg_color"
+        android:key="@string/key_ecg_color"
         android:title="@string/settings_ecg_color_title"
         android:defaultValue="black"
         android:entries="@array/line_color_options"
         android:entryValues="@array/line_color_values"></ListPreference>
     <ListPreference
-        android:key="key_rr_color"
+        android:key="@string/key_rr_color"
         android:title="@string/settings_rr_color_title"
         android:defaultValue="black"
         android:entries="@array/line_color_options"
         android:entryValues="@array/line_color_values"></ListPreference>
     <ListPreference
-        android:key="key_spo2_color"
+        android:key="@string/key_spo2_color"
         android:title="@string/settings_spo2_color_title"
         android:defaultValue="black"
         android:entries="@array/line_color_options"
         android:entryValues="@array/line_color_values"></ListPreference>
     <ListPreference
-        android:key="key_etco2_color"
+        android:key="@string/key_etco2_color"
         android:title="@string/settings_etco2_color_title"
         android:defaultValue="black"
         android:entries="@array/line_color_options"

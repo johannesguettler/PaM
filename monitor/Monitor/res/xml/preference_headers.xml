@@ -6,6 +6,7 @@
         android:title="@string/settings_colors_title">
         <extra
             android:name="settings"
+
             android:value="colors"></extra>
     </header>
     <header

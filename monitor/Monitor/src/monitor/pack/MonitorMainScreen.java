@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -232,7 +233,7 @@ public class MonitorMainScreen extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    // Hide the title-bar.
+// Hide the title-bar.
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     // Minimize the System-Bar and hide the Action-Bar if necessary.
     final View decorView = getWindow().getDecorView();
@@ -363,6 +364,7 @@ public class MonitorMainScreen extends Activity {
     handler = new Handler();
 
     // Set the MainScreen in Client.
+
     EnterScreen.client.setMonitorMainScreen(this);
 
     // Set curve-view.
@@ -1055,7 +1057,8 @@ public class MonitorMainScreen extends Activity {
    */
   public void openCloseSettings(View view) {
     // new: settingsActivity
-    startActivity(new Intent(this, SettingsActivity.class));
+    startActivity(new Intent(this, SettingsActivity.class).putExtra
+        (PreferenceActivity.EXTRA_SHOW_FRAGMENT_TITLE, true));
 
     // settingsFragment?
 /*    getFragmentManager().beginTransaction()

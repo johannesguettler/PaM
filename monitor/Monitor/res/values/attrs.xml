@@ -10,5 +10,10 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
+    <declare-styleable name="NumberPickerPreferenceAttributes">
+        <attr name="numberPickerMinValue" format="integer"/>
+        <attr name="numberPickerMaxValue" format="integer"/>
+        <attr name="numberPickerDefaultValue" format="integer"/>
+    </declare-styleable>
 
 </resources>
