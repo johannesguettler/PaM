@@ -79,7 +79,7 @@
 
 
     <PreferenceScreen
-        android:title="@string/settings_ecg_alarms_title"
+        android:title="@string/settings_spo2_alarms_title"
         android:key="settings_category_spo2_alarms_key">
         <SwitchPreference
             android:defaultValue="true"
@@ -90,31 +90,38 @@
             android:switchTextOn="@string/settings_alarmswitch_on"
             android:switchTextOff="@string/settings_alarmswitch_off"/>
         <monitor.pack.NumberPickerPreference
-            android:key="@string/key_ecg_upper_threshold"
-            android:title="Upper threshold"
-            app:numberPickerDefaultValue="110"
-            android:defaultValue="110"
+            android:key="@string/key_spo2_threshold"
+            android:title="@string/settings_alarm_single_threshold_title"
+            app:numberPickerDefaultValue="94"
+            android:defaultValue="94"
             app:numberPickerMinValue ="30"
-            app:numberPickerMaxValue ="180"/>
+            app:numberPickerMaxValue ="100"/>
+        </PreferenceScreen>
+    <PreferenceScreen
+        android:title="@string/settings_etco2_alarms_title"
+        android:key="settings_category_etco2_alarms_key">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/key_etco2_alarm"
+            android:title="@string/settings_etco2_alarm_title"
+            android:summaryOn="@string/settings_summ_etco2_alarm_on"
+            android:summaryOff="@string/settings_summ_etco2_alarm_off"
+            android:switchTextOn="@string/settings_alarmswitch_on"
+            android:switchTextOff="@string/settings_alarmswitch_off"/>
         <monitor.pack.NumberPickerPreference
-            android:key="@string/key_ecg_lower_threshold"
-            android:title="Lower threshold"
-            app:numberPickerDefaultValue="55"
-            android:defaultValue="55"
-            app:numberPickerMinValue ="30"
-            app:numberPickerMaxValue ="180"/>
-        ></PreferenceScreen>
-    <ListPreference
-        android:key="key_spo2_color"
-        android:title="@string/settings_spo2_color_title"
-        android:defaultValue="black"
-        android:entries="@array/line_color_options"
-        android:entryValues="@array/line_color_values"></ListPreference>
-    <ListPreference
-        android:key="key_etco2_color"
-        android:title="@string/settings_etco2_color_title"
-        android:defaultValue="black"
-        android:entries="@array/line_color_options"
-        android:entryValues="@array/line_color_values"></ListPreference>
+            android:key="@string/key_etco2_upper_threshold"
+            android:title="@string/settings_alarm_upper_threshold_title"
+            app:numberPickerDefaultValue="45"
+            android:defaultValue="45"
+            app:numberPickerMinValue ="5"
+            app:numberPickerMaxValue ="70"/>
+        <monitor.pack.NumberPickerPreference
+            android:key="@string/key_etco2_lower_threshold"
+            android:title="@string/settings_alarm_lower_threshold_title"
+            app:numberPickerDefaultValue="31"
+            android:defaultValue="31"
+            app:numberPickerMinValue ="5"
+            app:numberPickerMaxValue ="70"/>
 
+    </PreferenceScreen>
 </PreferenceScreen>

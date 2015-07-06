@@ -126,4 +126,14 @@
     <string name="settings_spo2_alarm_title">SpO2</string>
     <string name="settings_summ_spo2_alarm_off">SpO2-alarm disabled</string>
     <string name="settings_summ_spo2_alarm_on">SpO2-alarm enabled</string>
+    <string name="settings_spo2_alarms_title">SpO2</string>
+    <string name="key_spo2_threshold">key_spo2_threshold</string>
+    <string name="settings_alarm_single_threshold_title">Threshold</string>
+    <string name="settings_etco2_alarms_title">EtCO2</string>
+    <string name="key_etco2_alarm">key_etco2_alarm</string>
+    <string name="settings_etco2_alarm_title">Alarm</string>
+    <string name="settings_summ_etco2_alarm_on">EtCO2-alarm enabled</string>
+    <string name="settings_summ_etco2_alarm_off">EtCO2-alarm disabled</string>
+    <string name="key_etco2_upper_threshold">key_etco2_upper_threshold</string>
+    <string name="key_etco2_lower_threshold">key_etco2_lower_threshold</string>
 </resources>

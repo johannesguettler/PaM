@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -233,7 +234,8 @@ public class MonitorMainScreen extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-// Hide the title-bar.
+
+    // Hide the title-bar.
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     // Minimize the System-Bar and hide the Action-Bar if necessary.
     final View decorView = getWindow().getDecorView();
