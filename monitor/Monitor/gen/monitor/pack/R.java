@@ -1404,7 +1404,7 @@ containing a value of this type.
         public static final int background_floating_material_light=0x7f080007;
         public static final int background_material_dark=0x7f080004;
         public static final int background_material_light=0x7f080005;
-        public static final int bgray=0x7f080034;
+        public static final int bgrey =0x7f080034;
         public static final int black=0x7f080032;
         public static final int black_overlay=0x7f080031;
         public static final int blue=0x7f080039;
@@ -1424,7 +1424,7 @@ containing a value of this type.
         public static final int dim_foreground_disabled_material_light=0x7f08001d;
         public static final int dim_foreground_material_dark=0x7f08001a;
         public static final int dim_foreground_material_light=0x7f08001b;
-        public static final int gray=0x7f080033;
+        public static final int grey =0x7f080033;
         public static final int green=0x7f08003a;
         /**  TODO: This is 40% alpha on the default accent color. 
          */

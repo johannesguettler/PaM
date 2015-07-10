@@ -37,7 +37,8 @@
             android:screenOrientation="sensorLandscape"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_monitor_main_screen"
-            android:theme="@style/FullscreenTheme" >
+            android:theme="@style/FullscreenTheme"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".SettingsActivity"

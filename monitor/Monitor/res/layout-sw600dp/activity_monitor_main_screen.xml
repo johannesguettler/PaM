@@ -15,14 +15,14 @@
         android:layout_width="0dp"
 	    android:layout_height="match_parent"
 	   	android:layout_weight="0.0001"
-	   	android:background="@color/gray"
+	   	android:background="@color/grey"
 	   	android:orientation="vertical" >
 	   	
         <!-- Layout for the settings-title. -->
         <RelativeLayout
         android:layout_width="match_parent"
 	    android:layout_height="45dp"
-	   	android:background="@color/gray" >
+	   	android:background="@color/grey" >
 	   	
             <TextView
             android:id="@+id/settingsTitletextView"
@@ -199,7 +199,7 @@
                 android:layout_alignTop="@+id/colorSelectionYellowButton"
                 android:layout_toRightOf="@+id/colorSelectionYellowButton"
                 android:layout_marginLeft="3dp"
-                android:background="@color/bgray"
+                android:background="@color/bgrey"
                 android:onClick="changeColor" />
 
             <TextView
@@ -497,7 +497,7 @@
         <RelativeLayout 
 	        android:layout_width="match_parent"
 		    android:layout_height="0dp"
-		    android:background="@color/gray"
+		    android:background="@color/grey"
 		   	android:layout_weight="0.7">
          
             <TextView
@@ -789,7 +789,7 @@
 			                android:layout_alignParentRight="true"
 			                android:layout_marginBottom="10dp"
 			                android:layout_marginRight="20dp"
-			                android:textColor="@color/gray"
+			                android:textColor="@color/grey"
 			                android:textSize="50sp"
 			                android:text="@string/co2ValueDefault" />
 			            
@@ -813,7 +813,7 @@
 			                android:layout_alignParentLeft="true"
 			                android:layout_marginBottom="5dp"
 			                android:layout_marginLeft="80dp"
-			                android:textColor="@color/gray"
+			                android:textColor="@color/grey"
 			                android:textSize="40sp"
 			                android:text="@string/afValueDefault" />
 			            

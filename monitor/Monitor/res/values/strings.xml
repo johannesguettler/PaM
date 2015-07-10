@@ -5,15 +5,11 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
-    <color name="black">#000000</color>
+
 
     <string name="waitForConText">Waiting for a connection to controller...</string>
     <string name="title_activity_monitor_main_screen">MonitorMainScreen</string>
-    <color name="gray">#808080</color>
-    <color name="bgray">#C0C0C0</color>
-    <color name="lBlue">#ADD8E6</color>
-    <color name="red">#FF0000</color>
-    <color name="yellow">#FFFF00</color>
+
     <string name="OnButtonDesc">The main on button to start the monitor.</string>
     <string name="settingsTitle">Settings</string>
     <string name="statusBarTitle">Timer:   00:00</string>
@@ -38,15 +34,13 @@
     <string name="unitPercent">%</string>
     <string name="nibpAutoTimeDefault">3 min</string>
     <string name="alarmDesc">Alarm-bell that signalizes if the alarm for the correspondig vital parameter is active.</string>
-    <color name="white">#FFFFFF</color>
-    <color name="blue">#0000FF</color>
-    <color name="green">#00FF00</color>
+
     <string name="alarm">Alarm:</string>
     <string name="ekgSettigsButtonTitle">EKG</string>
     <string name="ibpSettigsButtonTitle">RR</string>
     <string name="o2SettigsButtonTitle">O2</string>
     <string name="co2SettigsButtonTitle">CO2</string>
-    <color name="lightGray">#B2CCE5</color>
+
     <string name="colorSelectionTitle">Color:</string>
     <string name="settingsPointingArrowDesc">Little arrow that shows which settings are selected.</string>
     <string name="alarmSettingsTitle">Alarm:</string>

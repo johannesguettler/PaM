@@ -23,7 +23,7 @@
     <ListPreference
         android:key="@string/key_spo2_color"
         android:title="@string/settings_spo2_color_title"
-        android:defaultValue="black"
+        android:defaultValue="/black"
         android:entries="@array/line_color_options"
         android:entryValues="@array/line_color_values"></ListPreference>
     <ListPreference

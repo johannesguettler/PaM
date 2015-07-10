@@ -214,6 +214,7 @@ public class MonitorMainScreen extends Activity {
   private boolean defiCharged = false;
   private boolean defiCharging = false;
   Handler handler;
+  private static MonitorMainScreen instance;
   /**
    * Variables for the generation of the defi sound,
    * not needed at the moment.
@@ -229,12 +230,22 @@ public class MonitorMainScreen extends Activity {
 
 
   /**
+   *
+   * @return
+   */
+  public static MonitorMainScreen getInstance() {
+    return instance;
+  }
+  /**
    * Do all the initializations and add Listeners.
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
+    // initialize instance
+    // Android Activities are inherently singletons and the launch mode of
+    // this Activity is "singleTop" so we can do this safely
+    instance = this;
     // Hide the title-bar.
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     // Minimize the System-Bar and hide the Action-Bar if necessary.
@@ -594,7 +605,7 @@ public class MonitorMainScreen extends Activity {
     		}
     	}, 1000, 1000);*/
     // set backround to white
-    changeBackColor(R.id.backColorSelectionWhiteButton);
+    //changeBackColor(R.id.backColorSelectionWhiteButton);
 /*    // set linecolors to black
     // EKG
     menuSelection = 0;
@@ -1268,8 +1279,8 @@ public class MonitorMainScreen extends Activity {
    * sets the value to 0 and makes the RR (and other values) blink. If the heart pattern is
    * ventfibri or ventflutter sets the value to 0.
    *
-   * @param low  - current low blood pressure value.
-   * @param high - current high blood pressure value.
+   * @param diaValue  - current low blood pressure value.
+   * @param sysValue - current high blood pressure value.
    */
   public void setIBP(int diaValue, int sysValue) {
     // If the current heart pattern is asystole set RR value to 0/0 and make the EKG, RR and O2 blink, if this isn't already the case.
@@ -1931,154 +1942,6 @@ public class MonitorMainScreen extends Activity {
         }, (alarmPauseTime * 1000));
       }
     }
-  }
-
-  /**
-   * Changes the color of the parameters/curve of a selected vital parameter according to a
-   * pressed button.
-   *
-   * @param view which called the method.
-   */
-  public void changeColor(View view) {
-    int id = view.getId();
-    performChangeColor(id);
-  }
-
-  public void changeColor(int id) {
-    performChangeColor(id);
-  }
-
-  private void performChangeColor(int id) {
-    // Distinguish which color was selected and save it.
-    int color = 0;
-    int red = 0;
-    int green = 0;
-    int blue = 0;
-    if (id == R.id.colorSelectionRedButton) {
-      color = Color.RED;
-      red = 255;
-    } else if (id == R.id.colorSelectionBlueButton) {
-      color = Color.BLUE;
-      blue = 255;
-    } else if (id == R.id.colorSelectionGreenButton) {
-      color = Color.GREEN;
-      green = 255;
-    } else if (id == R.id.colorSelectionYellowButton) {
-      color = Color.YELLOW;
-      red = 255;
-      green = 255;
-    } else if (id == R.id.colorSelectionBlackButton) {
-      color = Color.BLACK;
-      red = 0;
-      green = 0;
-      blue = 0;
-    }
-    // Change the color of the parameters/curve of the currently selected vital-parameter.
-    if (menuSelection == 0) {
-      // Change the color of the EKG-parameters/curve.
-      TextView ekgValueTextView = (TextView) this.findViewById(R.id.ekgValueTextView);
-      ekgValueTextView.setTextColor(color);
-      glActivity.SetColor(GLRenderer.LineType.Heart, red, green, blue);
-    } else if (menuSelection == 1) {
-      // Change the color of the blood pressure-parameters/curve.
-      TextView ibpValueTextView = (TextView) this.findViewById(R.id.ibpValueTextView);
-      TextView nibpValueTextView = (TextView) this.findViewById(R.id.nibpValueTextView);
-      ibpValueTextView.setTextColor(color);
-      nibpValueTextView.setTextColor(color);
-      glActivity.SetColor(GLRenderer.LineType.Blood, red, green, blue);
-    } else if (menuSelection == 2) {
-      // Change the color of the O2-parameters/curve.
-      TextView o2ValueTextView = (TextView) this.findViewById(R.id.o2ValueTextView);
-      o2ValueTextView.setTextColor(color);
-      glActivity.SetColor(GLRenderer.LineType.O2, red, green, blue);
-    } else if (menuSelection == 3) {
-      // Change the color of the CO2-parameters/curve and respiration-parameter.
-      TextView co2ValueTextView = (TextView) this.findViewById(R.id.co2ValueTextView);
-      TextView afValueTextView = (TextView) this.findViewById(R.id.afValueTextView);
-      co2ValueTextView.setTextColor(color);
-      afValueTextView.setTextColor(color);
-      glActivity.SetColor(GLRenderer.LineType.CO2, red, green, blue);
-    }
-  }
-
-  /**
-   * Changes the background color of the whole parameters/curve-view according to a
-   * pressed button.
-   *
-   * @param view which called the method.
-   */
-  public void changeBackColor(View view) {
-    int id = view.getId();
-    performChangeBackColor(id);
-  }
-
-  public void changeBackColor(int id) {
-    performChangeBackColor(id);
-  }
-
-  private void performChangeBackColor(int id) {
-    // Get all relevant layout-elements.
-    RelativeLayout ekgParamLayout = (RelativeLayout) this.findViewById(R.id.ekgParamLayout);
-    RelativeLayout ibpParamLayout = (RelativeLayout) this.findViewById(R.id.ibpParamLayout);
-    RelativeLayout o2ParamLayout = (RelativeLayout) this.findViewById(R.id.o2ParamLayout);
-    RelativeLayout co2ParamLayout = (RelativeLayout) this.findViewById(R.id.co2ParamLayout);
-    RelativeLayout nibpParamLayout = (RelativeLayout) this.findViewById(R.id.nibpParamLayout);
-    RelativeLayout nibpSettingsLayout = (RelativeLayout) this.findViewById(R.id.nibpSettingsLayout);
-    RelativeLayout defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
-    TextView ekgTitleTextView = (TextView) this.findViewById(R.id.ekgTitleTextView);
-    TextView ibpTitleTextView = (TextView) this.findViewById(R.id.ibpTitleTextView);
-    TextView ibpUnitTextView = (TextView) this.findViewById(R.id.ibpUnitTextView);
-    TextView o2TitleTextView = (TextView) this.findViewById(R.id.o2TitleTextView);
-    TextView o2UnitTextView = (TextView) this.findViewById(R.id.o2UnitTextView);
-    TextView co2TitleTextView = (TextView) this.findViewById(R.id.co2TitleTextView);
-    TextView co2UnitTextView = (TextView) this.findViewById(R.id.co2UnitTextView);
-    TextView afTitleTextView = (TextView) this.findViewById(R.id.afTitleTextView);
-    TextView nibpSettingsTitleTextView = (TextView) this.findViewById(R.id.nibpSettingsTitleTextView);
-    TextView nibpAutoTimeTextView = (TextView) this.findViewById(R.id.nibpAutoTimeTextView);
-    TextView nibpParamTitleTextView = (TextView) this.findViewById(R.id.nibpParamTitleTextView);
-    TextView nibpUnitTextView = (TextView) this.findViewById(R.id.nibpUnitTextView);
-    TextView defiTitletextView = (TextView) this.findViewById(R.id.defiTitletextView);
-    TextView defiEnergy = (TextView) this.findViewById(R.id.defiEnergy);
-    // Distinguish which color was selected and save it.
-    int color = 0;
-    int defiEngergyColor = 0;
-    int drawable = 0;
-    if (id == R.id.backColorSelectionWhiteButton) {
-      color = Color.BLACK;
-      defiEngergyColor = Color.WHITE;
-      drawable = R.drawable.border_white_back;
-      // Change background color of GL-part.
-      glActivity.SetColor(GLRenderer.LineType.Background, 255, 255, 255);
-    } else if (id == R.id.backColorSelectionBlackButton) {
-      color = Color.WHITE;
-      defiEngergyColor = Color.BLACK;
-      drawable = R.drawable.border_black_back;
-      // Change background color of GL-part.
-      glActivity.SetColor(GLRenderer.LineType.Background, 0, 0, 0);
-    }
-    // Set the new color in all relevant layout-elements.
-    ekgParamLayout.setBackgroundResource(drawable);
-    ibpParamLayout.setBackgroundResource(drawable);
-    o2ParamLayout.setBackgroundResource(drawable);
-    co2ParamLayout.setBackgroundResource(drawable);
-    nibpParamLayout.setBackgroundResource(drawable);
-    nibpSettingsLayout.setBackgroundResource(drawable);
-    defiLayout.setBackgroundResource(drawable);
-    ekgTitleTextView.setTextColor(color);
-    ibpTitleTextView.setTextColor(color);
-    ibpUnitTextView.setTextColor(color);
-    o2TitleTextView.setTextColor(color);
-    o2UnitTextView.setTextColor(color);
-    co2TitleTextView.setTextColor(color);
-    co2UnitTextView.setTextColor(color);
-    afTitleTextView.setTextColor(color);
-    nibpSettingsTitleTextView.setTextColor(color);
-    nibpAutoTimeTextView.setTextColor(color);
-    nibpParamTitleTextView.setTextColor(color);
-    nibpUnitTextView.setTextColor(color);
-    defiTitletextView.setTextColor(color);
-    defiEnergy.setBackgroundColor(color);
-    defiEnergy.setTextColor(defiEngergyColor);
   }
 
   /**
@@ -2958,5 +2821,8 @@ public class MonitorMainScreen extends Activity {
       changeShockButton();
       soundHandler.stopDefiReady(getBaseContext());
     }
+  }
+  public GLActivity getGlActivity() {
+    return glActivity;
   }
 }
