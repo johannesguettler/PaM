@@ -246,6 +246,10 @@ public class MonitorMainScreen extends Activity {
     // Android Activities are inherently singletons and the launch mode of
     // this Activity is "singleTop" so we can do this safely
     instance = this;
+    // initialize preference values, third parameter: override safed values
+    PreferenceManager.setDefaultValues(this, R.xml.settings_alarm, false);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_colors, false);
+
     // Hide the title-bar.
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     // Minimize the System-Bar and hide the Action-Bar if necessary.

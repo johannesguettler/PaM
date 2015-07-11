@@ -4,33 +4,41 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jo on 02.07.2015.
  */
-public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-  private SharedPreferences defaultSharedPreferences;
+public class SettingsActivity extends PreferenceActivity /*implements SharedPreferences.OnSharedPreferenceChangeListener */{
+  /*private SharedPreferences defaultSharedPreferences;
   private GLActivity mainGlActivity;
   private MonitorMainScreen monitorMainScreen;
-  private Resources resources;
+  private Resources resources;*/
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    monitorMainScreen = MonitorMainScreen.getInstance();
+    /*monitorMainScreen = MonitorMainScreen.getInstance();
     mainGlActivity = monitorMainScreen.getGlActivity();
     defaultSharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(MonitorMainScreen.getInstance());
-    resources = getResources();
+        .getDefaultSharedPreferences(monitorMainScreen);
+    resources = getResources();*/
+
   }
 
-  @Override
+
+
+/*  @Override
   public void onResume() {
     super.onResume();
     defaultSharedPreferences
@@ -41,7 +49,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     super.onPause();
     defaultSharedPreferences
         .unregisterOnSharedPreferenceChangeListener(this);
-  }
+  }*/
 
   @Override
   public void onBuildHeaders(List<Header> target) {
@@ -57,26 +65,29 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
    *
    * @param sharedPreferences
    * @param key
-   */
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-    System.out.println("PREFERENCESCHANGE WITH KEY: " + key + " in " +
-        "SettingsActivity. value: " + sharedPreferences.getString(key,
-        "FAIL"));
-
     // catch color changes
+    // colors: String
+    // thresolds: int
+    // alarm-buttons: boolean
     if (key.endsWith("_color")) {
       String value = sharedPreferences.getString(key, "");
+
       changeColor(key, value);
+    } else if(key.endsWith("_threshold")) {
+
+    } else if (key.endsWith("_alarm")) {
+
     }
   }
 
-  /**
+  *//**
    * Changes the color of the parameters/curves or background
    *
    * @param key   preference key
    * @param value preference value
-   */
+   *//*
   private void changeColor(String key, String value) {
     int colorId;
     int color;
@@ -134,7 +145,6 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
       ekgValueTextView.setTextColor(color);
       mainGlActivity.SetColor(GLRenderer.LineType.Heart, red, green, blue);
     } else if (key == getString(R.string.key_rr_color)) {
-      System.out.println("CHANGE RR COLOR!!!!!!!");
       // Change the color of the blood pressure-parameters/curve.
       TextView ibpValueTextView = (TextView) monitorMainScreen.findViewById(R.id
           .ibpValueTextView);
@@ -161,7 +171,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     }
   }
 
-  /**
+  *//**
    * Changes the background color of the whole parameters/curve-view according to a
    * pressed button.
    * @param value color-value
@@ -169,7 +179,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
    * @param red red-value
    * @param green green-value
    * @param blue blue value
-   */
+   *//*
   private void changeBackColor(String value, int color, int red, int green, int blue) {
     // Get all relevant layout-elements.
     RelativeLayout ekgParamLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.ekgParamLayout);
@@ -245,5 +255,5 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
   private int getBlueInt(int colorHex) {
     return (colorHex >> 0) & 0xFF;
-  }
+  }*/
 }
