@@ -215,6 +215,7 @@
         </RelativeLayout>
         
         <!-- Layout for the alarm settings. -->
+<!--
         <RelativeLayout
         android:id="@+id/alarmSettingsLayout"
         android:layout_width="match_parent"
@@ -443,7 +444,8 @@
                 android:onClick="startDecSecondAlarmLowTH" />
 	   	
         </RelativeLayout>
-        
+-->
+
         <!-- Layout for the sound settings. -->
         <RelativeLayout
        	android:id="@+id/soundSettingsLayout"

@@ -8,6 +8,7 @@ package monitor.pack;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -15,10 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -29,6 +28,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +53,7 @@ public class MonitorMainScreen extends Activity {
 
   // Minimum and maximum alarm-thresholds for each parameter.
   // EKG upper value.
-  private final int ekgAlarmUpValueMax = 250;
+ /* private final int ekgAlarmUpValueMax = 250;
   private final int ekgAlarmUpValueMin = 20;
   // EKG lower value.
   private final int ekgAlarmLowValueMax = 250;
@@ -84,7 +84,7 @@ public class MonitorMainScreen extends Activity {
   private final int ekgAlarmIncDecStep = 5;
   private final int rrAlarmIncDecStep = 5;
   private final int o2AlarmIncDecStep = 1;
-  private final int co2AlarmIncDecStep = 1;
+  private final int co2AlarmIncDecStep = 1;*///TODO: remove
 
   // The threshold above a random must be to trigger a variation of a parameter.
   private final float randThreshold = 0.7f;
@@ -130,20 +130,20 @@ public class MonitorMainScreen extends Activity {
   // Indicator if the alarm is currently paused.
   private boolean alarmPaused;
   // Indicators if an alarm increase/decrease button is currently pressed.
-  private boolean firstAlarmUpperTHDownButtonPressed;
+/*  private boolean firstAlarmUpperTHDownButtonPressed;
   private boolean firstAlarmUpperTHUpButtonPressed;
   private boolean firstAlarmLowerTHDownButtonPressed;
   private boolean firstAlarmLowerTHUpButtonPressed;
   private boolean secondAlarmUpperTHDownButtonPressed;
   private boolean secondAlarmUpperTHUpButtonPressed;
   private boolean secondAlarmLowerTHDownButtonPressed;
-  private boolean secondAlarmLowerTHUpButtonPressed;
+  private boolean secondAlarmLowerTHUpButtonPressed;*///TODO: remove
 
   // Indicators if the settings-/defi-layouts are hidden.
-  private boolean settingsHidden;
+/*  private boolean settingsHidden;*///TODO: remove
   private boolean defiHidden;
   // Settings- and defi-layouts.
-  private LinearLayout settingsLayout;
+ // private LinearLayout settingsLayout;//TODO: remove
   private RelativeLayout defiLayout;
 
   // Non inversive blood pressure measurement.
@@ -196,6 +196,7 @@ public class MonitorMainScreen extends Activity {
   private UpdateHandler updateHandler;
   private Signalserver signalServer;
   private GLActivity glActivity;
+  private SharedPreferences defaultSharedPreferences;
   private SoundHandler soundHandler;
   private Timer autoNibpTimer;
   private Timer incDecTimer;
@@ -249,6 +250,9 @@ public class MonitorMainScreen extends Activity {
     // initialize preference values, third parameter: override safed values
     PreferenceManager.setDefaultValues(this, R.xml.settings_alarm, false);
     PreferenceManager.setDefaultValues(this, R.xml.settings_colors, false);
+    // load saved/default values
+    defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+loadSavedPreferences();
 
     // Hide the title-bar.
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -323,28 +327,28 @@ public class MonitorMainScreen extends Activity {
     co2AlarmUpValue = 45;  // CO2 upper value.
     co2AlarmLowValue = 35;  // CO2 lower value.
     // Define the default activation states of the alarms.
-    alarmActive = false;
+    alarmActive = true;
     ekgAlarmOn = true;
     rrAlarmOn = true;
     o2AlarmOn = true;
     co2AlarmOn = true;
     alarmPaused = false;
     // Define the default pressed state of the alarm threshold increase/decrease buttons.
-    firstAlarmUpperTHDownButtonPressed = false;
+    /*firstAlarmUpperTHDownButtonPressed = false;
     firstAlarmUpperTHUpButtonPressed = false;
     firstAlarmLowerTHDownButtonPressed = false;
     firstAlarmLowerTHUpButtonPressed = false;
     secondAlarmUpperTHDownButtonPressed = false;
     secondAlarmUpperTHUpButtonPressed = false;
     secondAlarmLowerTHDownButtonPressed = false;
-    secondAlarmLowerTHUpButtonPressed = false;
+    secondAlarmLowerTHUpButtonPressed = false;*///TODO: remove
 
     // Deactivate the EKG and parameter blinking as default.
     ekgBlinkActive = false;
     paramBlinkActive = false;
 
     // Define the default hidden-state of the settings-/defi-layouts.
-    settingsHidden = true;
+/*    settingsHidden = true;*///TODO: remove
     defiHidden = true;
 
     // Set the NIBP and the auto NIBP to "not running" as default.
@@ -372,7 +376,7 @@ public class MonitorMainScreen extends Activity {
     timerActive = false;
 
     // Create the instances.
-    settingsLayout = (LinearLayout) this.findViewById(R.id.settingsLayout);
+    //settingsLayout = (LinearLayout) this.findViewById(R.id.settingsLayout);//TODO: remove
     defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
     updateHandler = new UpdateHandler(this);
     signalServer = new Signalserver(this);
@@ -436,7 +440,7 @@ public class MonitorMainScreen extends Activity {
 
     // Move the little arrow in the menu on the right position after the first opening of the menu.
     // Therefore add a onDraw-Listener to recognize when the menu is fully extended for the first time.
-    final LinearLayout settingsLayout = (LinearLayout) findViewById(R.id.settingsLayout);
+    /*final LinearLayout settingsLayout = (LinearLayout) findViewById(R.id.settingsLayout);
     settingsLayout.getViewTreeObserver().addOnPreDrawListener(
         new ViewTreeObserver.OnPreDrawListener() {
           public boolean onPreDraw() {
@@ -590,7 +594,7 @@ public class MonitorMainScreen extends Activity {
         }
         return false;
       }
-    });
+    });*///TODO: remove
 
     // Write the default time (= 0) to the status-bar.
     updateTime();
@@ -625,19 +629,12 @@ public class MonitorMainScreen extends Activity {
     changeColor(R.id.colorSelectionBlackButton);*/
     // set parameter textfields to black
 
-    TextView ekgValueTextView = (TextView) this.findViewById(R.id.ekgValueTextView);
-    TextView ibpValueTextView = (TextView) this.findViewById(R.id.ibpValueTextView);
-    TextView nibpValueTextView = (TextView) this.findViewById(R.id.nibpValueTextView);
-    TextView o2ValueTextView = (TextView) this.findViewById(R.id.o2ValueTextView);
-    TextView co2ValueTextView = (TextView) this.findViewById(R.id.co2ValueTextView);
-    TextView afValueTextView = (TextView) this.findViewById(R.id.afValueTextView);
-    ekgValueTextView.setTextColor(Color.BLACK);
-    ibpValueTextView.setTextColor(Color.BLACK);
-    nibpValueTextView.setTextColor(Color.BLACK);
-    o2ValueTextView.setTextColor(Color.BLACK);
-    co2ValueTextView.setTextColor(Color.BLACK);
-    afValueTextView.setTextColor(Color.BLACK);
+
+    initializeTextViews();
   }
+
+
+
 
   /**
    * Hide the System-Bar (and the Action-Bar) again after reentering the app.
@@ -1123,14 +1120,14 @@ public class MonitorMainScreen extends Activity {
       openCloseDefiButton.setText("Defibrillator >");
       // Show defi UI-elements.
       showHideDefiUiElements(true);
-      if (!settingsHidden) {
+/*      if (!settingsHidden) {
         LinearLayout.LayoutParams loParamsSettings = (LinearLayout.LayoutParams) settingsLayout.getLayoutParams();
         loParamsSettings.weight = 0.001f;
         settingsHidden = true;
         settingsLayout.setLayoutParams(loParamsSettings);
         Button openCloseSettingsButton = (Button) this.findViewById(R.id.openCloseSettingsButton);
         openCloseSettingsButton.setText("Settings >");
-      }
+      }*///TODO: remove
     } else {
       loParamsDefi.weight = 0.001f;
       defiHidden = true;
@@ -1633,7 +1630,7 @@ public class MonitorMainScreen extends Activity {
    *
    * @param view which called the method.
    */
-  public void showEKGSettings(View view) {
+  /*public void showEKGSettings(View view) {
     menuSelection = 0;
     // Change the button-text-color of the selected button to black.
     Button ekgSettingsButton = (Button) this.findViewById(R.id.ekgSettingsButton);
@@ -1660,12 +1657,12 @@ public class MonitorMainScreen extends Activity {
     setSoundButton(ekgSoundOn);
   }
 
-  /**
+  *//**
    * Displays the blood pressure-settings by marking RR-selection-button and loading/displaying the
    * current blood pressure-settings in the settings-layout.
    *
    * @param view which called the method.
-   */
+   *//*
   public void showIBPSettings(View view) {
     menuSelection = 1;
     // Change the button-text-color of the selected button to black.
@@ -1692,12 +1689,12 @@ public class MonitorMainScreen extends Activity {
     setAlarmButton(rrAlarmOn);
   }
 
-  /**
+  *//**
    * Displays the O2-settings by marking O2-selection-button and loading/displaying the
    * current O2-settings in the settings-layout.
    *
    * @param view which called the method.
-   */
+   *//*
   public void showO2Settings(View view) {
     menuSelection = 2;
     // Change the button-text-color of the selected button to black.
@@ -1723,12 +1720,12 @@ public class MonitorMainScreen extends Activity {
     setAlarmButton(o2AlarmOn);
   }
 
-  /**
+  *//**
    * Displays the CO2-settings by marking CO2-selection-button and loading/displaying the
    * current CO2-settings in the settings-layout.
    *
    * @param view which called the method.
-   */
+   *//*
   public void showCO2Settings(View view) {
     menuSelection = 3;
     // Change the button-text-color of the selected button to black.
@@ -1754,7 +1751,7 @@ public class MonitorMainScreen extends Activity {
     // Update the alarm and sound on/off buttons.
     setAlarmButton(co2AlarmOn);
   }
-
+*///TODO: remove
   /**
    * Turns the alarm of the currently in the settings selected parameter on/off.
    *
@@ -2029,12 +2026,12 @@ public class MonitorMainScreen extends Activity {
     });
   }
 
-  /**
+ /* *//**
    * Increases the first upper alarm threshold by one and schedules an automatic increase if the
    * button is pressed continuously.
    *
    * @param view which called the method.
-   */
+   *//*
   public void startIncFirstAlarmUpTH(View view) {
     // Increase the first upper threshold value by one.
     incFirstAlarmUpTH();
@@ -2056,10 +2053,10 @@ public class MonitorMainScreen extends Activity {
     }, incDecAutoStartDelay, incDecStepTime);
   }
 
-  /**
+  *//**
    * Performs an increase of the currently selected first upper alarm threshold,
    * displays the new value and activates the alarm if necessary.
-   */
+   *//*
   public void incFirstAlarmUpTH() {
     // Schedule the increase in the main GUI-thread.
     runOnUiThread(new Runnable() {
@@ -2088,398 +2085,9 @@ public class MonitorMainScreen extends Activity {
         checkAlarm();
       }
     });
-  }
+  }*///TODO: remove
 
-  /**
-   * Decreases the first upper alarm threshold by one and schedules an automatic decrease if the
-   * button is pressed continuously.
-   *
-   * @param view which called the method.
-   */
-  public void startDecFirstAlarmUpTH(View view) {
-    // Decrease the first upper threshold value by one.
-    decFirstAlarmUpTH();
-    // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
-    // until the button is released.
-    firstAlarmUpperTHDownButtonPressed = true;
-    if (incDecTimer != null) {
-      incDecTimer.cancel();
-    }
-    incDecTimer = new Timer();
-    incDecTimer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if (!firstAlarmUpperTHDownButtonPressed) {
-          this.cancel();
-        } else {
-          decFirstAlarmUpTH();
-        }
-      }
-    }, incDecAutoStartDelay, incDecStepTime);
-  }
 
-  /**
-   * Performs an decrease of the currently selected first upper alarm threshold,
-   * displays the new value and activates the alarm if necessary.
-   */
-  public void decFirstAlarmUpTH() {
-    // Schedule the decrease in the main GUI-thread.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        final TextView firstAlarmUpperTHValueTextView = (TextView) findViewById(R.id.firstAlarmUpperTHValueTextView);
-        if (menuSelection == 0) {  // EKG-settings selected.
-          if ((ekgAlarmUpValue - ekgAlarmIncDecStep) >= ekgAlarmUpValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            ekgAlarmUpValue = ekgAlarmUpValue - ekgAlarmIncDecStep;
-            firstAlarmUpperTHValueTextView.setText("" + ekgAlarmUpValue);
-          }
-        } else if (menuSelection == 1) {  // RR-settings selected.
-          if ((rrSysAlarmUpValue - rrAlarmIncDecStep) >= rrSysAlarmUpValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            rrSysAlarmUpValue = rrSysAlarmUpValue - rrAlarmIncDecStep;
-            firstAlarmUpperTHValueTextView.setText("" + rrSysAlarmUpValue);
-          }
-        } else if (menuSelection == 3) {  // CO2-settings selected.
-          if ((co2AlarmUpValue - co2AlarmIncDecStep) >= co2AlarmUpValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            co2AlarmUpValue = co2AlarmUpValue - co2AlarmIncDecStep;
-            firstAlarmUpperTHValueTextView.setText("" + co2AlarmUpValue);
-          }
-        }
-        // Activate the alarm if necessary.
-        checkAlarm();
-      }
-    });
-  }
-
-  /**
-   * Increases the first lower alarm threshold by one and schedules an automatic increase if the
-   * button is pressed continuously.
-   *
-   * @param view which called the method.
-   */
-  public void startIncFirstAlarmLowTH(View view) {
-    // Increase the first lower threshold value by one.
-    incFirstAlarmLowTH();
-    // Schedule an automatic increase after incDecAutoStartDelay ms every incDecStepTime
-    // until the button is released.
-    firstAlarmLowerTHUpButtonPressed = true;
-    if (incDecTimer != null) {
-      incDecTimer.cancel();
-    }
-    incDecTimer = new Timer();
-    incDecTimer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if (!firstAlarmLowerTHUpButtonPressed) {
-          this.cancel();
-        } else {
-          incFirstAlarmLowTH();
-        }
-      }
-    }, incDecAutoStartDelay, incDecStepTime);
-  }
-
-  /**
-   * Performs an increase of the currently selected first lower alarm threshold,
-   * displays the new value and activates the alarm if necessary.
-   */
-  public void incFirstAlarmLowTH() {
-    // Schedule the increase in the main GUI-thread.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        final TextView firstAlarmLowerTHValueTextView = (TextView) findViewById(R.id.firstAlarmLowerTHValueTextView);
-        if (menuSelection == 0) {  // EKG-settings selected.
-          if ((ekgAlarmLowValue + ekgAlarmIncDecStep) <= ekgAlarmLowValueMax) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            ekgAlarmLowValue = ekgAlarmLowValue + ekgAlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + ekgAlarmLowValue);
-          }
-        } else if (menuSelection == 1) {  // RR-settings selected.
-          if ((rrSysAlarmLowValue + rrAlarmIncDecStep) <= rrSysAlarmLowValueMax) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            rrSysAlarmLowValue = rrSysAlarmLowValue + rrAlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + rrSysAlarmLowValue);
-          }
-        } else if (menuSelection == 2) {  // O2-settings selected.
-          if ((o2AlarmLowValue + o2AlarmIncDecStep) <= o2AlarmLowValueMax) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            o2AlarmLowValue = o2AlarmLowValue + o2AlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + o2AlarmLowValue);
-          }
-        } else if (menuSelection == 3) {  // CO2-settings selected.
-          if ((co2AlarmLowValue + co2AlarmIncDecStep) <= co2AlarmLowValueMax) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            co2AlarmLowValue = co2AlarmLowValue + co2AlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + co2AlarmLowValue);
-          }
-        }
-        // Activate the alarm if necessary.
-        checkAlarm();
-      }
-    });
-  }
-
-  /**
-   * Decreases the first lower alarm threshold by one and schedules an automatic decrease if the
-   * button is pressed continuously.
-   *
-   * @param view which called the method.
-   */
-  public void startDecFirstAlarmLowTH(View view) {
-    // Decrease the first lower threshold value by one.
-    decFirstAlarmLowTH();
-    // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
-    // until the button is released.
-    firstAlarmLowerTHDownButtonPressed = true;
-    if (incDecTimer != null) {
-      incDecTimer.cancel();
-    }
-    incDecTimer = new Timer();
-    incDecTimer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if (!firstAlarmLowerTHDownButtonPressed) {
-          this.cancel();
-        } else {
-          decFirstAlarmLowTH();
-        }
-      }
-    }, incDecAutoStartDelay, incDecStepTime);
-  }
-
-  /**
-   * Performs an decrease of the currently selected first lower alarm threshold,
-   * displays the new value and activates the alarm if necessary.
-   */
-  public void decFirstAlarmLowTH() {
-    // Schedule the decrease in the main GUI-thread.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        final TextView firstAlarmLowerTHValueTextView = (TextView) findViewById(R.id.firstAlarmLowerTHValueTextView);
-        if (menuSelection == 0) {  // EKG-settings selected.
-          if ((ekgAlarmLowValue - ekgAlarmIncDecStep) >= ekgAlarmLowValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            ekgAlarmLowValue = ekgAlarmLowValue - ekgAlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + ekgAlarmLowValue);
-          }
-        } else if (menuSelection == 1) {  // RR-settings selected.
-          if ((rrSysAlarmLowValue - rrAlarmIncDecStep) >= rrSysAlarmLowValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            rrSysAlarmLowValue = rrSysAlarmLowValue - rrAlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + rrSysAlarmLowValue);
-          }
-        } else if (menuSelection == 2) {  // O2-settings selected.
-          if ((o2AlarmLowValue - o2AlarmIncDecStep) >= o2AlarmLowValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            o2AlarmLowValue = o2AlarmLowValue - o2AlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + o2AlarmLowValue);
-          }
-        } else if (menuSelection == 3) {  // CO2-settings selected.
-          if ((co2AlarmLowValue - co2AlarmIncDecStep) >= co2AlarmLowValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            co2AlarmLowValue = co2AlarmLowValue - co2AlarmIncDecStep;
-            firstAlarmLowerTHValueTextView.setText("" + co2AlarmLowValue);
-          }
-        }
-        // Activate the alarm if necessary.
-        checkAlarm();
-      }
-    });
-  }
-
-  /**
-   * Increases the second upper alarm threshold by one and schedules an automatic increase if the
-   * button is pressed continuously.
-   *
-   * @param view which called the method.
-   */
-  public void startIncSecondAlarmUpTH(View view) {
-    // Increase the second upper threshold value by one.
-    incSecondAlarmUpTH();
-    secondAlarmUpperTHUpButtonPressed = true;
-    // Schedule an automatic increase after incDecAutoStartDelay ms every incDecStepTime
-    // until the button is released.
-    if (incDecTimer != null) {
-      incDecTimer.cancel();
-    }
-    incDecTimer = new Timer();
-    incDecTimer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if (!secondAlarmUpperTHUpButtonPressed) {
-          this.cancel();
-        } else {
-          incSecondAlarmUpTH();
-        }
-      }
-    }, incDecAutoStartDelay, incDecStepTime);
-  }
-
-  /**
-   * Performs an increase of the currently selected second upper alarm threshold,
-   * displays the new value and activates the alarm if necessary.
-   */
-  public void incSecondAlarmUpTH() {
-    // Schedule the increase in the main GUI-thread.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        final TextView secondAlarmUpperTHValueTextView = (TextView) findViewById(R.id.secondAlarmUpperTHValueTextView);
-        if (menuSelection == 1) {  // RR-settings selected.
-          if ((rrDiaAlarmUpValue + rrAlarmIncDecStep) <= rrDiaAlarmUpValueMax) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            rrDiaAlarmUpValue = rrDiaAlarmUpValue + rrAlarmIncDecStep;
-            secondAlarmUpperTHValueTextView.setText("" + rrDiaAlarmUpValue);
-          }
-        }
-        // Activate the alarm if necessary.
-        checkAlarm();
-      }
-    });
-  }
-
-  /**
-   * Decreases the second upper alarm threshold by one and schedules an automatic decrease if the
-   * button is pressed continuously.
-   *
-   * @param view which called the method.
-   */
-  public void startDecSecondAlarmUpTH(View view) {
-    // Decrease the second upper threshold value by one.
-    decSecondAlarmUpTH();
-    // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
-    // until the button is released.
-    secondAlarmUpperTHDownButtonPressed = true;
-    if (incDecTimer != null) {
-      incDecTimer.cancel();
-    }
-    incDecTimer = new Timer();
-    incDecTimer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if (!secondAlarmUpperTHDownButtonPressed) {
-          this.cancel();
-        } else {
-          decSecondAlarmUpTH();
-        }
-      }
-    }, incDecAutoStartDelay, incDecStepTime);
-  }
-
-  /**
-   * Performs an decrease of the currently selected second upper alarm threshold,
-   * displays the new value and activates the alarm if necessary.
-   */
-  public void decSecondAlarmUpTH() {
-    // Schedule the decrease in the main GUI-thread.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        final TextView secondAlarmUpperTHValueTextView = (TextView) findViewById(R.id.secondAlarmUpperTHValueTextView);
-        if (menuSelection == 1) {  // RR-settings selected.
-          if ((rrDiaAlarmUpValue - rrAlarmIncDecStep) >= rrDiaAlarmUpValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            rrDiaAlarmUpValue = rrDiaAlarmUpValue - rrAlarmIncDecStep;
-            secondAlarmUpperTHValueTextView.setText("" + rrDiaAlarmUpValue);
-          }
-        }
-        // Activate the alarm if necessary.
-        checkAlarm();
-      }
-    });
-  }
-
-  /**
-   * Increases the second lower alarm threshold by one and schedules an automatic increase if the
-   * button is pressed continuously.
-   *
-   * @param view which called the method.
-   */
-  public void startIncSecondAlarmLowTH(View view) {
-    // Increase the second lower threshold value by one.
-    incSecondAlarmLowTH();
-    // Schedule an automatic increase after incDecAutoStartDelay ms every incDecStepTime
-    // until the button is released.
-    secondAlarmLowerTHUpButtonPressed = true;
-    if (incDecTimer != null) {
-      incDecTimer.cancel();
-    }
-    incDecTimer = new Timer();
-    incDecTimer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if (!secondAlarmLowerTHUpButtonPressed) {
-          this.cancel();
-        } else {
-          incSecondAlarmLowTH();
-        }
-      }
-    }, incDecAutoStartDelay, incDecStepTime);
-  }
-
-  /**
-   * Performs an increase of the currently selected second lower alarm threshold,
-   * displays the new value and activates the alarm if necessary.
-   */
-  public void incSecondAlarmLowTH() {
-    // Schedule the increase in the main GUI-thread.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        final TextView secondAlarmLowerTHValueTextView = (TextView) findViewById(R.id.secondAlarmLowerTHValueTextView);
-        if (menuSelection == 1) {  // RR-settings selected.
-          if ((rrDiaAlarmLowValue + rrAlarmIncDecStep) <= rrDiaAlarmLowValueMax) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            rrDiaAlarmLowValue = rrDiaAlarmLowValue + rrAlarmIncDecStep;
-            secondAlarmLowerTHValueTextView.setText("" + rrDiaAlarmLowValue);
-          }
-        }
-        // Activate the alarm if necessary.
-        checkAlarm();
-      }
-    });
-  }
-
-  /**
-   * Decreases the second lower alarm threshold by one and schedules an automatic decrease if the
-   * button is pressed continuously.
-   *
-   * @param view which called the method.
-   */
-  public void startDecSecondAlarmLowTH(View view) {
-    // Decrease the second lower threshold value by one.
-    decSecondAlarmLowTH();
-    // Schedule an automatic decrease after incDecAutoStartDelay ms every incDecStepTime
-    // until the button is released.
-    secondAlarmLowerTHDownButtonPressed = true;
-    if (incDecTimer != null) {
-      incDecTimer.cancel();
-    }
-    incDecTimer = new Timer();
-    incDecTimer.scheduleAtFixedRate(new TimerTask() {
-      public void run() {
-        if (!secondAlarmLowerTHDownButtonPressed) {
-          this.cancel();
-        } else {
-          decSecondAlarmLowTH();
-        }
-      }
-    }, incDecAutoStartDelay, incDecStepTime);
-  }
-
-  /**
-   * Performs an decrease of the currently selected second lower alarm threshold,
-   * displays the new value and activates the alarm if necessary.
-   */
-  public void decSecondAlarmLowTH() {
-    // Schedule the decrease in the main GUI-thread.
-    runOnUiThread(new Runnable() {
-      public void run() {
-        final TextView secondAlarmLowerTHValueTextView = (TextView) findViewById(R.id.secondAlarmLowerTHValueTextView);
-        if (menuSelection == 1) {  // RR-settings selected.
-          if ((rrDiaAlarmLowValue - rrAlarmIncDecStep) >= rrDiaAlarmLowValueMin) {
-            // When the new value doesn't conflict with the borders, save and display it.
-            rrDiaAlarmLowValue = rrDiaAlarmLowValue - rrAlarmIncDecStep;
-            secondAlarmLowerTHValueTextView.setText("" + rrDiaAlarmLowValue);
-          }
-        }
-        // Activate the alarm if necessary.
-        checkAlarm();
-      }
-    });
-  }
 
   /**
    * Returns the current EKG-value.
@@ -2593,6 +2201,8 @@ public class MonitorMainScreen extends Activity {
    * @param active - Indicates if EKG is active.
    */
   public void setEKGActive(final boolean active) {
+    Log.e("debug", "call of setEKGActive, set value to: "+Boolean.toString
+        (active));
     ekgActive = active;
     // Schedule show/hide  of the curve and values.
     runOnUiThread(new Runnable() {
@@ -2829,4 +2439,77 @@ public class MonitorMainScreen extends Activity {
   public GLActivity getGlActivity() {
     return glActivity;
   }
+  private void loadSavedPreferences() {
+    SharedPreferences sharedPreferences = PreferenceManager
+        .getDefaultSharedPreferences(this);
+    // load thresolds and alarm-settings
+    Map<String, ?> preferenceMap = sharedPreferences.getAll();
+
+    for (Map.Entry<String, ?> entry: preferenceMap.entrySet()) {
+      String entryKey = entry.getKey();
+      if (entryKey.endsWith("_threshold")) {
+        updateAlarmThreshold(sharedPreferences.getInt(entryKey,0), entryKey);
+      } else if (entryKey.endsWith("_alarm")) {
+        updateAlarmOnOff(sharedPreferences.getBoolean(entryKey, true),
+            entryKey);
+      }
+    }
+    // initialize Textviews
+    TextView ekgValueTextView = (TextView) this.findViewById(R.id.ekgValueTextView);
+    TextView ibpValueTextView = (TextView) this.findViewById(R.id.ibpValueTextView);
+    TextView nibpValueTextView = (TextView) this.findViewById(R.id.nibpValueTextView);
+    TextView o2ValueTextView = (TextView) this.findViewById(R.id.o2ValueTextView);
+    TextView co2ValueTextView = (TextView) this.findViewById(R.id.co2ValueTextView);
+    TextView afValueTextView = (TextView) this.findViewById(R.id.afValueTextView);
+    String ecgColor = sharedPreferences.getString(getString(R.string
+        .key_ecg_color), "grey");
+//TODO: load colors from shared preferences
+    ekgValueTextView.setTextColor(Color.BLACK);
+    ibpValueTextView.setTextColor(Color.BLACK);
+    nibpValueTextView.setTextColor(Color.BLACK);
+    o2ValueTextView.setTextColor(Color.BLACK);
+    co2ValueTextView.setTextColor(Color.BLACK);
+    afValueTextView.setTextColor(Color.BLACK);
+
+    //TODO: set linecolors with values from sharedPreferences
+  }
+  private void initializeTextViews() {
+
+  }
+
+  public void updateAlarmThreshold(int value, String key) {
+    if (key == getString(R.string.key_ecg_lower_threshold)) {
+      ekgAlarmLowValue = value;
+    } else if (key == getString(R.string.key_ecg_upper_threshold)) {
+      ekgAlarmUpValue = value;
+      Log.e("debug", "ecg upper thershold changed to "+value);
+    } else if (key == getString(R.string.key_rr_diastolic_lower_threshold)) {
+      rrDiaAlarmLowValue = value;
+    } else if (key == getString(R.string.key_rr_diastolic_upper_threshold)) {
+      rrDiaAlarmUpValue = value;
+    } else if (key == getString(R.string.key_rr_systolic_lower_threshold)) {
+      rrSysAlarmLowValue = value;
+    } else if (key == getString(R.string.key_rr_systolic_upper_threshold)) {
+      rrSysAlarmUpValue = value;
+    } else if (key == getString(R.string.key_spo2_threshold)) {
+      o2AlarmLowValue = value;
+    } else if (key == getString(R.string.key_etco2_lower_threshold)) {
+      co2AlarmLowValue = value;
+    } else if (key == getString(R.string.key_etco2_upper_threshold)) {
+      co2AlarmUpValue = value;
+    }
+  }
+
+  public void updateAlarmOnOff(boolean alarmOn, String key) {
+    if(key  == getString(R.string.key_ecg_alarm)){
+      ekgAlarmOn = alarmOn;
+    } else if(key  == getString(R.string.key_rr_alarm)){
+      rrAlarmOn = alarmOn;
+    } else if(key  == getString(R.string.key_etco2_alarm)){
+      co2AlarmOn = alarmOn;
+    } else if(key  == getString(R.string.key_spo2_alarm)){
+      o2AlarmOn = alarmOn;
+    }
+  }
+
 }

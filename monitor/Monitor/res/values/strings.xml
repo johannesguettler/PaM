@@ -104,7 +104,7 @@
     <string name="key_spo2_color">key_spo2_color</string>
     <string name="key_etco2_color">key_etco2_color</string>
     <string name="key_ecg_alarm">key_ecg_alarm</string>
-    <string name="key_ecg_upper_theshold">key_ecg_upper_theshold</string>
+
     <string name="key_ecg_upper_threshold">key_ecg_upper_threshold</string>
     <string name="key_rr_alarm">key_rr_alarm</string>
     <string name="key_ecg_lower_threshold">key_ecg_lower_threshold</string>

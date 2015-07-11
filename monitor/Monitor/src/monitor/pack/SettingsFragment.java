@@ -111,8 +111,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         changeColor(key, value);
       } else if(key.endsWith("_threshold")) {
 //TODO: set thresholds
+        int value = sharedPreferences.getInt(key, 0);
+        monitorMainScreen.updateAlarmThreshold(value, key);
       } else if (key.endsWith("_alarm")) {
 //TODO: set alarm on/off
+        boolean value = sharedPreferences.getBoolean(key, true);
+        monitorMainScreen.updateAlarmOnOff(value, key);
       }
     }
 

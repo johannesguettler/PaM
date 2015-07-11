@@ -10,6 +10,7 @@
     android:orientation="horizontal">
     
     <!-- Layout for the settings. Width controlled with weight-factor. -->
+<!--
     <LinearLayout
         android:id="@+id/settingsLayout"
         android:layout_width="0dp"
@@ -18,7 +19,7 @@
 	   	android:background="@color/grey"
 	   	android:orientation="vertical" >
 	   	
-        <!-- Layout for the settings-title. -->
+        &lt;!&ndash; Layout for the settings-title. &ndash;&gt;
         <RelativeLayout
         android:layout_width="match_parent"
 	    android:layout_height="45dp"
@@ -35,7 +36,7 @@
 	   	
         </RelativeLayout>
         
-        <!-- Layout for the backgroud-color-settings. -->
+        &lt;!&ndash; Layout for the backgroud-color-settings. &ndash;&gt;
         <RelativeLayout
         android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
@@ -75,7 +76,7 @@
 	   	
         </RelativeLayout>
         
-        <!-- Layout for the setting-selection. -->
+        &lt;!&ndash; Layout for the setting-selection. &ndash;&gt;
         <RelativeLayout
         android:layout_width="match_parent"
 	    android:layout_height="90dp" >
@@ -138,7 +139,7 @@
 	   	
         </RelativeLayout>
         
-        <!-- Layout for the color selection. -->
+        &lt;!&ndash; Layout for the color selection. &ndash;&gt;
         <RelativeLayout
         android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
@@ -214,7 +215,7 @@
 	   	
         </RelativeLayout>
         
-        <!-- Layout for the alarm settings. -->
+        &lt;!&ndash; Layout for the alarm settings. &ndash;&gt;
         <RelativeLayout
         android:id="@+id/alarmSettingsLayout"
         android:layout_width="match_parent"
@@ -444,7 +445,7 @@
 	   	
         </RelativeLayout>
         
-        <!-- Layout for the sound settings. -->
+        &lt;!&ndash; Layout for the sound settings. &ndash;&gt;
         <RelativeLayout
        	android:id="@+id/soundSettingsLayout"
         android:layout_width="match_parent"
@@ -475,7 +476,8 @@
         </RelativeLayout>
         
     </LinearLayout>
- 
+-->
+
     <!-- Sub-main-layout for the vital-parameters of the patient. Width controlled with weight-factor. -->
     <LinearLayout
         android:layout_width="0dp"
@@ -527,7 +529,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/statusBarTitle"
                 android:layout_marginLeft="20dp"
-  				android:drawableRight="@drawable/nbell2icon"
+  				android:drawableRight="@drawable/bell2"
   				android:drawablePadding="15dp"
   				android:gravity="left|center_vertical"
   				android:onClick="alarmOnOff"
