@@ -1,8 +1,11 @@
 package monitor.pack;
 
+
+import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -18,7 +21,7 @@ public class GLRenderer implements Renderer {
   private Line lineTrenner;
   private int width;
   private int height;
-  private float bgColor[] = {0.0F, 0.0F, 0.0f, 1.0f};
+  private float bgColor[] = new float[3];
   private double lastUpdate = -1;
   private double deltaTime = 0;
   private Signalserver signalServer;
@@ -26,8 +29,16 @@ public class GLRenderer implements Renderer {
   private final float[] mvPMatrix = new float[16];
   private final float[] projectionMatrix = new float[16];
   private final float[] viewMatrix = new float[16];
+  private int[] defaultLineColors = new int[4];
 
-  public GLRenderer() {
+
+  public GLRenderer(int lineHeartDefaultColor, int lineBloodDefaultColor, int
+   lineO2DefaultColor, int lineCo2DefaultColor) {
+    defaultLineColors = new int[]{lineHeartDefaultColor,
+        lineBloodDefaultColor, lineO2DefaultColor, lineCo2DefaultColor};
+
+
+
   }
 
   //Loads OpenGL Shaders
@@ -183,6 +194,8 @@ public class GLRenderer implements Renderer {
       lineTrenner.setColor(r, g, b);
     }
     if (line == LineType.Background) {
+      Log.e("debug, GLRenderer", "change of background color. value: " +
+          r+", "+g+", "+b);
       bgColor[0] = r;
       bgColor[1] = g;
       bgColor[2] = b;
@@ -219,36 +232,54 @@ public class GLRenderer implements Renderer {
     gl.glEnable(GL10.GL_BLEND);
     gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
+   initLines();//TODO:remove
+  }
+
+  private void initLines() {
     //Init HeartLine
     if (lineHeart == null) {
       lineHeart = new Line(500, true);
-      lineHeart.setColor(0f, 0f, 0f);
+      lineHeart.setColor(SettingsFragment.getRedInt(defaultLineColors[0]),
+          SettingsFragment.getGreenInt(defaultLineColors[0]),
+          SettingsFragment.getBlueInt(defaultLineColors[0]));
+/*      Log.e("debug, GLRenderer", "line heart createt with colorset rgb: " +
+          ""+SettingsFragment.getRedInt(defaultLineColors[0]) +", "+
+          SettingsFragment.getGreenInt(defaultLineColors[0])+", "+
+          SettingsFragment.getBlueInt(defaultLineColors[0]));*///TODO:remove
       lineHeart.setDrawAble(false);
     }
     //Init BloodLine
     if (lineBlood == null) {
       lineBlood = new Line(500, true);
-      lineBlood.setColor(0f, 0f, 0f);
+      lineBlood.setColor(SettingsFragment.getRedInt(defaultLineColors[1]),
+          SettingsFragment.getGreenInt(defaultLineColors[1]),
+          SettingsFragment.getBlueInt(defaultLineColors[1]));
       lineBlood.setDrawAble(false);
     }
     //Init O2Line
     if (lineO2 == null) {
       lineO2 = new Line(500, true);
-      lineO2.setColor(0f, 0f, 0f);
+      lineO2.setColor(SettingsFragment.getRedInt(defaultLineColors[2]),
+          SettingsFragment.getGreenInt(defaultLineColors[2]),
+          SettingsFragment.getBlueInt(defaultLineColors[2]));
       lineO2.setDrawAble(false);
       lineO2.setFill(true);
     }
     //Init CO2Line
     if (lineCO2 == null) {
       lineCO2 = new Line(500, true);
-      lineCO2.setColor(0.5f, 0.5f, 0.5f);
+      lineCO2.setColor(SettingsFragment.getRedInt(defaultLineColors[3]),
+          SettingsFragment.getGreenInt(defaultLineColors[3]),
+          SettingsFragment.getBlueInt(defaultLineColors[3]));
       lineCO2.setFill(true);
       lineCO2.setDrawAble(false);
     }
     //Init AFLine
     if (lineAF == null) {
       lineAF = new Line(500, true);
-      lineAF.setColor(1f, 1f, 0f);
+      lineAF.setColor(SettingsFragment.getRedInt(defaultLineColors[3]),
+          SettingsFragment.getGreenInt(defaultLineColors[3]),
+          SettingsFragment.getBlueInt(defaultLineColors[3]));
       lineAF.setDrawAble(false);
     }
     //Init Line between curves

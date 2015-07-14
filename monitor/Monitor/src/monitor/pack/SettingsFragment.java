@@ -110,7 +110,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         changeColor(key, value);
       } else if(key.endsWith("_threshold")) {
-//TODO: set thresholds
         int value = sharedPreferences.getInt(key, 0);
         monitorMainScreen.updateAlarmThreshold(value, key);
       } else if (key.endsWith("_alarm")) {
@@ -126,12 +125,159 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      * @param key   preference key
      * @param value preference value
      */
-  private void changeColor(String key, String value) {
-    int colorId;
+public void changeColor(String key, String value) {
+
+
+    if (key == getString(R.string.key_background_color)) {
+      changeBackColor(defaultSharedPreferences.getString(key, "white"),
+          monitorMainScreen);
+      Log.e("debug", "change of background color. value: " +
+          "" + defaultSharedPreferences.getString(key, "FAIL"));
+    } else {
+      changeLineColor(monitorMainScreen, mainGlActivity, resources, key, value);
+    }
+  }
+
+  /**
+   * change line color. for initialisation set glActivity to null and only
+   * the TextViews will be changed (in case Lines aren't initialized yet)
+   * @param localMonitorMainScreen
+   * @param glActivity
+   * @param resources
+   * @param key
+   * @param value
+   */
+  public static void changeLineColor(MonitorMainScreen localMonitorMainScreen,
+                                      GLActivity glActivity, Resources
+                                          resources,
+                                      String key, String value) {
     int color;
     int red;
     int green;
     int blue;
+    int colorId =getColorIdFromValue(value);
+    color = resources.getColor(colorId);
+    red = getRedInt(color);
+    green = getGreenInt(color);
+    blue = getBlueInt(color);
+    // Change the color of the parameters/curve of the currently selected vital-parameter.
+    if (key == localMonitorMainScreen.getString(R.string.key_ecg_color)) {
+      // Change the color of the EKG-parameters/curve.
+      TextView ekgValueTextView = (TextView) localMonitorMainScreen.findViewById(R.id
+          .ekgValueTextView);
+      ekgValueTextView.setTextColor(color);
+      if(glActivity != null)
+        glActivity.SetColor(GLRenderer.LineType.Heart, red,
+          green, blue);
+    } else if (key == localMonitorMainScreen.getString(R.string.key_rr_color)) {
+      // Change the color of the blood pressure-parameters/curve.
+      TextView ibpValueTextView = (TextView) localMonitorMainScreen.findViewById(R.id
+          .ibpValueTextView);
+      TextView nibpValueTextView = (TextView) localMonitorMainScreen.findViewById(R.id
+          .nibpValueTextView);
+      ibpValueTextView.setTextColor(color);
+      nibpValueTextView.setTextColor(color);
+      if(glActivity != null)
+      glActivity.SetColor(GLRenderer.LineType.Blood, red, green, blue);
+    } else if (key == localMonitorMainScreen.getString(R.string.key_spo2_color)) {
+      // Change the color of the O2-parameters/curve.
+      TextView o2ValueTextView = (TextView) localMonitorMainScreen.findViewById(R.id
+          .o2ValueTextView);
+      o2ValueTextView.setTextColor(color);
+      if(glActivity != null)
+      glActivity.SetColor(GLRenderer.LineType.O2, red, green, blue);
+    } else if (key == localMonitorMainScreen.getString(R.string
+        .key_etco2_color)) {
+      // Change the color of the CO2-parameters/curve and respiration-parameter.
+      TextView co2ValueTextView = (TextView) localMonitorMainScreen.findViewById(R.id
+          .co2ValueTextView);
+      TextView afValueTextView = (TextView) localMonitorMainScreen.findViewById(R.id
+          .afValueTextView);
+      co2ValueTextView.setTextColor(color);
+      afValueTextView.setTextColor(color);
+      if(glActivity != null)
+      glActivity.SetColor(GLRenderer.LineType.CO2, red, green, blue);
+    }
+  }
+
+  /**
+   * Changes the background color of the whole parameters/curve-view according to a
+   * pressed button.
+   * @param value color-value
+   * @param localMonitorMainScreen MonitorMainScreen instance
+   */
+  public static void changeBackColor(String value, MonitorMainScreen 
+      localMonitorMainScreen) {
+    // Get all relevant layout-elements.
+    RelativeLayout ekgParamLayout = (RelativeLayout) localMonitorMainScreen.findViewById(R.id.ekgParamLayout);
+    RelativeLayout ibpParamLayout = (RelativeLayout) localMonitorMainScreen.findViewById(R.id.ibpParamLayout);
+    RelativeLayout o2ParamLayout = (RelativeLayout) localMonitorMainScreen.findViewById(R.id.o2ParamLayout);
+    RelativeLayout co2ParamLayout = (RelativeLayout) localMonitorMainScreen.findViewById(R.id.co2ParamLayout);
+    RelativeLayout nibpParamLayout = (RelativeLayout) localMonitorMainScreen.findViewById(R.id.nibpParamLayout);
+    RelativeLayout nibpSettingsLayout = (RelativeLayout) localMonitorMainScreen.findViewById(R.id.nibpSettingsLayout);
+    RelativeLayout defiLayout = (RelativeLayout) localMonitorMainScreen.findViewById(R.id.defiLayout);
+    TextView ekgTitleTextView = (TextView) localMonitorMainScreen.findViewById(R.id.ekgTitleTextView);
+    TextView ibpTitleTextView = (TextView) localMonitorMainScreen.findViewById(R.id.ibpTitleTextView);
+    TextView ibpUnitTextView = (TextView) localMonitorMainScreen.findViewById(R.id.ibpUnitTextView);
+    TextView o2TitleTextView = (TextView) localMonitorMainScreen.findViewById(R.id.o2TitleTextView);
+    TextView o2UnitTextView = (TextView) localMonitorMainScreen.findViewById(R.id.o2UnitTextView);
+    TextView co2TitleTextView = (TextView) localMonitorMainScreen.findViewById(R.id.co2TitleTextView);
+    TextView co2UnitTextView = (TextView) localMonitorMainScreen.findViewById(R.id.co2UnitTextView);
+    TextView afTitleTextView = (TextView) localMonitorMainScreen.findViewById(R.id.afTitleTextView);
+    TextView nibpSettingsTitleTextView = (TextView) localMonitorMainScreen.findViewById(R.id.nibpSettingsTitleTextView);
+    TextView nibpAutoTimeTextView = (TextView) localMonitorMainScreen.findViewById(R.id.nibpAutoTimeTextView);
+    TextView nibpParamTitleTextView = (TextView) localMonitorMainScreen.findViewById(R.id.nibpParamTitleTextView);
+    TextView nibpUnitTextView = (TextView) localMonitorMainScreen.findViewById(R.id.nibpUnitTextView);
+    TextView defiTitletextView = (TextView) localMonitorMainScreen.findViewById(R.id.defiTitletextView);
+    TextView defiEnergy = (TextView) localMonitorMainScreen.findViewById(R.id.defiEnergy);
+    // Distinguish which color was selected and save it.
+
+    int defiEnergyColor = 0;
+    int drawable = 0;
+    int color;
+    if (!value.equals("black")) {
+      color = Color.BLACK;
+      defiEnergyColor = Color.WHITE;
+      drawable = R.drawable.border_white_back;
+      // Change background color of GL-part.
+      localMonitorMainScreen.getGlActivity().SetColor(GLRenderer.LineType
+              .Background, 255, 255,
+          255);
+    } else {
+      color = Color.WHITE;
+      defiEnergyColor = Color.BLACK;
+      drawable = R.drawable.border_black_back;
+      // Change background color of GL-part.
+      localMonitorMainScreen.getGlActivity().SetColor(GLRenderer.LineType
+          .Background, 0, 0, 0); //TODO change to zero
+    }
+    // Set the new color in all relevant layout-elements.
+    ekgParamLayout.setBackgroundResource(drawable);
+    ibpParamLayout.setBackgroundResource(drawable);
+    o2ParamLayout.setBackgroundResource(drawable);
+    co2ParamLayout.setBackgroundResource(drawable);
+    nibpParamLayout.setBackgroundResource(drawable);
+    nibpSettingsLayout.setBackgroundResource(drawable);
+    defiLayout.setBackgroundResource(drawable);
+    ekgTitleTextView.setTextColor(color);
+    ibpTitleTextView.setTextColor(color);
+    ibpUnitTextView.setTextColor(color);
+    o2TitleTextView.setTextColor(color);
+    o2UnitTextView.setTextColor(color);
+    co2TitleTextView.setTextColor(color);
+    co2UnitTextView.setTextColor(color);
+    afTitleTextView.setTextColor(color);
+    nibpSettingsTitleTextView.setTextColor(color);
+    nibpAutoTimeTextView.setTextColor(color);
+    nibpParamTitleTextView.setTextColor(color);
+    nibpUnitTextView.setTextColor(color);
+    defiTitletextView.setTextColor(color);
+    defiEnergy.setBackgroundColor(color);
+    defiEnergy.setTextColor(defiEnergyColor);
+  }
+
+  public static int getColorIdFromValue(String value) {
+   int colorId;
     switch (value) {
       case "red": {
         colorId = R.color.red;
@@ -161,137 +307,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         colorId = R.color.black;
         break;
       }
-
     }
-    color = resources.getColor(colorId);
-    red = getRedInt(color);
-    green = getGreenInt(color);
-    blue = getBlueInt(color);
-    if (key == getString(R.string.key_background_color)) {
-      changeBackColor(key, color, red, green, blue);
-    } else {
-      changeLineColor(key, color, red, green, blue);
-    }
+    return colorId;
   }
-
-  private void changeLineColor(String key, int color, int red, int green, int blue) {
-    // Change the color of the parameters/curve of the currently selected vital-parameter.
-    if (key == getString(R.string.key_ecg_color)) {
-      // Change the color of the EKG-parameters/curve.
-      TextView ekgValueTextView = (TextView) monitorMainScreen.findViewById(R.id
-          .ekgValueTextView);
-      ekgValueTextView.setTextColor(color);
-      mainGlActivity.SetColor(GLRenderer.LineType.Heart, red, green, blue);
-    } else if (key == getString(R.string.key_rr_color)) {
-      // Change the color of the blood pressure-parameters/curve.
-      TextView ibpValueTextView = (TextView) monitorMainScreen.findViewById(R.id
-          .ibpValueTextView);
-      TextView nibpValueTextView = (TextView) monitorMainScreen.findViewById(R.id
-          .nibpValueTextView);
-      ibpValueTextView.setTextColor(color);
-      nibpValueTextView.setTextColor(color);
-      mainGlActivity.SetColor(GLRenderer.LineType.Blood, red, green, blue);
-    } else if (key == getString(R.string.key_spo2_color)) {
-      // Change the color of the O2-parameters/curve.
-      TextView o2ValueTextView = (TextView) monitorMainScreen.findViewById(R.id
-          .o2ValueTextView);
-      o2ValueTextView.setTextColor(color);
-      mainGlActivity.SetColor(GLRenderer.LineType.O2, red, green, blue);
-    } else if (key == getString(R.string.key_etco2_color)) {
-      // Change the color of the CO2-parameters/curve and respiration-parameter.
-      TextView co2ValueTextView = (TextView) monitorMainScreen.findViewById(R.id
-          .co2ValueTextView);
-      TextView afValueTextView = (TextView) monitorMainScreen.findViewById(R.id
-          .afValueTextView);
-      co2ValueTextView.setTextColor(color);
-      afValueTextView.setTextColor(color);
-      mainGlActivity.SetColor(GLRenderer.LineType.CO2, red, green, blue);
-    }
-  }
-
-  /**
-   * Changes the background color of the whole parameters/curve-view according to a
-   * pressed button.
-   * @param value color-value
-   * @param color color as int
-   * @param red red-value
-   * @param green green-value
-   * @param blue blue value
-   */
-  private void changeBackColor(String value, int color, int red, int green, int blue) {
-    // Get all relevant layout-elements.
-    RelativeLayout ekgParamLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.ekgParamLayout);
-    RelativeLayout ibpParamLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.ibpParamLayout);
-    RelativeLayout o2ParamLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.o2ParamLayout);
-    RelativeLayout co2ParamLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.co2ParamLayout);
-    RelativeLayout nibpParamLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.nibpParamLayout);
-    RelativeLayout nibpSettingsLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.nibpSettingsLayout);
-    RelativeLayout defiLayout = (RelativeLayout) monitorMainScreen.findViewById(R.id.defiLayout);
-    TextView ekgTitleTextView = (TextView) monitorMainScreen.findViewById(R.id.ekgTitleTextView);
-    TextView ibpTitleTextView = (TextView) monitorMainScreen.findViewById(R.id.ibpTitleTextView);
-    TextView ibpUnitTextView = (TextView) monitorMainScreen.findViewById(R.id.ibpUnitTextView);
-    TextView o2TitleTextView = (TextView) monitorMainScreen.findViewById(R.id.o2TitleTextView);
-    TextView o2UnitTextView = (TextView) monitorMainScreen.findViewById(R.id.o2UnitTextView);
-    TextView co2TitleTextView = (TextView) monitorMainScreen.findViewById(R.id.co2TitleTextView);
-    TextView co2UnitTextView = (TextView) monitorMainScreen.findViewById(R.id.co2UnitTextView);
-    TextView afTitleTextView = (TextView) monitorMainScreen.findViewById(R.id.afTitleTextView);
-    TextView nibpSettingsTitleTextView = (TextView) monitorMainScreen.findViewById(R.id.nibpSettingsTitleTextView);
-    TextView nibpAutoTimeTextView = (TextView) monitorMainScreen.findViewById(R.id.nibpAutoTimeTextView);
-    TextView nibpParamTitleTextView = (TextView) monitorMainScreen.findViewById(R.id.nibpParamTitleTextView);
-    TextView nibpUnitTextView = (TextView) monitorMainScreen.findViewById(R.id.nibpUnitTextView);
-    TextView defiTitletextView = (TextView) monitorMainScreen.findViewById(R.id.defiTitletextView);
-    TextView defiEnergy = (TextView) monitorMainScreen.findViewById(R.id.defiEnergy);
-    // Distinguish which color was selected and save it.
-
-    int defiEnergyColor = 0;
-    int drawable = 0;
-    if (value == "white") {
-      color = Color.BLACK;
-      defiEnergyColor = Color.WHITE;
-      drawable = R.drawable.border_white_back;
-      // Change background color of GL-part.
-      mainGlActivity.SetColor(GLRenderer.LineType.Background, 255, 255, 255);
-    } else {
-      color = Color.WHITE;
-      defiEnergyColor = Color.BLACK;
-      drawable = R.drawable.border_black_back;
-      // Change background color of GL-part.
-      mainGlActivity.SetColor(GLRenderer.LineType.Background, 0, 0, 0);
-    }
-    // Set the new color in all relevant layout-elements.
-    ekgParamLayout.setBackgroundResource(drawable);
-    ibpParamLayout.setBackgroundResource(drawable);
-    o2ParamLayout.setBackgroundResource(drawable);
-    co2ParamLayout.setBackgroundResource(drawable);
-    nibpParamLayout.setBackgroundResource(drawable);
-    nibpSettingsLayout.setBackgroundResource(drawable);
-    defiLayout.setBackgroundResource(drawable);
-    ekgTitleTextView.setTextColor(color);
-    ibpTitleTextView.setTextColor(color);
-    ibpUnitTextView.setTextColor(color);
-    o2TitleTextView.setTextColor(color);
-    o2UnitTextView.setTextColor(color);
-    co2TitleTextView.setTextColor(color);
-    co2UnitTextView.setTextColor(color);
-    afTitleTextView.setTextColor(color);
-    nibpSettingsTitleTextView.setTextColor(color);
-    nibpAutoTimeTextView.setTextColor(color);
-    nibpParamTitleTextView.setTextColor(color);
-    nibpUnitTextView.setTextColor(color);
-    defiTitletextView.setTextColor(color);
-    defiEnergy.setBackgroundColor(color);
-    defiEnergy.setTextColor(defiEnergyColor);
-  }
-
-  private int getRedInt(int colorHex) {
+  public static int getRedInt(int colorHex) {
     return (colorHex >> 16) & 0xFF;
   }
 
-  private int getGreenInt(int colorHex) {
+  public static int getGreenInt(int colorHex) {
     return (colorHex >> 8) & 0xFF;
   }
 
-  private int getBlueInt(int colorHex) {
+  public static int getBlueInt(int colorHex) {
     return (colorHex >> 0) & 0xFF;
   }
 

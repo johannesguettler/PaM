@@ -28,6 +28,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
@@ -143,7 +144,7 @@ public class MonitorMainScreen extends Activity {
 /*  private boolean settingsHidden;*///TODO: remove
   private boolean defiHidden;
   // Settings- and defi-layouts.
- // private LinearLayout settingsLayout;//TODO: remove
+   private LinearLayout settingsLayout;//TODO: remove
   private RelativeLayout defiLayout;
 
   // Non inversive blood pressure measurement.
@@ -231,12 +232,12 @@ public class MonitorMainScreen extends Activity {
 
 
   /**
-   *
    * @return
    */
   public static MonitorMainScreen getInstance() {
     return instance;
   }
+
   /**
    * Do all the initializations and add Listeners.
    */
@@ -247,12 +248,7 @@ public class MonitorMainScreen extends Activity {
     // Android Activities are inherently singletons and the launch mode of
     // this Activity is "singleTop" so we can do this safely
     instance = this;
-    // initialize preference values, third parameter: override safed values
-    PreferenceManager.setDefaultValues(this, R.xml.settings_alarm, false);
-    PreferenceManager.setDefaultValues(this, R.xml.settings_colors, false);
-    // load saved/default values
-    defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-loadSavedPreferences();
+
 
     // Hide the title-bar.
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -308,6 +304,7 @@ loadSavedPreferences();
     setContentView(R.layout.activity_monitor_main_screen);
 
     // Initialize some members.
+    defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     // Deactivate all curves/values as default.
     ekgActive = false;
@@ -317,7 +314,7 @@ loadSavedPreferences();
     nibpActive = false;
     respActive = false;
     // Define the default alarm thresholds.
-    ekgAlarmUpValue = 110;  // EKG upper value.
+    /*ekgAlarmUpValue = 110;  // EKG upper value.
     ekgAlarmLowValue = 60;  // EKG lower value.
     rrDiaAlarmUpValue = 100;  // Diastolic blood pressure upper value.
     rrDiaAlarmLowValue = 40;  // Diastolic blood pressure lower value.
@@ -332,7 +329,7 @@ loadSavedPreferences();
     rrAlarmOn = true;
     o2AlarmOn = true;
     co2AlarmOn = true;
-    alarmPaused = false;
+    alarmPaused = false;*/
     // Define the default pressed state of the alarm threshold increase/decrease buttons.
     /*firstAlarmUpperTHDownButtonPressed = false;
     firstAlarmUpperTHUpButtonPressed = false;
@@ -376,7 +373,7 @@ loadSavedPreferences();
     timerActive = false;
 
     // Create the instances.
-    //settingsLayout = (LinearLayout) this.findViewById(R.id.settingsLayout);//TODO: remove
+    settingsLayout = (LinearLayout) this.findViewById(R.id.settingsLayout);//TODO: remove
     defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
     updateHandler = new UpdateHandler(this);
     signalServer = new Signalserver(this);
@@ -389,10 +386,21 @@ loadSavedPreferences();
     EnterScreen.client.setMonitorMainScreen(this);
 
     // Set curve-view.
-    glActivity = new GLActivity(this);
+/*    int backgroundColorDefault;
+    if (defaultSharedPreferences.getString(getString(R.string
+        .key_background_color), "white") == "black") {
+      backgroundColorDefault = Color.BLACK;
+    } else {
+      backgroundColorDefault = Color.WHITE;
+    }*///TODO:remove
+    int[] lineColors = loadLineColors();
+    glActivity = new GLActivity(this, lineColors[0], lineColors[1],
+        lineColors[2], lineColors[3]);
+
     RelativeLayout curveViewLayout = (RelativeLayout) this.findViewById(R.id.curveViewLayout);
     curveViewLayout.addView(glActivity);
     glActivity.setSignalserver(signalServer);
+
 
     // Initialize the slider for the repeating-time of the autom. NIBP.
     SeekBar nibpAutoTimeSeekBar = (SeekBar) this.findViewById(R.id.nibpAutoTimeSeekBar);
@@ -431,10 +439,10 @@ loadSavedPreferences();
     ekgSoundImageView.setVisibility(View.INVISIBLE);
 
     // Initialize the settings view with the EKG-settings.
-    showAlarmSetting(true, false, false, false, "Frequency", "", "" + ekgAlarmLowValue, "" + ekgAlarmUpValue, "", "");
+    /*showAlarmSetting(true, false, false, false, "Frequency", "", "" + ekgAlarmLowValue, "" + ekgAlarmUpValue, "", "");
     setAlarmButton(ekgAlarmOn);
     showSoundSetting(false);
-
+*///TODO:remove?
     // Hide defi UI-elements.
     showHideDefiUiElements(false);
 
@@ -628,12 +636,15 @@ loadSavedPreferences();
     menuSelection = 3;
     changeColor(R.id.colorSelectionBlackButton);*/
     // set parameter textfields to black
+// initialize preference values, third parameter: override safed values
+    PreferenceManager.setDefaultValues(this, R.xml.settings_alarm, false);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_colors, false);
+    // load saved/default values
 
+    loadSavedPreferences();
 
     initializeTextViews();
   }
-
-
 
 
   /**
@@ -745,11 +756,11 @@ loadSavedPreferences();
     }, heartBlinkDelay);
   }
 
-  /**
+ /* *//**
    * Shows/hides the sound settings.
    *
    * @param visible - states if the sound settings are visible or not.
-   */
+   *//*
   private void showSoundSetting(boolean visible) {
     RelativeLayout soundSettingsLayout = (RelativeLayout) this.findViewById(R.id.soundSettingsLayout);
     if (visible) {
@@ -759,7 +770,7 @@ loadSavedPreferences();
     }
   }
 
-  /**
+  *//**
    * Shows/hides the alarm settings or only parts of it and fills it with given parameters.
    *
    * @param alarm1       - States if the settings for the first alarm are visible or not. If alarm1 and alarm2 are set to false, the whole alarm settings section isn't visible.
@@ -772,7 +783,7 @@ loadSavedPreferences();
    * @param alarm1UpDef  - The default upper value for the first alarm which will be displayed.
    * @param alarm2LowDef - The default lower value for the second alarm which will be displayed.
    * @param alarm2UpDef  - The default upper value for the second alarm which will be displayed.
-   */
+   *//*
   private void showAlarmSetting(boolean alarm1, boolean oneValue, boolean onlyUpper, boolean alarm2, String alarm1Title,
                                 String alarm2Title, String alarm1LowDef, String alarm1UpDef, String alarm2LowDef, String alarm2UpDef) {
     RelativeLayout alarmSettingsLayout = (RelativeLayout) this.findViewById(R.id.alarmSettingsLayout);
@@ -872,11 +883,11 @@ loadSavedPreferences();
     }
   }
 
-  /**
+  *//**
    * Toggles the alarm button title between "ON" and "OFF".
    *
    * @param on - Flag which indicates if the alarm is on.
-   */
+   *//*
   private void setAlarmButton(boolean on) {
     Button alarmOnOffButton = (Button) this.findViewById(R.id.alarmOnOffButton);
     if (on) {
@@ -888,11 +899,11 @@ loadSavedPreferences();
     }
   }
 
-  /**
+  *//**
    * Toggles the sound button title between "ON" and "OFF".
    *
    * @param on - Flag which indicates if the sound is on.
-   */
+   *//*
   private void setSoundButton(boolean on) {
     Button soundOnOffButton = (Button) this.findViewById(R.id.soundOnOffButton);
     if (on) {
@@ -902,7 +913,7 @@ loadSavedPreferences();
       soundOnOffButton.setText("OFF");
       soundOnOffButton.setTextColor(Color.WHITE);
     }
-  }
+  }*/
 
   /**
    * A functions which activates/deactivates the corresponding alarm if the current vital-parameter-values are
@@ -1280,7 +1291,7 @@ loadSavedPreferences();
    * sets the value to 0 and makes the RR (and other values) blink. If the heart pattern is
    * ventfibri or ventflutter sets the value to 0.
    *
-   * @param diaValue  - current low blood pressure value.
+   * @param diaValue - current low blood pressure value.
    * @param sysValue - current high blood pressure value.
    */
   public void setIBP(int diaValue, int sysValue) {
@@ -1752,6 +1763,7 @@ loadSavedPreferences();
     setAlarmButton(co2AlarmOn);
   }
 *///TODO: remove
+
   /**
    * Turns the alarm of the currently in the settings selected parameter on/off.
    *
@@ -1761,7 +1773,7 @@ loadSavedPreferences();
     if (menuSelection == 0) {  // EKG-settings selected.
       // Trigger the alarm(-button).
       ekgAlarmOn = !ekgAlarmOn;
-      setAlarmButton(ekgAlarmOn);
+      //setAlarmButton(ekgAlarmOn);//TODO:remove
       // Show/Hide the little bell in the EKG-parameter-section.
       ImageView ekgAlarmImageView = (ImageView) this.findViewById(R.id.ekgAlarmImageView);
       if (ekgAlarmOn && alarmActive) {
@@ -1774,7 +1786,7 @@ loadSavedPreferences();
     } else if (menuSelection == 1) {  // RR-settings selected.
       // Trigger the alarm(-button).
       rrAlarmOn = !rrAlarmOn;
-      setAlarmButton(rrAlarmOn);
+      //setAlarmButton(rrAlarmOn);//TODO:remove
       // Show/Hide the little bells in the IBP- and the NIBP-parameter-section.
       ImageView ibpAlarmImageView = (ImageView) this.findViewById(R.id.ibpAlarmImageView);
       ImageView nibpAlarmImageView = (ImageView) this.findViewById(R.id.nibpAlarmImageView);
@@ -1790,7 +1802,7 @@ loadSavedPreferences();
     } else if (menuSelection == 2) {  // O2-settings selected.
       // Trigger the alarm(-button).
       o2AlarmOn = !o2AlarmOn;
-      setAlarmButton(o2AlarmOn);
+      //setAlarmButton(o2AlarmOn);TODO:remove
       // Show/Hide the little bell in the O2-parameter-section.
       ImageView o2AlarmImageView = (ImageView) this.findViewById(R.id.o2AlarmImageView);
       if (o2AlarmOn && alarmActive) {
@@ -1803,7 +1815,7 @@ loadSavedPreferences();
     } else if (menuSelection == 3) {  // CO2-settings selected.
       // Trigger the alarm(-button).
       co2AlarmOn = !co2AlarmOn;
-      setAlarmButton(co2AlarmOn);
+      //setAlarmButton(co2AlarmOn);//TODO:remove
       // Show/Hide the little bell in the O2-parameter-section.
       ImageView co2AlarmImageView = (ImageView) this.findViewById(R.id.co2AlarmImageView);
       if (co2AlarmOn && alarmActive) {
@@ -1821,12 +1833,16 @@ loadSavedPreferences();
    *
    * @param view which called the method.
    */
-  public void triggerSound(View view) {
+  public void triggerSound(View view){
+    triggerSound();
+  }
+  public void triggerSound() {
     // Trigger the sound(-button).
     ekgSoundOn = !ekgSoundOn;
-    setSoundButton(ekgSoundOn);
+    //setSoundButton(ekgSoundOn);TODO:remove
     // Show/Hide the little speaker in the EKG-parameter-section.
     ImageView ekgSoundImageView = (ImageView) this.findViewById(R.id.ekgSoundImageView);
+
     if (ekgSoundOn) {
       ekgSoundImageView.setVisibility(View.VISIBLE);
     } else {
@@ -1847,7 +1863,7 @@ loadSavedPreferences();
 
   /**
    * Activates/Deactivates the alarm in general.
-   *
+   * called from general alarm on/off button
    * @param view which called the method.
    */
   public void alarmOnOff(View view) {
@@ -1857,18 +1873,32 @@ loadSavedPreferences();
         alarmPauseTimer.cancel();
       }
       alarmPaused = false;
-      alarmActive = true;
+      //alarmActive = true;
       Button alarmPauseButton = (Button) this.findViewById(R.id.alarmPauseButton);
       alarmPauseButton.setTextColor(Color.WHITE);
     }
+    if (alarmActive) {
+      alarmActive = false;
+    } else {
+      alarmActive = true;
+    }
+
+    setAlarmIcons();
+    checkAlarm();
+  }
+
+  /**
+   * set icon of general alarm button and show/hide alarm bell for the
+   * parameters
+   */
+  private void setAlarmIcons(){
     Button mainAlarmOnOffButton = (Button) this.findViewById(R.id.mainAlarmOnOffButton);
     ImageView ekgAlarmImageView = (ImageView) this.findViewById(R.id.ekgAlarmImageView);
     ImageView ibpAlarmImageView = (ImageView) this.findViewById(R.id.ibpAlarmImageView);
     ImageView nibpAlarmImageView = (ImageView) this.findViewById(R.id.nibpAlarmImageView);
     ImageView o2AlarmImageView = (ImageView) this.findViewById(R.id.o2AlarmImageView);
     ImageView co2AlarmImageView = (ImageView) this.findViewById(R.id.co2AlarmImageView);
-    if (alarmActive) {
-      alarmActive = false;
+    if (!alarmActive) {
       // Change the button icon and text color.
       Drawable newIcon = getResources().getDrawable(R.drawable.nbell2icon);
       mainAlarmOnOffButton.setCompoundDrawablesWithIntrinsicBounds(null, null, newIcon, null);
@@ -1880,7 +1910,6 @@ loadSavedPreferences();
       o2AlarmImageView.setVisibility(View.INVISIBLE);
       co2AlarmImageView.setVisibility(View.INVISIBLE);
     } else {
-      alarmActive = true;
       // Change the button icon and text color.
       Drawable newIcon = getResources().getDrawable(R.drawable.bell2icon);
       mainAlarmOnOffButton.setCompoundDrawablesWithIntrinsicBounds(null, null, newIcon, null);
@@ -1888,19 +1917,27 @@ loadSavedPreferences();
       // Show little bells at the parameters for which there is an alarm active now.
       if (ekgAlarmOn) {
         ekgAlarmImageView.setVisibility(View.VISIBLE);
+      } else {
+        ekgAlarmImageView.setVisibility(View.INVISIBLE);
       }
       if (rrAlarmOn) {
         ibpAlarmImageView.setVisibility(View.VISIBLE);
         nibpAlarmImageView.setVisibility(View.VISIBLE);
+      }else{
+        ibpAlarmImageView.setVisibility(View.INVISIBLE);
+        nibpAlarmImageView.setVisibility(View.INVISIBLE);
       }
       if (o2AlarmOn) {
         o2AlarmImageView.setVisibility(View.VISIBLE);
+      }else{
+        o2AlarmImageView.setVisibility(View.INVISIBLE);
       }
       if (co2AlarmOn) {
         co2AlarmImageView.setVisibility(View.VISIBLE);
+      }else{
+        co2AlarmImageView.setVisibility(View.INVISIBLE);
       }
     }
-    checkAlarm();
   }
 
   /**
@@ -2088,7 +2125,6 @@ loadSavedPreferences();
   }*///TODO: remove
 
 
-
   /**
    * Returns the current EKG-value.
    *
@@ -2201,7 +2237,7 @@ loadSavedPreferences();
    * @param active - Indicates if EKG is active.
    */
   public void setEKGActive(final boolean active) {
-    Log.e("debug", "call of setEKGActive, set value to: "+Boolean.toString
+    Log.e("debug", "call of setEKGActive, set value to: " + Boolean.toString
         (active));
     ekgActive = active;
     // Schedule show/hide  of the curve and values.
@@ -2369,7 +2405,7 @@ loadSavedPreferences();
     }
 
 		/*
-	    _defiTimerInterval = (int) (((double) _defi1kTime * ((double)defiEnergy / 1000)) / (double)_defiFrequencySteps);
+      _defiTimerInterval = (int) (((double) _defi1kTime * ((double)defiEnergy / 1000)) / (double)_defiFrequencySteps);
 	    _defiSoundIncrement = (int) (((double)_defi1kFrequency * ((double)(defiEnergy) / 1000)) / (double)_defiFrequencySteps);
 		_defiTimer = new Timer();
 		_defiTimer.scheduleAtFixedRate(new TimerTask() {
@@ -2436,43 +2472,84 @@ loadSavedPreferences();
       soundHandler.stopDefiReady(getBaseContext());
     }
   }
+
   public GLActivity getGlActivity() {
     return glActivity;
   }
+
+  /**
+   * load saved/default values and set fields
+   */
   private void loadSavedPreferences() {
     SharedPreferences sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(this);
     // load thresolds and alarm-settings
+    // dynamic set general alarm on/off value
+    alarmActive = sharedPreferences.getBoolean
+        ("key_general_alarm_on", true);
+    SharedPreferences.Editor editor = defaultSharedPreferences.edit();
+    editor.putBoolean("key_general_alarm_on", alarmActive);
     Map<String, ?> preferenceMap = sharedPreferences.getAll();
 
-    for (Map.Entry<String, ?> entry: preferenceMap.entrySet()) {
+    for (Map.Entry<String, ?> entry : preferenceMap.entrySet()) {
       String entryKey = entry.getKey();
       if (entryKey.endsWith("_threshold")) {
-        updateAlarmThreshold(sharedPreferences.getInt(entryKey,0), entryKey);
+        updateAlarmThreshold(sharedPreferences.getInt(entryKey, 0), entryKey);
       } else if (entryKey.endsWith("_alarm")) {
         updateAlarmOnOff(sharedPreferences.getBoolean(entryKey, true),
             entryKey);
       }
     }
-    // initialize Textviews
-    TextView ekgValueTextView = (TextView) this.findViewById(R.id.ekgValueTextView);
+
+
+   /* // initialize Textviews
+    TextView ekgValueTextView =
+        (TextView) this.findViewById(R.id.ekgValueTextView);
     TextView ibpValueTextView = (TextView) this.findViewById(R.id.ibpValueTextView);
     TextView nibpValueTextView = (TextView) this.findViewById(R.id.nibpValueTextView);
     TextView o2ValueTextView = (TextView) this.findViewById(R.id.o2ValueTextView);
     TextView co2ValueTextView = (TextView) this.findViewById(R.id.co2ValueTextView);
     TextView afValueTextView = (TextView) this.findViewById(R.id.afValueTextView);
-    String ecgColor = sharedPreferences.getString(getString(R.string
-        .key_ecg_color), "grey");
+*/
 //TODO: load colors from shared preferences
-    ekgValueTextView.setTextColor(Color.BLACK);
+
+   /* ekgValueTextView.setTextColor(Color.BLACK);
     ibpValueTextView.setTextColor(Color.BLACK);
     nibpValueTextView.setTextColor(Color.BLACK);
     o2ValueTextView.setTextColor(Color.BLACK);
     co2ValueTextView.setTextColor(Color.BLACK);
-    afValueTextView.setTextColor(Color.BLACK);
+    afValueTextView.setTextColor(Color.BLACK);*/
 
     //TODO: set linecolors with values from sharedPreferences
+
+
+    //initializeLineColors();
+    // set backgroundcolor
+    SettingsFragment.changeBackColor(defaultSharedPreferences.getString
+        (getString(R.string.key_background_color), "white"), this);
+
   }
+
+  private int[] loadLineColors() {
+    int[] lineColorKeyIds = new int[]{
+        R.string.key_ecg_color,
+        R.string.key_rr_color,
+        R.string.key_spo2_color,
+        R.string.key_etco2_color
+  };
+    int[] colors = new int[4];
+    for (int i = 0; i< colors.length; i++) {
+      String key = getString(lineColorKeyIds[i]);
+      String value = defaultSharedPreferences.getString
+          (key, "grey");
+      colors[i] = getResources().getColor(SettingsFragment
+          .getColorIdFromValue(value));
+      SettingsFragment.changeLineColor(this,null,getResources(),key,value);
+    }
+
+    return colors;
+  }
+
   private void initializeTextViews() {
 
   }
@@ -2482,7 +2559,7 @@ loadSavedPreferences();
       ekgAlarmLowValue = value;
     } else if (key == getString(R.string.key_ecg_upper_threshold)) {
       ekgAlarmUpValue = value;
-      Log.e("debug", "ecg upper thershold changed to "+value);
+      Log.e("debug", "ecg upper thershold changed to " + value);
     } else if (key == getString(R.string.key_rr_diastolic_lower_threshold)) {
       rrDiaAlarmLowValue = value;
     } else if (key == getString(R.string.key_rr_diastolic_upper_threshold)) {
@@ -2501,15 +2578,18 @@ loadSavedPreferences();
   }
 
   public void updateAlarmOnOff(boolean alarmOn, String key) {
-    if(key  == getString(R.string.key_ecg_alarm)){
+    if (key == getString(R.string.key_ecg_alarm)) {
       ekgAlarmOn = alarmOn;
-    } else if(key  == getString(R.string.key_rr_alarm)){
+      //findViewById(R.id.ekgAlarmImageView).setVisibility();
+    } else if (key == getString(R.string.key_rr_alarm)) {
       rrAlarmOn = alarmOn;
-    } else if(key  == getString(R.string.key_etco2_alarm)){
+    } else if (key == getString(R.string.key_etco2_alarm)) {
       co2AlarmOn = alarmOn;
-    } else if(key  == getString(R.string.key_spo2_alarm)){
+    } else if (key == getString(R.string.key_spo2_alarm)) {
       o2AlarmOn = alarmOn;
     }
+    //triggerSound();
+    setAlarmIcons();
   }
 
 }

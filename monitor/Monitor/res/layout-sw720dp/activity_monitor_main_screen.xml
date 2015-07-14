@@ -445,14 +445,14 @@
 	   	
         </RelativeLayout>
 -->
-
-        <!-- Layout for the sound settings. -->
+<!--TODO:remove
+        &lt;!&ndash; Layout for the sound settings. &ndash;&gt;
         <RelativeLayout
        	android:id="@+id/soundSettingsLayout"
         android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	   	android:background="@drawable/border_white" >
-            
+
             <TextView
                 android:id="@+id/soundSettingsTitleTextView"
                 android:layout_width="wrap_content"
@@ -473,8 +473,8 @@
                 android:layout_marginRight="7dp"
                 android:text="@string/OnOffButtonTitle"
                 android:onClick="triggerSound" />
-            
-        </RelativeLayout>
+
+        </RelativeLayout>-->
         
     </LinearLayout>
  
