@@ -1,6 +1,7 @@
 package monitor.pack;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -61,7 +62,7 @@ public class Line {
     // initialize vertex byte buffer for shape coordinates
     ByteBuffer bb = ByteBuffer.allocateDirect(
         // (number of coordinate values * 4 bytes per float)
-        (lineCoords.length + 3) * 4);
+        (lineCoords.length *2 +6) * 4);
     // use the device hardware's native byte order
     bb.order(ByteOrder.nativeOrder());
 
@@ -161,23 +162,76 @@ public class Line {
             }
             GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, (i - start));
           } else {
-            //We got something to fill
-            //Add Vertex as central Point of all Triangles
-            vertexBuffer.put(new float[]{-1F + (2f * i / (resolution -1)),0,0});
-            while(i < resolution -1 && lineCoords[i*3+1] != 0 && !(i >=
-                pos && i < pos + resolution/100))
-              i++;
-            /*vertexBuffer.put(new float[]{-1F + (2f * i / (resolution -1)),0,
-                0});*/
-            vertexBuffer.put(lineCoords,start*3,(i-start)*3);
-            //Add HelperVertex to fill whole Curve
+            // NEUER ANSATZ
+            /*// startpoint
             vertexBuffer.put(new float[]{-1F + (2f * i / (resolution -1)),0,
-                0});
+                0});*/
+            while (i < resolution - 1 && lineCoords[i * 3 + 1] != 0 && !(i >=
+                pos && i < pos + resolution / 100)) {
+              i++;
+
+            }
+
+            //vertexBuffer.put(lineCoords, start * 3, (i - start) * 3);
+            /*Log.d("PUT VALUES", "Number of values: " + (((i - start) * 3) -
+                (start * 3)) + "  ;;; start*3 = " + (start * 3) + "; (i-start)*3 = " + (i - start) * 3);
+            */
+            int countCoords = 0;
+            for (int j = (start *3); j < ((start *3)+((i - start) * 3));
+                 ++j) {
+              /*vertexBuffer.put(lineCoords[j]);*/
+              vertexBuffer.put(new float[]{lineCoords[j],0,0});
+              countCoords++;
+              vertexBuffer.put(new float[]{lineCoords[j], lineCoords[++j],
+                  lineCoords[++j]});
+
+              /*vertexBuffer.put(lineCoords[j]);
+              vertexBuffer.put(lineCoords[j+1]);
+              vertexBuffer.put(lineCoords[j+2]);*/
+              //vertexBuffer.put(new float[]{lineCoords[j],0,0});
+            }
+            /*vertexBuffer.put(new float[]{-1F + (2f * i / (resolution -1)),0,0});*/
+            //vertexBuffer.put(new float[]{lineCoords[i * 3 + 1], 0,0});
+
+
+            //vertexBuffer.put(lineCoords,start*3,(i-start)*3);
+
+            //Add HelperVertex to fill whole Curve
+            /*vertexBuffer.put(new float[]{-1F + (2f * i / (resolution - 1)),
+                0, 0});*/
+            vertexBuffer.position(0);
+            GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, (i - start) + 2 +
+                countCoords - 3);
+
+            //We need at least 3 Vertexes for a triangle
+            /*if (i - start > 2) {
+              GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, (i - start)+2 -3);
+            }*/
+
+
+            // ENDE NEUER ANSATZ
+            //We got something to fill
+            /*//Add Vertex as central Point of all Triangles
+            vertexBuffer.put(new float[]{-1F + (2f * i / (resolution - 1)), 0, 0});
+            while (i < resolution - 1 && lineCoords[i * 3 + 1] != 0 && !(i >=
+                pos && i < pos + resolution / 100)) {
+              i++;
+            }
+
+            vertexBuffer.put(lineCoords, start * 3, (i - start) * 3);
+vertexBuffer.put(lineCoords,start*3,(i-start)*3);
+
+            //Add HelperVertex to fill whole Curve
+            vertexBuffer.put(new float[]{-1F + (2f * i / (resolution - 1)), 0, 0});
             vertexBuffer.position(0);
             GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, i);
+
             //We need at least 3 Vertexes for a triangle
-            if(i - start > 2)
-              GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, i);
+            if (i - start > 2) {
+              GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, i);
+            }*/
+
+
           }
           while (i >= pos && i < pos + resolution / 100) {
             i++;

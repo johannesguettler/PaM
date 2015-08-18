@@ -263,7 +263,7 @@ public class GLRenderer implements Renderer {
           SettingsFragment.getGreenInt(defaultLineColors[2]),
           SettingsFragment.getBlueInt(defaultLineColors[2]));
       lineO2.setDrawAble(false);
-      lineO2.setFill(true);
+
     }
     //Init CO2Line
     if (lineCO2 == null) {

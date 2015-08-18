@@ -124,10 +124,10 @@ public class MonitorMainScreen extends Activity {
   // Indicator if the alarm in general is on or off.
   private boolean alarmActive;
   // Indicators if the alarm for a parameter is active.
-  private boolean ekgAlarmOn;
-  private boolean rrAlarmOn;
-  private boolean o2AlarmOn;
-  private boolean co2AlarmOn;
+  private boolean ekgAlarmOn=true;
+  private boolean rrAlarmOn=true;
+  private boolean o2AlarmOn=true;
+  private boolean co2AlarmOn=true;
   // Indicator if the alarm is currently paused.
   private boolean alarmPaused;
   // Indicators if an alarm increase/decrease button is currently pressed.
@@ -1497,6 +1497,8 @@ public class MonitorMainScreen extends Activity {
       // Check if new variation should be done and adjust the curve.
       if (Math.random() > randThreshold && ekgPeakCounter > (ekgValue / ekgDivFactor)) {
         double rand = randomGenerator.nextGaussian();
+        Log.e("debug, Main, ekg", "randomvalue: "+rand+", applied value: "+(
+            (int) (rand * ekgRandMult)));
         ekgRandValue = ekgValue + (int) (rand * ekgRandMult);
         signalServer.changeHeartRate(ekgRandValue);
         ekgPeakCounter = 0;
@@ -1877,12 +1879,15 @@ public class MonitorMainScreen extends Activity {
       Button alarmPauseButton = (Button) this.findViewById(R.id.alarmPauseButton);
       alarmPauseButton.setTextColor(Color.WHITE);
     }
-    if (alarmActive) {
+   /* if (alarmActive) {
       alarmActive = false;
     } else {
       alarmActive = true;
-    }
+    }*/
+    alarmActive = !alarmActive;
 
+
+    //triggerAlarm(view);
     setAlarmIcons();
     checkAlarm();
   }
@@ -1915,6 +1920,8 @@ public class MonitorMainScreen extends Activity {
       mainAlarmOnOffButton.setCompoundDrawablesWithIntrinsicBounds(null, null, newIcon, null);
       mainAlarmOnOffButton.setTextColor(Color.BLACK);
       // Show little bells at the parameters for which there is an alarm active now.
+      Log.e("debug, setAlarmIcons", "alarmActive==true, egkAlarmActive? " +
+          ""+Boolean.toString(ekgAlarmOn));
       if (ekgAlarmOn) {
         ekgAlarmImageView.setVisibility(View.VISIBLE);
       } else {
@@ -2481,22 +2488,27 @@ public class MonitorMainScreen extends Activity {
    * load saved/default values and set fields
    */
   private void loadSavedPreferences() {
-    SharedPreferences sharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(this);
     // load thresolds and alarm-settings
     // dynamic set general alarm on/off value
-    alarmActive = sharedPreferences.getBoolean
+    alarmActive = defaultSharedPreferences.getBoolean
         ("key_general_alarm_on", true);
     SharedPreferences.Editor editor = defaultSharedPreferences.edit();
     editor.putBoolean("key_general_alarm_on", alarmActive);
-    Map<String, ?> preferenceMap = sharedPreferences.getAll();
+    Log.e("debug, Mian, loadAlarms", "load kgeneral alarmOn. "+Boolean
+        .toString(alarmActive));
+    Map<String, ?> preferenceMap = defaultSharedPreferences.getAll();
 
     for (Map.Entry<String, ?> entry : preferenceMap.entrySet()) {
       String entryKey = entry.getKey();
       if (entryKey.endsWith("_threshold")) {
-        updateAlarmThreshold(sharedPreferences.getInt(entryKey, 0), entryKey);
+        updateAlarmThreshold(defaultSharedPreferences.getInt(entryKey, 0), entryKey);
       } else if (entryKey.endsWith("_alarm")) {
-        updateAlarmOnOff(sharedPreferences.getBoolean(entryKey, true),
+        Log.e("debug, Mian, loadAlarms", "load key: "+entryKey+", value(def" +
+            ".true): " +
+            ""+Boolean.toString(defaultSharedPreferences.getBoolean(entryKey,
+            true))+", value(def.false): "+Boolean.toString(defaultSharedPreferences.getBoolean(entryKey,
+            false)));
+        updateAlarmOnOff(defaultSharedPreferences.getBoolean(entryKey, true),
             entryKey);
       }
     }
@@ -2541,7 +2553,7 @@ public class MonitorMainScreen extends Activity {
     for (int i = 0; i< colors.length; i++) {
       String key = getString(lineColorKeyIds[i]);
       String value = defaultSharedPreferences.getString
-          (key, "grey");
+          (key, "black");
       colors[i] = getResources().getColor(SettingsFragment
           .getColorIdFromValue(value));
       SettingsFragment.changeLineColor(this,null,getResources(),key,value);
@@ -2555,37 +2567,41 @@ public class MonitorMainScreen extends Activity {
   }
 
   public void updateAlarmThreshold(int value, String key) {
-    if (key == getString(R.string.key_ecg_lower_threshold)) {
+    if (key.equals(getString(R.string.key_ecg_lower_threshold))) {
       ekgAlarmLowValue = value;
-    } else if (key == getString(R.string.key_ecg_upper_threshold)) {
+    } else if (key.equals(getString(R.string.key_ecg_upper_threshold))) {
       ekgAlarmUpValue = value;
       Log.e("debug", "ecg upper thershold changed to " + value);
-    } else if (key == getString(R.string.key_rr_diastolic_lower_threshold)) {
+    } else if (key.equals(getString(R.string
+        .key_rr_diastolic_lower_threshold))) {
       rrDiaAlarmLowValue = value;
-    } else if (key == getString(R.string.key_rr_diastolic_upper_threshold)) {
+    } else if (key.equals(getString(R.string
+        .key_rr_diastolic_upper_threshold))) {
       rrDiaAlarmUpValue = value;
-    } else if (key == getString(R.string.key_rr_systolic_lower_threshold)) {
+    } else if (key.equals(getString(R.string.key_rr_systolic_lower_threshold)
+    )) {
       rrSysAlarmLowValue = value;
-    } else if (key == getString(R.string.key_rr_systolic_upper_threshold)) {
+    } else if (key.equals(getString(R.string.key_rr_systolic_upper_threshold)
+    )) {
       rrSysAlarmUpValue = value;
-    } else if (key == getString(R.string.key_spo2_threshold)) {
+    } else if (key.equals(getString(R.string.key_spo2_threshold))) {
       o2AlarmLowValue = value;
-    } else if (key == getString(R.string.key_etco2_lower_threshold)) {
+    } else if (key.equals(getString(R.string.key_etco2_lower_threshold))) {
       co2AlarmLowValue = value;
-    } else if (key == getString(R.string.key_etco2_upper_threshold)) {
+    } else if (key.equals(getString(R.string.key_etco2_upper_threshold))) {
       co2AlarmUpValue = value;
     }
   }
 
   public void updateAlarmOnOff(boolean alarmOn, String key) {
-    if (key == getString(R.string.key_ecg_alarm)) {
+    if (key.equals(getString(R.string.key_ecg_alarm))) {
       ekgAlarmOn = alarmOn;
       //findViewById(R.id.ekgAlarmImageView).setVisibility();
-    } else if (key == getString(R.string.key_rr_alarm)) {
+    } else if (key.equals(getString(R.string.key_rr_alarm))) {
       rrAlarmOn = alarmOn;
-    } else if (key == getString(R.string.key_etco2_alarm)) {
+    } else if (key.equals(getString(R.string.key_etco2_alarm))) {
       co2AlarmOn = alarmOn;
-    } else if (key == getString(R.string.key_spo2_alarm)) {
+    } else if (key.equals(getString(R.string.key_spo2_alarm))) {
       o2AlarmOn = alarmOn;
     }
     //triggerSound();
