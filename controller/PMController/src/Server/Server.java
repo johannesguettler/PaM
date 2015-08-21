@@ -44,8 +44,8 @@ public class Server {
   private NsdServiceInfo mServiceInfo;
 
   // Hardcoded controller port because of usability (Task of network admin to
-  // open port 3000
-  private int controllerPort = 3000;
+  // open port 3000 //TODO: change comment: no hardcoded port
+  private int controllerPort = 0;
 
   // -- GETTER / SETTER --
 
@@ -107,7 +107,8 @@ public class Server {
       try {
         if (commThread == null) {
           Log.d(tagS, "No Communiction Handler initialized");
-          return;
+          return;//TODO: wenn ein monitor verschweindet wird das system
+          // lahmgelegt?
         }
         Log.d(tagS, "Controller sends: " + jsonString);
         commThread.out(jsonString);
@@ -129,8 +130,10 @@ public class Server {
 
     public void run() {
       try {
-        // Initialize a server socket on port: controllerPort
-        serverSocket = new ServerSocket(controllerPort);
+        // Initialize a server socket on some available port
+        serverSocket = new ServerSocket(0);
+        // get chosen port
+        controllerPort = serverSocket.getLocalPort();
       } catch (Exception e) {
         System.err.println("Caught IOException: " + e.getMessage());
       }

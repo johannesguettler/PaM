@@ -7,8 +7,10 @@
 package monitor.pack;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -34,13 +36,15 @@ import android.util.Log;
 
 class Client {
 
-	private EnterScreen es;
+
+  private final boolean ACTIVE_CLIENT;
+  private EnterScreen es;
 	private MonitorMainScreen mms;
 
 	// Socket connection containing IP and Port of Controller
 	private Socket mSocket;
 	private InetAddress controllerIP;
-	private final int controllerPort = 3000;
+	private int controllerPort = 0;
 
 	// Service Name set by User
 	private String mServiceName;
@@ -137,8 +141,9 @@ class Client {
 	 * 
 	 * @param e EnterScreen handover from Main Activity
 	 */
-	Client(EnterScreen e) {
+	Client(EnterScreen e, boolean isActiveClient) {
 		this.es = e;
+    this.ACTIVE_CLIENT = isActiveClient;
 		// API 16 (Jelly Bean) required for NSDManager
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			this.setmServiceName("PaM_Session");
@@ -300,6 +305,21 @@ class Client {
 		}
 	}
 
+	void out(String jsonString) {
+		try {
+
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+					mSocket.getOutputStream()));
+			writer.write(jsonString + "\n");
+			writer.flush();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	/**
@@ -447,6 +467,7 @@ class Client {
 					Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
 					mService = serviceInfo;
 					setHost(mService.getHost());
+					controllerPort = mService.getPort();
 					Log.d(TAG, "Set Host");
 					doNotifyOnConnect();
 				}

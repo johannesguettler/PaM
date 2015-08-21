@@ -104,7 +104,8 @@ public class EnterScreen extends Activity {
     showHideIPSettings(false);
 
     // Initialize Client
-    client = new Client(EnterScreen.this);
+    // default is active client
+    client = new Client(EnterScreen.this, true);
   }
 
   // PUBLIC:
@@ -246,12 +247,26 @@ public class EnterScreen extends Activity {
    * available.
    *
    * @param view which called the method.
+   * @param activeMonitor true if this should open an active monitor
    */
-  public void openMonitorMain(View view) {
+  public void openMonitorMain(View view, boolean activeMonitor) {
     if (connectionAvailable) {
       final Intent mainMonitorIntent = new Intent(this, MonitorMainScreen.class);
       startActivity(mainMonitorIntent);
+      //TODO: set active/passive monitor
     }
+  }
+
+  public void openMonitorMain(View view) {
+    openMonitorMain(view, true);
+  }
+  public void openMonitorMainActive(View view) {
+    //TODO: set client field active/passive monitor
+    openMonitorMain(view, true);
+  }
+  public void openMonitorMainPassive(View view) {
+    //TODO: set client field active/passive monitor
+    openMonitorMain(view, false);
   }
 
   /**
@@ -276,7 +291,7 @@ public class EnterScreen extends Activity {
       public void run() {
         TextView waitForConTextView = (TextView) findViewById(R.id.waitForConTextView);
         ProgressBar waitForConProgressBar = (ProgressBar) findViewById(R.id.waitForConProgressBar);
-        ImageButton onButton = (ImageButton) findViewById(R.id.onButton);
+        ImageButton onButton = (ImageButton) findViewById(R.id.onButtonActiveMonitor);
         if (value) {
           connectionAvailable = true;
           waitForConTextView.setVisibility(View.INVISIBLE);

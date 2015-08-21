@@ -39,6 +39,11 @@ import java.util.TimerTask;
  */
 public class MonitorMainScreen extends Activity {
 
+  /**
+   * active clients send back usage-data to the conroller (AED-usage ...)
+   */
+  public static boolean ACTIVE_CLIENT;
+
   // PRIVATE:
 
   //FINAL MEMBERS:
@@ -2477,6 +2482,7 @@ public class MonitorMainScreen extends Activity {
       defiCharged = false;
       changeShockButton();
       soundHandler.stopDefiReady(getBaseContext());
+      EnterScreen.client.out("defi fired!");
     }
   }
 

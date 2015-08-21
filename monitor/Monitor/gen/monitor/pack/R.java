@@ -1785,7 +1785,7 @@ containing a value of this type.
         public static final int o2TitleTextView=0x7f060084;
         public static final int o2UnitTextView=0x7f060086;
         public static final int o2ValueTextView=0x7f060085;
-        public static final int onButton=0x7f060043;
+        public static final int onButtonActiveMonitor =0x7f060043;
         public static final int openCloseDefiButton=0x7f060076;
         public static final int openCloseSettingsButton=0x7f060075;
         public static final int progress_circular=0x7f06001e;

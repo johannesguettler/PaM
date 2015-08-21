@@ -6,8 +6,13 @@
 
 package Server;
 
+import android.util.Log;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -67,21 +72,37 @@ class CommunicationThread extends Thread {
 
 	public void run() {
 		while (!Thread.currentThread().isInterrupted()) {
+				while (!Thread.currentThread().isInterrupted()) {
+					incomeMessage = in();
+					if (incomeMessage.length() != 0){
+						
+						Log.e("DEBUG incoming message:", incomeMessage);
+					}
+
+					//TODO: pass string to mainActivity
+				}
 		}
 	}
 
 	/**
 	 * @return Message from other device (Monitor) as string
 	 */
-	/*
-	 * public String in() { String inStr = ""; StringBuilder completeString =
-	 * new StringBuilder(); try { this.inMessage = new BufferedReader(new
-	 * InputStreamReader( this.socket.getInputStream()));
-	 * 
-	 * while ((inStr = inMessage.readLine()) != null) {
-	 * completeString.append(inStr); } } catch (IOException e) {
-	 * e.printStackTrace(); } return completeString.toString(); }
-	 */
+	public String in() {
+		String inStr = "";
+		StringBuilder completeString =
+				new StringBuilder();
+		try {
+			BufferedReader inMessage = new BufferedReader(new
+					InputStreamReader(this.socket.getInputStream()));
+
+			while ((inStr = inMessage.readLine()) != null) {
+				completeString.append(inStr);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return completeString.toString();
+	}
 
 	/**
 	 * 

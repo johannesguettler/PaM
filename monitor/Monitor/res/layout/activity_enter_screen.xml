@@ -48,7 +48,7 @@
 	    	
 
 		<ImageButton
-		    android:id="@+id/onButton"
+		    android:id="@+id/onButtonActiveMonitor"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:layout_centerInParent="true"
@@ -57,8 +57,25 @@
 		    android:background="@null"
 		    android:src="@drawable/onbuttonr_gray"
 		    android:contentDescription="@string/OnButtonDesc"
-		    android:onClick="openMonitorMain" />
-	        
+		    android:onClick="openMonitorMainActive"
+			android:focusableInTouchMode="true"/>
+
+		<ImageButton
+			android:id="@+id/onButtonPassiveMonitor"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:adjustViewBounds="true"
+			android:scaleType="centerInside"
+			android:background="@null"
+			android:src="@drawable/onbuttonr_gray"
+			android:contentDescription="@string/OnButtonDesc"
+			android:onClick="openMonitorMainPassive"
+			android:layout_centerVertical="true"
+			android:layout_toRightOf="@+id/onButtonActiveMonitor"
+			android:layout_toEndOf="@+id/onButtonActiveMonitor"
+			android:layout_marginLeft="38dp"
+			android:layout_marginStart="38dp"/>
+
 	</RelativeLayout>
     
     <!-- Layout with the for the "waiting for a connection"-progressBar. Height controlled with weight-factor. -->	
