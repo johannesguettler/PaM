@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -35,6 +36,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pmcontroller1.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import Server.Server;
 
@@ -75,6 +79,11 @@ public class MainActivity extends Activity {
     private TextView service_text = null;
     private boolean showed_alert = false;
     private boolean show_connected = true;
+    private static ControllerActivity controllerActivity;
+
+    public static void setControllerActivity(ControllerActivity controllerActivity) {
+        MainActivity.controllerActivity = controllerActivity;
+    }
 
     /*
      * (non-Javadoc)
@@ -242,15 +251,7 @@ public class MainActivity extends Activity {
                             if (DEBUG)
                                 Toast.makeText(getApplicationContext(), "New service name: " + service_name, Toast.LENGTH_SHORT).show();
 
-                            // Destroy Server
-                            if (server != null) {
-                                destroyServer();
-                            }
-
-                            // Update the textfiel beyond the start button
-                            show_connected = false;
-                            // Start new service
-                            server = new Server(service_name);
+                            restartServer();
                         }
                     }
                 }).setNegativeButton(getResources().getString(R.string.change_service_alert_negative_button), new DialogInterface.OnClickListener() {
@@ -272,7 +273,7 @@ public class MainActivity extends Activity {
             // Check if wifi connection active, if yes...
             if (mWifi.isConnected()) {
                 // Start server
-                server = new Server(service_name);
+                server = new Server(service_name, this);
                 // Display Green start button
                 start_button.setImageResource(R.drawable.onbutton_green);
                 start_button.setEnabled(true);
@@ -369,4 +370,33 @@ public class MainActivity extends Activity {
             server = null;
         }
     }
+
+    /**
+     * restart Server (easiest way to change server name in the network)
+     * Note: set field service_name first!
+     */
+    private void restartServer() {
+        // Destroy Server
+        if (server != null) {
+            destroyServer();
+        }
+
+        // Update the textfiel beyond the start button
+        show_connected = false;
+        // Start new service
+        server = new Server(service_name, this);
+    }
+
+  public void incomingMonitorEvent(String jSonString) {
+    JSONObject inObject = null;
+    try {
+      inObject = new JSONObject(jSonString);
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    if (inObject != null){
+      controllerActivity.handleMonitorEvent(inObject);
+    }
+
+  }
 }

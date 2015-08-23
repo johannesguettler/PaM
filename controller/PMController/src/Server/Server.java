@@ -25,6 +25,7 @@ import gui.MainActivity;
  */
 public class Server {
 
+  private final MainActivity mainActivity;
   private ServerSocket serverSocket;
   private Thread serverThread = null;
   private CommunicationThread commThread;
@@ -74,10 +75,12 @@ public class Server {
    *
    * @param serviceName
    *            User input: Service Name was set by user before
+   * @param mainActivity
    */
-  public Server(String serviceName) {
+  public Server(String serviceName, MainActivity mainActivity) {
+    this.mainActivity = mainActivity;
     this.serviceName = serviceName;
-    this.serverThread = new Thread(new ServerThread());
+    this.serverThread = new Thread(new ServerThread(this));
     this.serverThread.start();
   }
 
@@ -119,6 +122,15 @@ public class Server {
   }
 
   /**
+   * Forward incoming message from active monitor to main program
+   * @param jSonString
+   */
+  public void in(String jSonString) {
+    mainActivity.incomingMonitorEvent(jSonString);
+  }
+
+
+  /**
    * <h1>Server Thread</h1> The Server Thread establishs a ServerSocket on a
    * hardcoded Port (because of usability for user) and registers a Network
    * Service via NSD Manager in its network Ever new Client connecting to
@@ -127,6 +139,12 @@ public class Server {
    *
    */
   private class ServerThread implements Runnable {
+    private final Server parentServer;
+
+    public ServerThread(Server server) {
+      super();
+      this.parentServer = server;
+    }
 
     public void run() {
       try {
@@ -145,7 +163,7 @@ public class Server {
         try {
           // starts Communication Thread for every new client
           // connecting to Server
-          commThread = (new CommunicationThread(serverSocket.accept()));
+          commThread = (new CommunicationThread(serverSocket.accept(), parentServer));
           Log.d(tagST, "Client connected");
           commThreads.add(commThread);
           commThread.start();

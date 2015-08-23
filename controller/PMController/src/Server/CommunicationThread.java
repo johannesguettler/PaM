@@ -27,8 +27,9 @@ class CommunicationThread extends Thread {
 
 	// given socket connection of Server
 	private final Socket socket;
+  private final Server server;
 
-	// if new message is ready to send
+  // if new message is ready to send
 	private boolean newMessage = true;
 	// not used yet, but if communication to Monitor should be vice versa
 	private String incomeMessage = "";
@@ -66,8 +67,9 @@ class CommunicationThread extends Thread {
 	 *            Socket (Client) given after Monitor connects to Server
 	 * 
 	 */
-	CommunicationThread(Socket socket) {
+	CommunicationThread(Socket socket, Server server) {
 		this.socket = socket;
+    this.server = server;
 	}
 
 	public void run() {
@@ -75,8 +77,8 @@ class CommunicationThread extends Thread {
 				while (!Thread.currentThread().isInterrupted()) {
 					incomeMessage = in();
 					if (incomeMessage.length() != 0){
-						
-						Log.e("DEBUG incoming message:", incomeMessage);
+            server.in(incomeMessage);
+						Log.e("DEBUG CommThread", "incomimng message: "+incomeMessage);
 					}
 
 					//TODO: pass string to mainActivity

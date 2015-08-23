@@ -34,6 +34,7 @@
 	 <!-- Size of the blue seperator -->
 	 <dimen name="sperator_size">2dp</dimen>
 	 <dimen name="negative_sperator_size">-5dp</dimen>
-	
-    
+    <dimen name="text_size_30sp">30sp</dimen>
+
+
 </resources>

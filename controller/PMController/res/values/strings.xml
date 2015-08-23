@@ -119,5 +119,8 @@
     <string name="title_activity_controller">Back</string>
     <string name="title_activity_scenario">Back</string>
     <string name="title_activity_protocoll">Back</string>
+    <string name="defi_reaction_positive_button_text">Apply</string>
+    <string name="defi_reaction_negative_button_text">Cancel</string>
+    <string name="defi_reaction_dialog_title_text">Defibrillation with ??? Joule. Reaction?</string>
 
 </resources>

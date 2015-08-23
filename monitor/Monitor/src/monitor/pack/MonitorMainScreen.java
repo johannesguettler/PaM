@@ -28,7 +28,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
@@ -46,6 +48,9 @@ public class MonitorMainScreen extends Activity {
 
   // PRIVATE:
 
+  private enum ControllerInfoType {
+    CHANGED_TO_DEFI_SCREEN, DEFI_FIRED
+  }
   //FINAL MEMBERS:
   // private final boolean DEBUG = false;  // De(Activate) the debug-messages.
   private final int hideSystemBarDelay = 2000;  // Delay-time for hiding the system-bar.
@@ -2482,7 +2487,7 @@ public class MonitorMainScreen extends Activity {
       defiCharged = false;
       changeShockButton();
       soundHandler.stopDefiReady(getBaseContext());
-      EnterScreen.client.out("defi fired!");
+      sendControllerInfo(ControllerInfoType.DEFI_FIRED);
     }
   }
 
@@ -2613,5 +2618,32 @@ public class MonitorMainScreen extends Activity {
     //triggerSound();
     setAlarmIcons();
   }
+
+  /**
+   * send JSon-typed info to the controller screen
+   * @param infoType
+   */
+  private void sendControllerInfo(ControllerInfoType infoType) {
+    String key = "";
+    JSONObject infoObject = new JSONObject();
+    try {switch(infoType) {
+      case DEFI_FIRED:
+        key = "defi_shock";
+        infoObject.put(key, defiEnergy);
+        break;
+      case CHANGED_TO_DEFI_SCREEN:
+        key = "defi_open";
+
+infoObject.put(key, "opened");
+        break;
+      default:
+        return;
+    }
+      EnterScreen.client.out(infoObject.toString());
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+  }
+
 
 }

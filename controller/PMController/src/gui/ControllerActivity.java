@@ -20,13 +20,19 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -35,6 +41,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -42,6 +49,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pmcontroller1.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +67,7 @@ import Scenario.ScenarioHelper;
  * Controller Class that handles every user interaction like button presses or slider changes
  * Displaying all values correct
  */
-public class ControllerActivity extends Activity {
+public class ControllerActivity extends FragmentActivity implements DefiReactionDialogFragment.DefiReactionDialogListener{
   // Debug mode shows debug messages all over the application
   private static final boolean DEBUG = false;
 
@@ -175,6 +185,8 @@ public class ControllerActivity extends Activity {
       }
     });
 
+    // register Activity in MainActivity (used for incoming communication)
+    MainActivity.setControllerActivity(this);
 
     // Init UI elements...
 
@@ -373,7 +385,8 @@ public class ControllerActivity extends Activity {
    */
   public void applyPressed(View view) {
     // Store current slider values
-    blood_pressure_systolic_value = Integer.valueOf(blood_pressure_systolic_slider.getProgress());
+    blood_pressure_systolic_value = Integer.valueOf
+        (blood_pressure_systolic_slider.getProgress());
     blood_pressure_diastolic_value = Integer.valueOf(blood_pressure_diastolic_slider.getProgress());
     heart_rate_value = Integer.valueOf(heart_rate_slider.getProgress());
     o2_rate_value = Integer.valueOf(o2_rate_slider.getProgress());
@@ -1023,9 +1036,17 @@ public class ControllerActivity extends Activity {
   	  	10: HeartPattern.ASYSTOLE;
   	    */
     adapter_heart_rate = new ImageArrayAdapter(this,
-        new Integer[]{R.drawable.hr_sine, R.drawable.hr_absolute_arrhythmie, R.drawable.hr_avblock, R.drawable.hr_leftblock,
-            R.drawable.hr_leftblock_aa, R.drawable.hr_stemi, R.drawable.hr_pacer,
-            R.drawable.hr_ventriflutter, R.drawable.hr_ventifibri, R.drawable.hr_cpr, R.drawable.hr_asystoly});
+        new Integer[]{R.drawable.hr_sine,
+            R.drawable.hr_absolute_arrhythmie,
+            R.drawable.hr_avblock,
+            R.drawable.hr_leftblock,
+            R.drawable.hr_leftblock_aa,
+            R.drawable.hr_stemi,
+            R.drawable.hr_pacer,
+            R.drawable.hr_ventriflutter,
+            R.drawable.hr_ventifibri,
+            R.drawable.hr_cpr,
+            R.drawable.hr_asystoly});
     adapter_o2_rate = new ImageArrayAdapter(this,
         new Integer[]{R.drawable.o2_normal, R.drawable.o2_coldfingers});
     adapter_co2_rate = new ImageArrayAdapter(this,
@@ -1087,6 +1108,70 @@ public class ControllerActivity extends Activity {
     apply_button.setEnabled(true);
     dismiss_button.setBackground(getResources().getDrawable(R.drawable.red_button));
     dismiss_button.setEnabled(true);
+  }
+
+  public void handleMonitorEvent(JSONObject inObject) {
+
+    if (inObject.has("defi_shock")) {
+
+      DefiReactionDialogFragment reactionDialog = new
+          DefiReactionDialogFragment();
+      try {
+        int power = inObject.getInt("defi_shock");
+        Bundle args = new Bundle();
+        args.putInt("energy", power);
+        reactionDialog.setArguments(args);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      reactionDialog.show(getSupportFragmentManager(), "DefiReactionDialogFragment");
+    }
+    /*try {
+      if (inObject.has("defi_shock")) {
+        int power = inObject.getInt("defi_shock");
+
+        Log.e("DEBUG handle defi", "defi fired with energy: " + power);
+
+        View defiReactionPopupView = getLayoutInflater().inflate(R.layout
+            .defibrillation_reaction_popup, null);
+        final PopupWindow popupWindow = new PopupWindow
+            (defiReactionPopupView, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        Button btnDismiss = (Button) defiReactionPopupView.findViewById(R.id.dismiss);
+        View parentView = findViewById(R.id.background_view).getRootView();
+        ViewGroup viewGroup = (ViewGroup) findViewById(R.id.background_view);
+
+
+
+        btnDismiss.setOnClickListener(new Button.OnClickListener() {
+
+          @Override
+          public void onClick(View v) {
+            // TODO Auto-generated method stub
+            popupWindow.dismiss();
+          }
+        });
+
+        new PopupThread(this).run();
+
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+
+    }*/
+
+  }
+
+  @Override
+  public void onDefiReactionDialogPositiveClick(DefiReactionDialogFragment dialog) {
+    int heartRateSpinnerPosition = dialog.getHeartRhythmSpinnerItemPosition();
+    spinner_heart_rate.setSelection(heartRateSpinnerPosition);
+    apply_button.callOnClick();
+  }
+
+  @Override
+  public void onDefiReactionDialogNegativeClick(DefiReactionDialogFragment dialog) {
+
   }
 
   /**

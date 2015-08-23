@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:background="@android:drawable/alert_light_frame"
+
+  >
+
+        <Spinner
+            android:id="@+id/defi_reaction_heart_rate_spinner"
+            style="@style/curve_button_style"
+            android:prompt="@string/curve_choose_string"
+            android:layout_gravity="top|left"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="70dp"/>
+
+        <Button
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:text="@string/defi_reaction_negative_button_text"
+            android:id="@+id/defi_reaction_negative_button"
+            android:layout_row="11"
+            android:layout_column="19"
+            android:layout_gravity="left|bottom"
+            android:layout_above="@+id/space"
+            android:layout_alignLeft="@+id/heart_rate_spinner"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="50dp"/>
+
+        <Button
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:text="@string/defi_reaction_positive_button_text"
+            android:id="@+id/defi_reaction_positive_button"
+            android:layout_row="11"
+            android:layout_column="20"
+            android:layout_gravity="bottom|right"
+            android:singleLine="false"
+            android:layout_above="@+id/space"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="50dp"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20px"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/space"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/defi_reaction_dialog_title_text"
+        android:id="@+id/defi_reaction_dialog_title"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="@dimen/text_size_30sp"
+        android:textColor="#ff000000"
+        android:textAlignment="center"
+        android:textStyle="normal"/>
+
+</RelativeLayout>
