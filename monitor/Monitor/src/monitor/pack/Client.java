@@ -291,6 +291,7 @@ class Client {
 					if (inStr.contains("}"))
 						break;
 				}
+        Log.e("DEBUG Client", "incomimng message 8unfil): "+completeString);
 				if (completeString.length() != 0) {
 					if (mms != null) {
 						mms.newEvent(completeString.toString());

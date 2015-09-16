@@ -121,6 +121,7 @@
     <string name="title_activity_protocoll">Back</string>
     <string name="defi_reaction_positive_button_text">Apply</string>
     <string name="defi_reaction_negative_button_text">Cancel</string>
-    <string name="defi_reaction_dialog_title_text">Defibrillation with ??? Joule. Reaction?</string>
+    <string name="defi_reaction_dialog_title_text">Defibrillator
+        opened.\nEnergy: ???Joule\nReaction on shock?</string>
 
 </resources>

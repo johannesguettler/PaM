@@ -164,9 +164,12 @@ public class Server {
           // starts Communication Thread for every new client
           // connecting to Server
           commThread = (new CommunicationThread(serverSocket.accept(), parentServer));
-          Log.d(tagST, "Client connected");
+          Log.e(tagST, "Client connected");
           commThreads.add(commThread);
+          Log.e("DEBUG Server", "new client added. number of comthreads: " +
+              ""+commThreads.size());
           commThread.start();
+
           Log.d(tagST, "Connection Handler started");
         } catch (IOException e1) {
           System.err

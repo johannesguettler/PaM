@@ -74,8 +74,8 @@ public class DefiReactionDialogFragment extends DialogFragment {
         .defi_reaction_positive_button);
 
     // set Element functions
-    dialogTitle.setText("Defibrillation with " + energyString + " Joule. " +
-        "Reaction?");
+    dialogTitle.setText("Defibrillator opened.\nEnergy: " + energyString +
+        " Joule.\n" + "Reaction on shock?");
     ImageArrayAdapter heartRateImageArrayAdapter= new ImageArrayAdapter(getActivity(),
         new Integer[]{R.drawable.hr_sine,
             R.drawable.hr_absolute_arrhythmie,

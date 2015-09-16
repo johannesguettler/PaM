@@ -58,13 +58,13 @@
     <string name="soundSettingsTitle">Sound:</string>
     <string name="backColorSettingsTitle">Background:</string>
     <string name="ekgSoundDesc">Litte speaker that symbolizes if the ekg sound is turned on.</string>
-    <string name="energy">Energie</string>
+    <string name="energy">Energy</string>
     <string name="defiChargeButton">Button to charge the defibrilator</string>
     <string name="defiButtonUp">Button to raise the defi energy</string>
     <string name="defiButtonDown">Button to lower the defi energy</string>
-    <string name="defiChargeText">Laden</string>
+    <string name="defiChargeText">Charge</string>
     <string name="defiDischargeButton">Button to decharge the defibrilator</string>
-    <string name="defiDischargeText">Entladen</string>
+    <string name="defiDischargeText">Discharge</string>
     <string name="defiShockButton">Button to trigger a shock</string>
     <string name="startEnergy">100 J</string>
     <string name="afValueDefault">- -</string>

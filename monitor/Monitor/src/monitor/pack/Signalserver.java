@@ -1,11 +1,6 @@
 
 package monitor.pack;
 
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
  * A signalserver, which provides patterns for heartrhythm,
  * blood pressure, O2 saturation and respiration.
@@ -48,6 +43,43 @@ public class Signalserver {
   // The array in which the values of the basic CO2 curve are stored. To get the actual
   // value it is multiplied with the CO2 max value in the getCO2Value method.
   private double[] CO2;
+
+  //heartrhythm peaks and first peak-index. Needed to correct interpolation
+  // errors
+  private double peakSinerhythm;
+  private int peakIndexSinerhythm;
+  private double peakPacerhythm;
+  private int peakIndexPacerhythm;
+  private double peakLbbbrhythm;
+  private int peakIndexLbbbrhythm;
+  private double peakStemirhythm;
+  private int peakIndexStemirhythm;
+  private double peakVentflutterrhythm;
+  private int peakIndexVentflutterrhythm;
+  private double peakVentfibrirhythm;
+  private int peakIndexVentfibrirhythm;
+  private double peakCprrhythm;
+  private int peakIndexCprrhythm;
+  private double peakAsystolicrhythm;
+  private int peakIndexAsystolicrhythm;
+  //heartrhythm peaks and first peak-index. Needed to correct interpolation
+  // errors
+  private double negativPeakSinerhythm;
+  private int negativPeakIndexSinerhythm;
+  private double negativPeakPacerhythm;
+  private int negativPeakIndexPacerhythm;
+  private double negativPeakLbbbrhythm;
+  private int negativPeakIndexLbbbrhythm;
+  private double negativPeakStemirhythm;
+  private int negativPeakIndexStemirhythm;
+  private double negativPeakVentflutterrhythm;
+  private int negativPeakIndexVentflutterrhythm;
+  private double negativPeakVentfibrirhythm;
+  private int negativPeakIndexVentfibrirhythm;
+  private double negativPeakCprrhythm;
+  private int negativPeakIndexCprrhythm;
+  private double negativPeakAsystolicrhythm;
+  private int negativPeakIndexAsystolicrhythm;
   // The counter in which the current position of the array is stored. To get the next
   // position, use the increment() method.
   private double index;
@@ -118,7 +150,7 @@ public class Signalserver {
     oldindex = 0;
     CO2index = 0;
     pi = 3.14159265359;
-    basicheartrate = 36;
+    basicheartrate = 60;
     heartrate = 50;
     respirationrate = 20;
     maxbloodpressure = 160;
@@ -308,6 +340,8 @@ public class Signalserver {
         SPO2[i - 1 + 30] = 0.9 * Math.exp(-0.4 * (i - 1) * 2 * pi / 72);
       }
     }
+    // set heartrhythm peaks and index of first peak
+    setHeartRhythmPeaks();
     // ------------------
     // CREATE CO2 PATTERN
     // ------------------
@@ -354,6 +388,82 @@ public class Signalserver {
     CO2 = new double[]{0.000000, 0.000039, 0.000024, 0.006194, 0.023405, 0.053559, 0.098557, 0.160301, 0.240693, 0.339068, 0.446680, 0.553197, 0.648286, 0.721720, 0.769993, 0.800164, 0.820212, 0.836167, 0.849183, 0.859668, 0.868027, 0.874666, 0.879994, 0.884415, 0.888335, 0.892040, 0.895573, 0.898948, 0.902180, 0.905284, 0.908274, 0.911166, 0.913975, 0.916714, 0.919399, 0.922045, 0.924666, 0.927277, 0.929893, 0.932528, 0.935198, 0.937910, 0.940663, 0.943455, 0.946285, 0.949151, 0.952051, 0.954985, 0.957950, 0.960944, 0.963967, 0.967016, 0.970090, 0.973187, 0.976306, 0.979444, 0.982601, 0.985752, 0.988859, 0.991884, 0.994785, 0.997525, 1.000000, 0.992076, 0.944846, 0.854502, 0.736439, 0.606433, 0.480263, 0.371633, 0.282611, 0.211211, 0.155441, 0.113309, 0.082825, 0.061998, 0.048835, 0.041346, 0.037540, 0.035425, 0.033260, 0.030985, 0.028724, 0.026451, 0.024137, 0.021754, 0.019274, 0.016669, 0.013929, 0.011138, 0.008415, 0.005880, 0.003652, 0.001852, 0.000597, 0.000008, 0.000007, -0.000020, -0.000068, -0.000000};
 
   }
+
+  private void setHeartRhythmPeaks() {
+    double rhythms[][] = {
+        sinerhythm,
+        pacerhythm,
+        lbbbrhythm,
+        stemirhythm,
+        cprrhythm,
+        asystolicrhythm,
+        ventflutterrhythm,
+        ventfibrirhythm
+
+    };
+    double peaks[] = new double[rhythms.length];
+    double negPeaks[] = new double[rhythms.length];
+    int peakIndeces[] = new int[rhythms.length];
+    int negPeakIndeces[] = new int[rhythms.length];
+    // search for peak
+    for (int i = 0; i < peaks.length; i++) {
+      peaks[i] = 0.0;
+      negPeaks[i] = 0.0;
+      peakIndeces[i] = 0;
+      negPeakIndeces[i] = 0;
+      for (int j = 0; j < rhythms[i].length; j++) {
+        double tempRhythmValue = rhythms[i][j];
+        if (peaks[i] < tempRhythmValue) {
+          peaks[i] = tempRhythmValue;
+          peakIndeces[i] = j;
+        }
+        if (negPeaks[i] > tempRhythmValue) {
+          negPeaks[i] = tempRhythmValue;
+          negPeakIndeces[i] = j;
+        }
+      }
+    }
+    // set positive peaks
+    int it = 0;
+    peakSinerhythm = peaks[it++];
+    peakPacerhythm = peaks[it++];
+    peakLbbbrhythm = peaks[it++];
+    peakStemirhythm = peaks[it++];
+    peakVentflutterrhythm = peaks[it++];
+    peakVentfibrirhythm = peaks[it++];
+    peakCprrhythm = peaks[it++];
+    peakAsystolicrhythm = peaks[it++];
+    it = 0;
+    peakIndexSinerhythm = peakIndeces[it++];
+    peakIndexPacerhythm = peakIndeces[it++];
+    peakIndexLbbbrhythm = peakIndeces[it++];
+    peakIndexStemirhythm = peakIndeces[it++];
+    peakIndexVentflutterrhythm = peakIndeces[it++];
+    peakIndexVentfibrirhythm = peakIndeces[it++];
+    peakIndexCprrhythm = peakIndeces[it++];
+    peakIndexAsystolicrhythm = peakIndeces[it++];
+
+    // set negative peaks
+    it = 0;
+    negativPeakSinerhythm = negPeaks[it++];
+    negativPeakPacerhythm = negPeaks[it++];
+    negativPeakLbbbrhythm = negPeaks[it++];
+    negativPeakStemirhythm = negPeaks[it++];
+    negativPeakVentflutterrhythm = negPeaks[it++];
+    negativPeakVentfibrirhythm = negPeaks[it++];
+    negativPeakCprrhythm = negPeaks[it++];
+    negativPeakAsystolicrhythm = negPeaks[it++];
+    it = 0;
+    negativPeakIndexSinerhythm = negPeakIndeces[it++];
+    negativPeakIndexPacerhythm = negPeakIndeces[it++];
+    negativPeakIndexLbbbrhythm = negPeakIndeces[it++];
+    negativPeakIndexStemirhythm = negPeakIndeces[it++];
+    negativPeakIndexVentflutterrhythm = negPeakIndeces[it++];
+    negativPeakIndexVentfibrirhythm = negPeakIndeces[it++];
+    negativPeakIndexCprrhythm = negPeakIndeces[it++];
+    negativPeakIndexAsystolicrhythm = negPeakIndeces[it++];
+  }
+
   // Changes the heart rhythm curve to a new pattern.
   // If the current heart rhythm is Asystole the heart rhythm gets changed immediately.
   public void changeHeartRhythm(Event.HeartPattern rhythm) {
@@ -451,18 +561,41 @@ public class Signalserver {
 
   // Calculates the output value of a heart pattern. Uses a heart pattern and a position of the array as input.
   // Interpolates the array if the position is a decimal.
-  private double calcHeartRateValue(double[] pattern, double position) {
+  private double calcHeartRateValue(double[] pattern, double position, int
+      peakIndex, double peakValue, int negPeakIndex, double negPeakValue) {
     double value = 0;
     // A scaling factor to scale the patterns to the optimal height.
     double scale = 1.4;
     // Interpolate if position is a decimal.
     if (Math.floor(position) != Math.ceil(position)) {
-      value = pattern[(int) Math.floor(position)] + (pattern[(int) Math.ceil(position)] - pattern[(int) Math.floor(position)]) / (Math.ceil(position) - Math.floor(position)) * (position - Math.floor(position)) * scale;
+      // check if there is a peak between the two interpolation values.
+      // Dependent on the sampling rate use the nearest peak value (or not)
+      double samplingStepSize = ((double) heartrate) / basicheartrate;
+      double distanceToLowerPeakIndex = position - (double)peakIndex;
+      double distanceToHigherPeakIndex = (double)peakIndex - position;
+      double distanceToLowerNegPeakIndex = position - (double)negPeakIndex;
+      double distanceToHigherNegPeakIndex = (double)negPeakIndex - position;
+      if((peakIndex != 0) && ((distanceToLowerPeakIndex <= samplingStepSize &&
+          distanceToLowerPeakIndex > 0)
+          || (distanceToHigherPeakIndex < samplingStepSize &&
+          distanceToHigherPeakIndex > 0))){
+
+        value = peakValue;
+      } else if((negPeakIndex != 0) && ((distanceToLowerNegPeakIndex <=
+          samplingStepSize &&
+          distanceToLowerNegPeakIndex > 0)
+          || (distanceToHigherNegPeakIndex < samplingStepSize &&
+          distanceToHigherNegPeakIndex > 0))) {
+        value =negPeakValue;
+      } else {
+        value = pattern[(int) Math.floor(position)] + (pattern[(int) Math.ceil(position)] - pattern[(int) Math.floor(position)]) / (Math.ceil(position) - Math.floor(position)) * (position - Math.floor(position)) * scale;
+      }
     }
     // Otherwise just read out the value of the heart rate array if index is a natural number.
     else {
       value = pattern[(int) position] * scale;
     }
+    //Log.e("DEBUG SignalServer", "used heartvalue: "+value);
     return value;
   }
 
@@ -541,7 +674,9 @@ public class Signalserver {
     int threshold = 50;
     // ------ CALCULATION FOR HEARTRATEVALUE WITH sinerhythm ------
     if (heartrhythm == Event.HeartPattern.SINE) {
-      heartratevalue = calcHeartRateValue(sinerhythm, index);
+      heartratevalue = calcHeartRateValue(sinerhythm, index,
+          peakIndexSinerhythm, peakSinerhythm, negativPeakIndexSinerhythm,
+          negativPeakSinerhythm);
       // Trigger acoustic signal and heart blinking in monitor object.
       triggerBeepBlink(heartratevalue, threshold);
     }
@@ -570,11 +705,15 @@ public class Signalserver {
           if (heartrhythm == Event.HeartPattern.ARRYTHMIC)
           // Absolute Arrythmia with sine pattern.
           {
-            heartratevalue = calcHeartRateValue(sinerhythm, newindex);
+            heartratevalue = calcHeartRateValue(sinerhythm, newindex,
+                peakIndexSinerhythm, peakSinerhythm,
+                negativPeakIndexSinerhythm, negativPeakSinerhythm);
           } else
           // Absolute Arrythmia with left bundle branch block pattern.
           {
-            heartratevalue = calcHeartRateValue(lbbbrhythm, newindex);
+            heartratevalue = calcHeartRateValue(lbbbrhythm, newindex,
+                peakIndexLbbbrhythm, peakLbbbrhythm,
+                negativPeakIndexLbbbrhythm, negativPeakLbbbrhythm);
           }
         }
         // Or simulate atrial fibrillation with random values.
@@ -592,11 +731,15 @@ public class Signalserver {
           if (heartrhythm == Event.HeartPattern.ARRYTHMIC)
           // Absolute Arrythmia with sine pattern.
           {
-            heartratevalue = calcHeartRateValue(sinerhythm, index);
+            heartratevalue = calcHeartRateValue(sinerhythm, index,
+                peakIndexSinerhythm, peakSinerhythm,
+                negativPeakIndexSinerhythm, negativPeakSinerhythm);
           } else
           // Absolute Arrythmia with left bundle branch block pattern.
           {
-            heartratevalue = calcHeartRateValue(lbbbrhythm, index);
+            heartratevalue = calcHeartRateValue(lbbbrhythm, index,
+                peakIndexLbbbrhythm, peakLbbbrhythm,
+                negativPeakIndexLbbbrhythm, negativPeakLbbbrhythm);
           }
         }
       }
@@ -618,22 +761,28 @@ public class Signalserver {
         // We have to make sure the T zone of the pattern doesn't get cut if we shift the pattern to the right,
         // so we insert the end of the last pattern in the beginning of the current one.
         else if (index < ((avblockpeak - 1) * 6)) {
-          heartratevalue = calcHeartRateValue(sinerhythm, index + 99 - ((avblockpeak - 1) * 6));
+          heartratevalue = calcHeartRateValue(sinerhythm, index + 99 - (
+              (avblockpeak - 1) * 6),peakIndexSinerhythm, peakSinerhythm,
+              negativPeakIndexSinerhythm, negativPeakSinerhythm);
         } else {
-          heartratevalue = calcHeartRateValue(sinerhythm, index);
+          heartratevalue = calcHeartRateValue(sinerhythm, index,
+              peakIndexSinerhythm, peakSinerhythm, negativPeakIndexSinerhythm, negativPeakSinerhythm);
         }
       }
       // avblockpeak counts up from zero to three. Every time the array is looped, the QRS Peak gets delayed more.
       else {
         if (index > 48) {
-          heartratevalue = calcHeartRateValue(sinerhythm, index - (avblockpeak * 6));
+          heartratevalue = calcHeartRateValue(sinerhythm, index -
+              (avblockpeak * 6),peakIndexSinerhythm, peakSinerhythm, negativPeakIndexSinerhythm, negativPeakSinerhythm);
         }
         // We have to make sure the T zone of the pattern doesn't get cut if we shift the pattern to the right,
         // so we insert the end of the last pattern in the beginning of the current one.
         else if (index < ((avblockpeak - 1) * 6)) {
-          heartratevalue = calcHeartRateValue(sinerhythm, index + 99 - ((avblockpeak - 1) * 6));
+          heartratevalue = calcHeartRateValue(sinerhythm, index + 99 - (
+              (avblockpeak - 1) * 6),peakIndexSinerhythm, peakSinerhythm, negativPeakIndexSinerhythm, negativPeakSinerhythm);
         } else {
-          heartratevalue = calcHeartRateValue(sinerhythm, index);
+          heartratevalue = calcHeartRateValue(sinerhythm, index,
+              peakIndexSinerhythm, peakSinerhythm, negativPeakIndexSinerhythm, negativPeakSinerhythm);
         }
       }
       // Trigger acoustic signal and heart blinking in monitor object.
@@ -641,20 +790,26 @@ public class Signalserver {
     }
     // ------ CALCULATION FOR HEARTRATEVALUE WITH LEFT BUNDLE BRANCH BLOCK RHYTHM ------
     else if (heartrhythm == Event.HeartPattern.LEFTBLOCK) {
-      heartratevalue = calcHeartRateValue(lbbbrhythm, index);
+      heartratevalue = calcHeartRateValue(lbbbrhythm, index,
+          peakIndexLbbbrhythm, peakLbbbrhythm, negativPeakIndexLbbbrhythm,
+          negativPeakLbbbrhythm);
       // Trigger acoustic signal and heart blinking in monitor object.
       triggerBeepBlink(heartratevalue, threshold);
     }
     // ------ CALCULATION FOR HEARTRATEVALUE WITH STEMI RHYTHM ------
     else if (heartrhythm == Event.HeartPattern.STEMI) {
-      heartratevalue = calcHeartRateValue(stemirhythm, index);
+      heartratevalue = calcHeartRateValue(stemirhythm, index,
+          peakIndexStemirhythm, peakStemirhythm, negativPeakIndexStemirhythm,
+          negativPeakStemirhythm);
       // Trigger acoustic signal and heart blinking in monitor object.
       triggerBeepBlink(heartratevalue, threshold + 20);
     }
     // ------ CALCULATION FOR HEARTRATEVALUE WITH PACEMAKER RHYTHM ------
     else if (heartrhythm == Event.HeartPattern.PACE) {
       // A scaling factor to scale the patterns to the optimal height.
-      heartratevalue = calcHeartRateValue(pacerhythm, index);
+      heartratevalue = calcHeartRateValue(pacerhythm, index,
+          peakIndexPacerhythm, peakPacerhythm, negativPeakIndexPacerhythm,
+          negativPeakPacerhythm);
       // Adjust the peak of the pacemaker, so it looks more similar in every loop.
       if (pacepulse == false) {
         if (heartratevalue >= 40) {
@@ -730,16 +885,24 @@ public class Signalserver {
     // If the heartrhythm is ventflutter nearly no blood gets pumped at all. The shrinked
     // ventflutter heartrate pattern itself can be used to simulate the bloodemission.
     else if (heartrhythm == Event.HeartPattern.VENTFLUTTER) {
-      value = Math.abs((calcHeartRateValue(ventflutterrhythm, index) - 40) / 35);
+      value = Math.abs((calcHeartRateValue(ventflutterrhythm, index,
+          peakIndexVentflutterrhythm, peakVentflutterrhythm,
+          negativPeakIndexVentflutterrhythm, negativPeakIndexVentflutterrhythm) - 40) /
+          35);
     }
     // If the heartrhythm is ventfibri nearly no blood gets pumped at all. The shrinked
     // ventfibri heartrate pattern itself can be used to simulate the bloodemission.
     else if (heartrhythm == Event.HeartPattern.VENTFIBRI) {
-      value = Math.abs((calcHeartRateValue(ventfibrirhythm, index) - 25) / 25);
+      value = Math.abs((calcHeartRateValue(ventfibrirhythm, index,
+          peakIndexVentfibrirhythm, peakVentfibrirhythm,
+          negativPeakIndexVentfibrirhythm, negativPeakVentfibrirhythm) -
+          25) / 25);
     }
     // In case of a reanimation the blood gets pumped with the pushing frequenzy of the reanimator.
     else if (heartrhythm == Event.HeartPattern.CPR) {
-      value = Math.abs((calcHeartRateValue(cprrhythm, index)) / 10);
+      value = Math.abs((calcHeartRateValue(cprrhythm, index,
+          peakIndexCprrhythm, peakCprrhythm, negativPeakIndexCprrhythm, negativPeakCprrhythm)) /
+          10);
     }
     // If there is no heart contraction no blood gets pumped through the body and no BP curve is visible.
     else if (heartrhythm == Event.HeartPattern.ASYSTOLE) {
@@ -770,7 +933,9 @@ public class Signalserver {
     // In case of a reanimation the blood gets pumped with the pushing frequenzy of the reanimator. The
     // oxygen saturation is low.
     else if (heartrhythm == Event.HeartPattern.CPR) {
-      value = Math.abs((calcHeartRateValue(cprrhythm, index)) / 25);
+      value = Math.abs((calcHeartRateValue(cprrhythm, index,
+          peakIndexCprrhythm, peakCprrhythm, negativPeakIndexCprrhythm, negativPeakCprrhythm)
+      ) / 25);
       // Trigger blink and random variation.
       triggerO2peak(value, threshold);
     }

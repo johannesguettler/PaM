@@ -7,6 +7,7 @@
 package monitor.pack;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -62,40 +63,6 @@ public class MonitorMainScreen extends Activity {
   private final int incDecAutoStartDelay = 500;  // Delay before the auto increase/decrease starts, when the buttons are pressed continuously.
   private final int alarmPauseTime = 60; // Time in sec for which the alarm is paused if the alarm pause button is pressed.
 
-  // Minimum and maximum alarm-thresholds for each parameter.
-  // EKG upper value.
- /* private final int ekgAlarmUpValueMax = 250;
-  private final int ekgAlarmUpValueMin = 20;
-  // EKG lower value.
-  private final int ekgAlarmLowValueMax = 250;
-  private final int ekgAlarmLowValueMin = 20;
-  // Diastolic blood pressure upper value.
-  private final int rrDiaAlarmUpValueMax = 150;
-  private final int rrDiaAlarmUpValueMin = 10;
-  // Diastolic blood pressure lower value.
-  private final int rrDiaAlarmLowValueMax = 150;
-  private final int rrDiaAlarmLowValueMin = 10;
-  // Systolic blood pressure upper value.
-  private final int rrSysAlarmUpValueMax = 250;
-  private final int rrSysAlarmUpValueMin = 20;
-  // Systolic blood pressure lower value.
-  private final int rrSysAlarmLowValueMax = 250;
-  private final int rrSysAlarmLowValueMin = 20;
-  // O2 saturation lower value.
-  private final int o2AlarmLowValueMax = 100;
-  private final int o2AlarmLowValueMin = 40;
-  // CO2 upper value.
-  private final int co2AlarmUpValueMax = 100;
-  private final int co2AlarmUpValueMin = 15;
-  // CO2 low value.
-  private final int co2AlarmLowValueMax = 100;
-  private final int co2AlarmLowValueMin = 15;
-
-  // The increase/decrease step-size for the different alarm-thresholds.
-  private final int ekgAlarmIncDecStep = 5;
-  private final int rrAlarmIncDecStep = 5;
-  private final int o2AlarmIncDecStep = 1;
-  private final int co2AlarmIncDecStep = 1;*///TODO: remove
 
   // The threshold above a random must be to trigger a variation of a parameter.
   private final float randThreshold = 0.7f;
@@ -140,22 +107,13 @@ public class MonitorMainScreen extends Activity {
   private boolean co2AlarmOn=true;
   // Indicator if the alarm is currently paused.
   private boolean alarmPaused;
-  // Indicators if an alarm increase/decrease button is currently pressed.
-/*  private boolean firstAlarmUpperTHDownButtonPressed;
-  private boolean firstAlarmUpperTHUpButtonPressed;
-  private boolean firstAlarmLowerTHDownButtonPressed;
-  private boolean firstAlarmLowerTHUpButtonPressed;
-  private boolean secondAlarmUpperTHDownButtonPressed;
-  private boolean secondAlarmUpperTHUpButtonPressed;
-  private boolean secondAlarmLowerTHDownButtonPressed;
-  private boolean secondAlarmLowerTHUpButtonPressed;*///TODO: remove
 
   // Indicators if the settings-/defi-layouts are hidden.
-/*  private boolean settingsHidden;*///TODO: remove
   private boolean defiHidden;
   // Settings- and defi-layouts.
-   private LinearLayout settingsLayout;//TODO: remove
+
   private RelativeLayout defiLayout;
+  private DefiFragment defiFragment;
 
   // Non inversive blood pressure measurement.
   private int nibpAutoTime;  // The current auto-repeat-time.
@@ -323,39 +281,12 @@ public class MonitorMainScreen extends Activity {
     co2Active = false;
     nibpActive = false;
     respActive = false;
-    // Define the default alarm thresholds.
-    /*ekgAlarmUpValue = 110;  // EKG upper value.
-    ekgAlarmLowValue = 60;  // EKG lower value.
-    rrDiaAlarmUpValue = 100;  // Diastolic blood pressure upper value.
-    rrDiaAlarmLowValue = 40;  // Diastolic blood pressure lower value.
-    rrSysAlarmUpValue = 160;  // Systolic blood pressure upper value.
-    rrSysAlarmLowValue = 100;  // Sysstolic blood pressure lower value.
-    o2AlarmLowValue = 92;  // O2 saturation lower value.
-    co2AlarmUpValue = 45;  // CO2 upper value.
-    co2AlarmLowValue = 35;  // CO2 lower value.
-    // Define the default activation states of the alarms.
-    alarmActive = true;
-    ekgAlarmOn = true;
-    rrAlarmOn = true;
-    o2AlarmOn = true;
-    co2AlarmOn = true;
-    alarmPaused = false;*/
-    // Define the default pressed state of the alarm threshold increase/decrease buttons.
-    /*firstAlarmUpperTHDownButtonPressed = false;
-    firstAlarmUpperTHUpButtonPressed = false;
-    firstAlarmLowerTHDownButtonPressed = false;
-    firstAlarmLowerTHUpButtonPressed = false;
-    secondAlarmUpperTHDownButtonPressed = false;
-    secondAlarmUpperTHUpButtonPressed = false;
-    secondAlarmLowerTHDownButtonPressed = false;
-    secondAlarmLowerTHUpButtonPressed = false;*///TODO: remove
+
 
     // Deactivate the EKG and parameter blinking as default.
     ekgBlinkActive = false;
     paramBlinkActive = false;
 
-    // Define the default hidden-state of the settings-/defi-layouts.
-/*    settingsHidden = true;*///TODO: remove
     defiHidden = true;
 
     // Set the NIBP and the auto NIBP to "not running" as default.
@@ -383,8 +314,11 @@ public class MonitorMainScreen extends Activity {
     timerActive = false;
 
     // Create the instances.
-    settingsLayout = (LinearLayout) this.findViewById(R.id.settingsLayout);//TODO: remove
-    defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
+
+
+    defiFragment = new DefiFragment();
+/*    defiLayout = (RelativeLayout) defiFragment.returnView().findViewById(R.id
+        .defiLayout);*/
     updateHandler = new UpdateHandler(this);
     signalServer = new Signalserver(this);
     soundHandler = new SoundHandler(this);
@@ -395,14 +329,6 @@ public class MonitorMainScreen extends Activity {
 
     EnterScreen.client.setMonitorMainScreen(this);
 
-    // Set curve-view.
-/*    int backgroundColorDefault;
-    if (defaultSharedPreferences.getString(getString(R.string
-        .key_background_color), "white") == "black") {
-      backgroundColorDefault = Color.BLACK;
-    } else {
-      backgroundColorDefault = Color.WHITE;
-    }*///TODO:remove
     int[] lineColors = loadLineColors();
     glActivity = new GLActivity(this, lineColors[0], lineColors[1],
         lineColors[2], lineColors[3]);
@@ -448,171 +374,10 @@ public class MonitorMainScreen extends Activity {
     ImageView ekgSoundImageView = (ImageView) this.findViewById(R.id.ekgSoundImageView);
     ekgSoundImageView.setVisibility(View.INVISIBLE);
 
-    // Initialize the settings view with the EKG-settings.
-    /*showAlarmSetting(true, false, false, false, "Frequency", "", "" + ekgAlarmLowValue, "" + ekgAlarmUpValue, "", "");
-    setAlarmButton(ekgAlarmOn);
-    showSoundSetting(false);
-*///TODO:remove?
     // Hide defi UI-elements.
     showHideDefiUiElements(false);
 
-    // Move the little arrow in the menu on the right position after the first opening of the menu.
-    // Therefore add a onDraw-Listener to recognize when the menu is fully extended for the first time.
-    /*final LinearLayout settingsLayout = (LinearLayout) findViewById(R.id.settingsLayout);
-    settingsLayout.getViewTreeObserver().addOnPreDrawListener(
-        new ViewTreeObserver.OnPreDrawListener() {
-          public boolean onPreDraw() {
-            // If the menu is extended for the first time.
-            if (settingsLayout.getMeasuredWidth() > 5 && firstSettingsOpen) {
-              // Move the arrow under the button.
-              Button ekgSettingsButton = (Button) findViewById(R.id.ekgSettingsButton);
-              ImageView setPointArrowImageView = (ImageView) findViewById(R.id.settingsPointingArrowImageView);
-              int arrowPos = ekgSettingsButton.getLeft() + ekgSettingsButton.getWidth() / 2 - setPointArrowImageView.getWidth() / 2;
-              RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) setPointArrowImageView.getLayoutParams();
-              params.setMargins(arrowPos, 0, 0, 0); //Parameters for left, top, right and bottom margin.
-              setPointArrowImageView.setLayoutParams(params);
-              firstSettingsOpen = false;
-            }
-            return true;
-          }
-        });
 
-    // Add Listeners to the 8 alarm increase/decrease buttons such that the auto increase/decrease while pressed could be stopped, if the button is released.
-    final Button firstAlarmUpperTHDownButton = (Button) this.findViewById(R.id.firstAlarmUpperTHDownButton);
-    firstAlarmUpperTHDownButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          firstAlarmUpperTHDownButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });
-
-    final Button firstAlarmUpperTHUpButton = (Button) this.findViewById(R.id.firstAlarmUpperTHUpButton);
-    firstAlarmUpperTHUpButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          firstAlarmUpperTHUpButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });
-
-    final Button firstAlarmLowerTHDownButton = (Button) this.findViewById(R.id.firstAlarmLowerTHDownButton);
-    firstAlarmLowerTHDownButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          firstAlarmLowerTHDownButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });
-
-    final Button firstAlarmLowerTHUpButton = (Button) this.findViewById(R.id.firstAlarmLowerTHUpButton);
-    firstAlarmLowerTHUpButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          firstAlarmLowerTHUpButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });
-
-    final Button secondAlarmUpperTHDownButton = (Button) this.findViewById(R.id.secondAlarmUpperTHDownButton);
-    secondAlarmUpperTHDownButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          secondAlarmUpperTHDownButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });
-
-    final Button secondAlarmUpperTHUpButton = (Button) this.findViewById(R.id.secondAlarmUpperTHUpButton);
-    secondAlarmUpperTHUpButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          secondAlarmUpperTHUpButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });
-
-    final Button secondAlarmLowerTHDownButton = (Button) this.findViewById(R.id.secondAlarmLowerTHDownButton);
-    secondAlarmLowerTHDownButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          secondAlarmLowerTHDownButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });
-
-    final Button secondAlarmLowerTHUpButton = (Button) this.findViewById(R.id.secondAlarmLowerTHUpButton);
-    secondAlarmLowerTHUpButton.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-          secondAlarmLowerTHUpButtonPressed = false;  // Publish the release of the button.
-          v.setPressed(false);
-          return true;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
-          v.performClick();
-          v.setPressed(true);
-          return true;
-        }
-        return false;
-      }
-    });*///TODO: remove
 
     // Write the default time (= 0) to the status-bar.
     updateTime();
@@ -630,21 +395,7 @@ public class MonitorMainScreen extends Activity {
         		});
     		}
     	}, 1000, 1000);*/
-    // set backround to white
-    //changeBackColor(R.id.backColorSelectionWhiteButton);
-/*    // set linecolors to black
-    // EKG
-    menuSelection = 0;
-    changeColor(R.id.colorSelectionBlackButton);
-    // RR
-    menuSelection = 1;
-    changeColor(R.id.colorSelectionBlackButton);
-    // O2
-    menuSelection = 2;
-    changeColor(R.id.colorSelectionBlackButton);
-    // CO2
-    menuSelection = 3;
-    changeColor(R.id.colorSelectionBlackButton);*/
+
     // set parameter textfields to black
 // initialize preference values, third parameter: override safed values
     PreferenceManager.setDefaultValues(this, R.xml.settings_alarm, false);
@@ -759,171 +510,14 @@ public class MonitorMainScreen extends Activity {
   private void blinkHeart() {
     final ImageView ekgHeartImageView = (ImageView) this.findViewById(R.id.ekgHeartImageView);
     ekgHeartImageView.setVisibility(View.INVISIBLE);
-    new Handler().postDelayed(new Runnable() {
+    /*new Handler().postDelayed(new Runnable() {
       public void run() {
         ekgHeartImageView.setVisibility(View.VISIBLE);
       }
-    }, heartBlinkDelay);
+    }, heartBlinkDelay);*///TODO: remove completely
   }
 
- /* *//**
-   * Shows/hides the sound settings.
-   *
-   * @param visible - states if the sound settings are visible or not.
-   *//*
-  private void showSoundSetting(boolean visible) {
-    RelativeLayout soundSettingsLayout = (RelativeLayout) this.findViewById(R.id.soundSettingsLayout);
-    if (visible) {
-      soundSettingsLayout.setVisibility(View.VISIBLE);
-    } else {
-      soundSettingsLayout.setVisibility(View.INVISIBLE);
-    }
-  }
 
-  *//**
-   * Shows/hides the alarm settings or only parts of it and fills it with given parameters.
-   *
-   * @param alarm1       - States if the settings for the first alarm are visible or not. If alarm1 and alarm2 are set to false, the whole alarm settings section isn't visible.
-   * @param oneValue     - States if only one value (the upper or lower one) of the first alarm is determinable.
-   * @param onlyUpper    - States which of the values (the upper or lower one) is determinable if oneValue is true.
-   * @param alarm2       - States if the settings for the second alarm are visible or not. If alarm1 and alarm2 are set to false, the whole alarm settings section isn't visible.
-   * @param alarm1Title  - The title of the first alarm which will be displayed.
-   * @param alarm2Title  - The title of the second alarm which will be displayed.
-   * @param alarm1LowDef - The default lower value for the first alarm which will be displayed.
-   * @param alarm1UpDef  - The default upper value for the first alarm which will be displayed.
-   * @param alarm2LowDef - The default lower value for the second alarm which will be displayed.
-   * @param alarm2UpDef  - The default upper value for the second alarm which will be displayed.
-   *//*
-  private void showAlarmSetting(boolean alarm1, boolean oneValue, boolean onlyUpper, boolean alarm2, String alarm1Title,
-                                String alarm2Title, String alarm1LowDef, String alarm1UpDef, String alarm2LowDef, String alarm2UpDef) {
-    RelativeLayout alarmSettingsLayout = (RelativeLayout) this.findViewById(R.id.alarmSettingsLayout);
-    if (!alarm1 && !alarm2) {
-      // If no alarm is needed, hide all.
-      alarmSettingsLayout.setVisibility(View.INVISIBLE);
-    } else {
-      // If one or more alarm are needed, check which one, display them and set the titles and default threshold-values.
-      alarmSettingsLayout.setVisibility(View.VISIBLE);
-      TextView firstAlarmTitleTextView = (TextView) this.findViewById(R.id.firstAlarmTitleTextView);
-      TextView firstAlarmUpperTHTextView = (TextView) this.findViewById(R.id.firstAlarmUpperTHTextView);
-      TextView firstAlarmUpperTHValueTextView = (TextView) this.findViewById(R.id.firstAlarmUpperTHValueTextView);
-      TextView firstAlarmLowerTHTextView = (TextView) this.findViewById(R.id.firstAlarmLowerTHTextView);
-      TextView firstAlarmLowerTHValueTextView = (TextView) this.findViewById(R.id.firstAlarmLowerTHValueTextView);
-      Button firstAlarmUpperTHUpButton = (Button) this.findViewById(R.id.firstAlarmUpperTHUpButton);
-      Button firstAlarmUpperTHDownButton = (Button) this.findViewById(R.id.firstAlarmUpperTHDownButton);
-      Button firstAlarmLowerTHUpButton = (Button) this.findViewById(R.id.firstAlarmLowerTHUpButton);
-      Button firstAlarmLowerTHDownButton = (Button) this.findViewById(R.id.firstAlarmLowerTHDownButton);
-      if (alarm1) {
-        firstAlarmTitleTextView.setVisibility(View.VISIBLE);
-        if (oneValue && onlyUpper) {
-          firstAlarmUpperTHTextView.setVisibility(View.VISIBLE);
-          firstAlarmUpperTHValueTextView.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHTextView.setVisibility(View.INVISIBLE);
-          firstAlarmLowerTHValueTextView.setVisibility(View.INVISIBLE);
-          firstAlarmUpperTHUpButton.setVisibility(View.VISIBLE);
-          firstAlarmUpperTHDownButton.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHUpButton.setVisibility(View.INVISIBLE);
-          firstAlarmLowerTHDownButton.setVisibility(View.INVISIBLE);
-        } else if (oneValue && !onlyUpper) {
-          firstAlarmUpperTHTextView.setVisibility(View.INVISIBLE);
-          firstAlarmUpperTHValueTextView.setVisibility(View.INVISIBLE);
-          firstAlarmLowerTHTextView.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHValueTextView.setVisibility(View.VISIBLE);
-          firstAlarmUpperTHUpButton.setVisibility(View.INVISIBLE);
-          firstAlarmUpperTHDownButton.setVisibility(View.INVISIBLE);
-          firstAlarmLowerTHUpButton.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHDownButton.setVisibility(View.VISIBLE);
-        } else {
-          firstAlarmUpperTHTextView.setVisibility(View.VISIBLE);
-          firstAlarmUpperTHValueTextView.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHTextView.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHValueTextView.setVisibility(View.VISIBLE);
-          firstAlarmUpperTHUpButton.setVisibility(View.VISIBLE);
-          firstAlarmUpperTHDownButton.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHUpButton.setVisibility(View.VISIBLE);
-          firstAlarmLowerTHDownButton.setVisibility(View.VISIBLE);
-        }
-        firstAlarmTitleTextView.setText(alarm1Title);
-        firstAlarmUpperTHValueTextView.setText(alarm1UpDef);
-        firstAlarmLowerTHValueTextView.setText(alarm1LowDef);
-      } else {
-        firstAlarmTitleTextView.setVisibility(View.INVISIBLE);
-        firstAlarmUpperTHTextView.setVisibility(View.INVISIBLE);
-        firstAlarmUpperTHValueTextView.setVisibility(View.INVISIBLE);
-        firstAlarmLowerTHTextView.setVisibility(View.INVISIBLE);
-        firstAlarmLowerTHValueTextView.setVisibility(View.INVISIBLE);
-        firstAlarmUpperTHUpButton.setVisibility(View.INVISIBLE);
-        firstAlarmUpperTHDownButton.setVisibility(View.INVISIBLE);
-        firstAlarmLowerTHUpButton.setVisibility(View.INVISIBLE);
-        firstAlarmLowerTHDownButton.setVisibility(View.INVISIBLE);
-      }
-
-      TextView secondAlarmTitleTextView = (TextView) this.findViewById(R.id.secondAlarmTitleTextView);
-      TextView secondAlarmUpperTHTextView = (TextView) this.findViewById(R.id.secondAlarmUpperTHTextView);
-      TextView secondAlarmUpperTHValueTextView = (TextView) this.findViewById(R.id.secondAlarmUpperTHValueTextView);
-      TextView secondAlarmLowerTHTextView = (TextView) this.findViewById(R.id.secondAlarmLowerTHTextView);
-      TextView secondAlarmLowerTHValueTextView = (TextView) this.findViewById(R.id.secondAlarmLowerTHValueTextView);
-      Button secondAlarmUpperTHUpButton = (Button) this.findViewById(R.id.secondAlarmUpperTHUpButton);
-      Button secondAlarmUpperTHDownButton = (Button) this.findViewById(R.id.secondAlarmUpperTHDownButton);
-      Button secondAlarmLowerTHUpButton = (Button) this.findViewById(R.id.secondAlarmLowerTHUpButton);
-      Button secondAlarmLowerTHDownButton = (Button) this.findViewById(R.id.secondAlarmLowerTHDownButton);
-      if (alarm2) {
-        secondAlarmTitleTextView.setVisibility(View.VISIBLE);
-        secondAlarmUpperTHTextView.setVisibility(View.VISIBLE);
-        secondAlarmUpperTHValueTextView.setVisibility(View.VISIBLE);
-        secondAlarmLowerTHTextView.setVisibility(View.VISIBLE);
-        secondAlarmLowerTHValueTextView.setVisibility(View.VISIBLE);
-        secondAlarmUpperTHUpButton.setVisibility(View.VISIBLE);
-        secondAlarmUpperTHDownButton.setVisibility(View.VISIBLE);
-        secondAlarmLowerTHUpButton.setVisibility(View.VISIBLE);
-        secondAlarmLowerTHDownButton.setVisibility(View.VISIBLE);
-        secondAlarmTitleTextView.setText(alarm2Title);
-        secondAlarmUpperTHValueTextView.setText(alarm2UpDef);
-        secondAlarmLowerTHValueTextView.setText(alarm2LowDef);
-      } else {
-        secondAlarmTitleTextView.setVisibility(View.INVISIBLE);
-        secondAlarmUpperTHTextView.setVisibility(View.INVISIBLE);
-        secondAlarmUpperTHValueTextView.setVisibility(View.INVISIBLE);
-        secondAlarmLowerTHTextView.setVisibility(View.INVISIBLE);
-        secondAlarmLowerTHValueTextView.setVisibility(View.INVISIBLE);
-        secondAlarmUpperTHUpButton.setVisibility(View.INVISIBLE);
-        secondAlarmUpperTHDownButton.setVisibility(View.INVISIBLE);
-        secondAlarmLowerTHUpButton.setVisibility(View.INVISIBLE);
-        secondAlarmLowerTHDownButton.setVisibility(View.INVISIBLE);
-      }
-    }
-  }
-
-  *//**
-   * Toggles the alarm button title between "ON" and "OFF".
-   *
-   * @param on - Flag which indicates if the alarm is on.
-   *//*
-  private void setAlarmButton(boolean on) {
-    Button alarmOnOffButton = (Button) this.findViewById(R.id.alarmOnOffButton);
-    if (on) {
-      alarmOnOffButton.setText("ON");
-      alarmOnOffButton.setTextColor(Color.BLACK);
-    } else {
-      alarmOnOffButton.setText("OFF");
-      alarmOnOffButton.setTextColor(Color.WHITE);
-    }
-  }
-
-  *//**
-   * Toggles the sound button title between "ON" and "OFF".
-   *
-   * @param on - Flag which indicates if the sound is on.
-   *//*
-  private void setSoundButton(boolean on) {
-    Button soundOnOffButton = (Button) this.findViewById(R.id.soundOnOffButton);
-    if (on) {
-      soundOnOffButton.setText("ON");
-      soundOnOffButton.setTextColor(Color.BLACK);
-    } else {
-      soundOnOffButton.setText("OFF");
-      soundOnOffButton.setTextColor(Color.WHITE);
-    }
-  }*/
 
   /**
    * A functions which activates/deactivates the corresponding alarm if the current vital-parameter-values are
@@ -1074,56 +668,35 @@ public class MonitorMainScreen extends Activity {
    * @param show - states if the elments should be shown or not.
    */
   private void showHideDefiUiElements(boolean show) {
-    RelativeLayout defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
+    FragmentManager fragmentManager = getFragmentManager();
+    if(show && (fragmentManager.findFragmentByTag("defiFragment") == null)) {
+      fragmentManager.beginTransaction()
+          .add(R.id.defi_fragment_container, defiFragment, "defiFragment")
+          .commit();
+    } else {
+      fragmentManager.beginTransaction()
+          .remove(defiFragment)
+          .commit();
+    }
+   //TODO: link to new layout
+   /* RelativeLayout defiLayout = (RelativeLayout) this.findViewById(R.id.defiLayout);
     if (show) {
       defiLayout.setVisibility(View.VISIBLE);
     } else {
       defiLayout.setVisibility(View.INVISIBLE);
-    }
+    }*/
   }
 
   // PUBLIC:
 
   /**
-   * Opens/Closes the settings-view via its weight-factor. If the defi-view is already open,
-   * close it first.
+   * Opens the settings-view via its weight-factor.
    *
-   * @param view which called the method.
    */
-  public void openCloseSettings(View view) {
+  public void openSettings() {
     // new: settingsActivity
     startActivity(new Intent(this, SettingsActivity.class).putExtra
         (PreferenceActivity.EXTRA_SHOW_FRAGMENT_TITLE, true));
-
-    // settingsFragment?
-/*    getFragmentManager().beginTransaction()
-        .replace(android.R.id.content, new SettingsFragment())
-        .commit();*/
-    // original settings starter
-/*
-    LinearLayout.LayoutParams loParamsSettings = (LinearLayout.LayoutParams) settingsLayout.getLayoutParams();
-    Button openCloseSettingsButton = (Button) this.findViewById(R.id.openCloseSettingsButton);
-    if (settingsHidden) {
-      loParamsSettings.weight = 0.6f;
-      settingsHidden = false;
-      openCloseSettingsButton.setText("< Settings");
-      if (!defiHidden) {
-        LinearLayout.LayoutParams loParamsDefi = (LinearLayout.LayoutParams) defiLayout.getLayoutParams();
-        loParamsDefi.weight = 0.001f;
-        defiHidden = true;
-        defiLayout.setLayoutParams(loParamsDefi);
-        Button openCloseDefiButton = (Button) this.findViewById(R.id.openCloseDefiButton);
-        openCloseDefiButton.setText("< Defibrillator");
-        // Hide defi UI-elements.
-        showHideDefiUiElements(false);
-      }
-    } else {
-      loParamsSettings.weight = 0.001f;
-      settingsHidden = true;
-      openCloseSettingsButton.setText("Settings >");
-    }
-    settingsLayout.setLayoutParams(loParamsSettings);
-*/
   }
 
   /**
@@ -1133,30 +706,20 @@ public class MonitorMainScreen extends Activity {
    * @param view which called the method.
    */
   public void openCloseDefi(View view) {
-    LinearLayout.LayoutParams loParamsDefi = (LinearLayout.LayoutParams) defiLayout.getLayoutParams();
+    /*LinearLayout.LayoutParams loParamsDefi = (LinearLayout.LayoutParams) defiLayout.getLayoutParams();*/
     Button openCloseDefiButton = (Button) this.findViewById(R.id.openCloseDefiButton);
     if (defiHidden) {
-      loParamsDefi.weight = 0.4f;
       defiHidden = false;
       openCloseDefiButton.setText("Defibrillator >");
       // Show defi UI-elements.
       showHideDefiUiElements(true);
-/*      if (!settingsHidden) {
-        LinearLayout.LayoutParams loParamsSettings = (LinearLayout.LayoutParams) settingsLayout.getLayoutParams();
-        loParamsSettings.weight = 0.001f;
-        settingsHidden = true;
-        settingsLayout.setLayoutParams(loParamsSettings);
-        Button openCloseSettingsButton = (Button) this.findViewById(R.id.openCloseSettingsButton);
-        openCloseSettingsButton.setText("Settings >");
-      }*///TODO: remove
     } else {
-      loParamsDefi.weight = 0.001f;
       defiHidden = true;
       openCloseDefiButton.setText("< Defibrillator");
       // Hide defi UI-elements.
       showHideDefiUiElements(false);
     }
-    defiLayout.setLayoutParams(loParamsDefi);
+    //defiLayout.setLayoutParams(loParamsDefi);
   }
 
   /**
@@ -2379,7 +1942,8 @@ public class MonitorMainScreen extends Activity {
       defiEnergy = ((defiEnergy + 50 >= defiEnergyUpperBound)
           ? defiEnergyUpperBound : defiEnergy + 50);
     }
-    TextView energy = (TextView) this.findViewById(R.id.defiEnergy);
+    TextView energy = (TextView) defiFragment.returnView().findViewById(R.id
+        .defi_energy_textView);
     energy.setText(String.valueOf(defiEnergy) + " J");
   }
 
@@ -2394,7 +1958,8 @@ public class MonitorMainScreen extends Activity {
       defiEnergy = ((defiEnergy - 50 <= defiEnergyLowerBound)
           ? defiEnergyLowerBound : defiEnergy - 50);
     }
-    TextView energy = (TextView) this.findViewById(R.id.defiEnergy);
+    TextView energy = (TextView) defiFragment.returnView().findViewById(R.id
+        .defi_energy_textView);
     energy.setText(String.valueOf(defiEnergy) + " J");
   }
 
@@ -2468,7 +2033,7 @@ public class MonitorMainScreen extends Activity {
       public void run() {
         // TODO Auto-generated method stub
         ImageButton shockButton = (ImageButton)
-            findViewById(R.id.defiShockButton);
+            defiFragment.getView().findViewById(R.id.defiShockButton);
         if (defiCharged) {
           shockButton.setBackgroundResource(R.drawable.roundedbutton_green);
         } else {

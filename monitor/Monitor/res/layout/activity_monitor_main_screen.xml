@@ -541,7 +541,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:onClick="openCloseSettings"
+                android:onClick="openSettings"
                 android:text="@string/openCloseSettingsButtonTitle" />
 
             <Button

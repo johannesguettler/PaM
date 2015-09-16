@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="defi_layout_hight">410dp</dimen>
+    <dimen name="arrowSize">60dp</dimen>
+    <dimen name="arrowSizeSmall">35dp</dimen>
+</resources>
