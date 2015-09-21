@@ -23,7 +23,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -50,7 +49,7 @@ public class MonitorMainScreen extends Activity {
   // PRIVATE:
 
   private enum ControllerInfoType {
-    CHANGED_TO_DEFI_SCREEN, DEFI_FIRED
+    CHANGED_TO_DEFI_SCREEN, DEFI_ENERGY_CHANGE, DEFI_CLOSED, DEFI_FIRED
   }
   //FINAL MEMBERS:
   // private final boolean DEBUG = false;  // De(Activate) the debug-messages.
@@ -670,6 +669,7 @@ public class MonitorMainScreen extends Activity {
   private void showHideDefiUiElements(boolean show) {
     FragmentManager fragmentManager = getFragmentManager();
     if(show && (fragmentManager.findFragmentByTag("defiFragment") == null)) {
+      defiFragment.setEnergy(defiEnergy);
       fragmentManager.beginTransaction()
           .add(R.id.defi_fragment_container, defiFragment, "defiFragment")
           .commit();
@@ -713,11 +713,13 @@ public class MonitorMainScreen extends Activity {
       openCloseDefiButton.setText("Defibrillator >");
       // Show defi UI-elements.
       showHideDefiUiElements(true);
+      sendControllerInfo(ControllerInfoType.CHANGED_TO_DEFI_SCREEN);
     } else {
       defiHidden = true;
       openCloseDefiButton.setText("< Defibrillator");
       // Hide defi UI-elements.
       showHideDefiUiElements(false);
+      sendControllerInfo(ControllerInfoType.DEFI_CLOSED);
     }
     //defiLayout.setLayoutParams(loParamsDefi);
   }
@@ -1935,6 +1937,9 @@ public class MonitorMainScreen extends Activity {
    * Increase the energy of the defibrilator.
    */
   public void defiEnergyUp(View view) {
+    if (defiCharged || defiCharging) {
+      return;
+    }
     if (defiEnergy + 10 <= defiEnergyThr) {
       defiEnergy = ((defiEnergy + 10 == defiEnergyUpperBound)
           ? defiEnergyUpperBound : defiEnergy + 10);
@@ -1945,12 +1950,17 @@ public class MonitorMainScreen extends Activity {
     TextView energy = (TextView) defiFragment.returnView().findViewById(R.id
         .defi_energy_textView);
     energy.setText(String.valueOf(defiEnergy) + " J");
+    defiFragment.setEnergy(defiEnergy);
+    sendControllerInfo(ControllerInfoType.DEFI_ENERGY_CHANGE);
   }
 
   /**
    * Decrease the energy of the defibrilator.
    */
   public void defiEnergyDown(View view) {
+    if (defiCharged || defiCharging) {
+      return;
+    }
     if (defiEnergy - 10 <= defiEnergyThr) {
       defiEnergy = ((defiEnergy - 10 <= defiEnergyLowerBound)
           ? defiEnergyLowerBound : defiEnergy - 10);
@@ -1961,6 +1971,8 @@ public class MonitorMainScreen extends Activity {
     TextView energy = (TextView) defiFragment.returnView().findViewById(R.id
         .defi_energy_textView);
     energy.setText(String.valueOf(defiEnergy) + " J");
+    defiFragment.setEnergy(defiEnergy);
+    sendControllerInfo(ControllerInfoType.DEFI_ENERGY_CHANGE);
   }
 
   /**
@@ -2198,9 +2210,15 @@ public class MonitorMainScreen extends Activity {
         break;
       case CHANGED_TO_DEFI_SCREEN:
         key = "defi_open";
-
-infoObject.put(key, "opened");
+        infoObject.put(key, defiEnergy);
         break;
+      case DEFI_ENERGY_CHANGE:
+        key = "defi_energy_change";
+        infoObject.put(key, defiEnergy);
+        break;
+      case DEFI_CLOSED:
+        key = "defi_closed";
+        infoObject.put(key, "");
       default:
         return;
     }

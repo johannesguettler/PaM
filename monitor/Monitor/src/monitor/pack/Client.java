@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -104,6 +105,11 @@ class Client {
 			}
 		}
 		mSocket = socket;
+		try {
+			mSocket.setTcpNoDelay(true);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 	}
 
 		public Thread getConnectionThread() {
@@ -313,6 +319,7 @@ class Client {
 					mSocket.getOutputStream()));
 			writer.write(jsonString + "\n");
 			writer.flush();
+			Log.e("DEBUG Client", "Output Message: "+jsonString);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

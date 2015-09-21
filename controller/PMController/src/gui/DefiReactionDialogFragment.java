@@ -25,6 +25,11 @@ public class DefiReactionDialogFragment extends DialogFragment {
 
   // Use this instance of the interface to deliver action events
   DefiReactionDialogListener dialogListener;
+  // has to be a field to be editable after the dialog has shown up
+  private TextView dialogTitle = null;
+
+
+
   /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
@@ -64,7 +69,7 @@ public class DefiReactionDialogFragment extends DialogFragment {
     builder.setView(localView);
 
     //initialize Dialog Elements
-    TextView dialogTitle = (TextView) localView.findViewById(R.id
+    dialogTitle = (TextView) localView.findViewById(R.id
         .defi_reaction_dialog_title);
     heartRhythmSpinner = (Spinner) localView.findViewById(R.id
         .defi_reaction_heart_rate_spinner);
@@ -74,8 +79,7 @@ public class DefiReactionDialogFragment extends DialogFragment {
         .defi_reaction_positive_button);
 
     // set Element functions
-    dialogTitle.setText("Defibrillator opened.\nEnergy: " + energyString +
-        " Joule.\n" + "Reaction on shock?");
+    setDialogTitleEnergy(energy);
     ImageArrayAdapter heartRateImageArrayAdapter= new ImageArrayAdapter(getActivity(),
         new Integer[]{R.drawable.hr_sine,
             R.drawable.hr_absolute_arrhythmie,
@@ -111,5 +115,30 @@ public class DefiReactionDialogFragment extends DialogFragment {
   }
   public int getHeartRhythmSpinnerItemPosition() {
     return heartRhythmSpinner.getSelectedItemPosition();
+  }
+  public void changeEnergy(int newValue) {
+    setDialogTitleEnergy(newValue);
+  }
+  private void setDialogTitleEnergy(int energy){
+    getActivity().runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        dialogTitle.setText("Defibrillator opened.\nEnergy: " + Integer.toString
+            (energy) + " Joule.\n" + "Reaction on shock?");
+      }
+    });
+  }
+  public void defiFired(int energy) {
+
+    getActivity().runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        dialogTitle.setText("Defibrillator fired.\nEnergy: " + Integer.toString
+            (energy) + " Joule.\n" + "Reaction?");
+      }
+    });
+    /*dialogTitle.setText("Defibrillator fired.\nEnergy: " + Integer.toString
+        (energy) + " Joule.\n" + "Reaction?");*/
+
   }
 }

@@ -11,8 +11,16 @@ import android.net.nsd.NsdManager.RegistrationListener;
 import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import gui.MainActivity;
@@ -21,14 +29,15 @@ import gui.MainActivity;
  * <h1>Server (Server Socket)</h1>
  * Every Server holds a Server Thread and a CommunicationThread
  * to communicate over TCP and JSON with its out()-Method to a Monitor
- *
  */
 public class Server {
 
   private final MainActivity mainActivity;
   private ServerSocket serverSocket;
+  private ServerThread serverThreadInstance = null;
   private Thread serverThread = null;
-  private CommunicationThread commThread;
+
+  // private CommunicationThread commThread;
 
   // List of CommunicationThreads
   private ArrayList<CommunicationThread> commThreads = new ArrayList<CommunicationThread>();
@@ -69,18 +78,17 @@ public class Server {
   // -- End GETTER / SETTER --
 
   /**
-   *
    * Creates a Server object to set Service name of NSD Manager and starts the
    * Server Thread to register Service under the given Service name
    *
-   * @param serviceName
-   *            User input: Service Name was set by user before
+   * @param serviceName  User input: Service Name was set by user before
    * @param mainActivity
    */
   public Server(String serviceName, MainActivity mainActivity) {
     this.mainActivity = mainActivity;
     this.serviceName = serviceName;
-    this.serverThread = new Thread(new ServerThread(this));
+    this.serverThreadInstance = new ServerThread(this);
+    this.serverThread = new Thread(serverThreadInstance);
     this.serverThread.start();
   }
 
@@ -89,6 +97,11 @@ public class Server {
    */
   public void tearDownServer() {
     serverThread.interrupt();
+    for (CommunicationThread commThread: commThreads) {
+      commThread.exit();
+    }
+    commThreads.clear();
+
     try {
       serverSocket.close();
     } catch (IOException ioe) {
@@ -97,15 +110,15 @@ public class Server {
   }
 
   /**
-   *
    * Sends JSONstring to every Monitor over its socket connection
    * (CommunicationThread)
    *
-   * @param jsonString
-   *            JSON-String created by an event before sending
-   *
+   * @param jsonString JSON-String created by an event before sending
    */
   public void out(String jsonString) {
+    //TODO: new connection procedure
+    //serverThreadInstance.setOutputString(jsonString);
+
     for (CommunicationThread commThread : commThreads) {
       try {
         if (commThread == null) {
@@ -123,6 +136,7 @@ public class Server {
 
   /**
    * Forward incoming message from active monitor to main program
+   *
    * @param jSonString
    */
   public void in(String jSonString) {
@@ -136,17 +150,20 @@ public class Server {
    * Service via NSD Manager in its network Ever new Client connecting to
    * Server gets its own Thread to communicate with the Server Socket via
    * Socket connection
-   *
    */
   private class ServerThread implements Runnable {
     private final Server parentServer;
+    private String outputString = "";
+    private ArrayList<InetAddress> clientInetAdressList;
 
     public ServerThread(Server server) {
       super();
       this.parentServer = server;
+      clientInetAdressList = new ArrayList<>();
     }
 
     public void run() {
+      Socket socket = null;
       try {
         // Initialize a server socket on some available port
         serverSocket = new ServerSocket(0);
@@ -160,15 +177,78 @@ public class Server {
       Log.d(tagST, "Server running on port: " + getControllerPort());
 
       while (!Thread.currentThread().isInterrupted()) {
+        //TODO: new connection procedure
         try {
+          socket = serverSocket.accept();
+          // if unknown add client to list and start communication thread
+
+
+
+          InetAddress clientInetAdress = socket.getInetAddress();
+          if (!clientInetAdressList.contains(clientInetAdress)) {
+
+            CommunicationThread commThread = (new CommunicationThread
+                (socket, parentServer));
+            commThreads.add(commThread);
+            clientInetAdressList.add(clientInetAdress);
+            Log.e("DEBUG Server", "new client added: "+clientInetAdress+". " +
+                "number of comthreads: " + commThreads.size());
+            commThread.start();
+          } else {
+            setNewSocket(clientInetAdress, socket);
+          }
+
+          // begin incoming message
+          /*String inStr = "";
+          StringBuilder completeString =
+              new StringBuilder();
+
+          try {
+            InputStreamReader inputStreamReader = new InputStreamReader
+                (socket.getInputStream());
+            BufferedReader inMessage = new BufferedReader(inputStreamReader);
+
+            while (((inStr = inMessage.readLine()) !=
+                null)) {
+               completeString.append(inStr);
+              if (inStr.contains("}"))
+                break;
+            }
+            inStr = completeString.toString();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+          if (!inStr.isEmpty()) {
+            parentServer.in(inStr);
+            Log.e("DEBUG ServerThread", "incomimng message: " + inStr);
+          }*/
+          // end incoming message
+
+        } catch (IOException e) {
+          e.printStackTrace();
+        } /*finally {
+          if (socket != null){
+            try {
+              socket.close();
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          }
+        }*/
+
+        /*try {
           // starts Communication Thread for every new client
           // connecting to Server
-          commThread = (new CommunicationThread(serverSocket.accept(), parentServer));
+          CommunicationThread commThread = (new CommunicationThread
+              (serverSocket.accept(),
+              parentServer));
           Log.e(tagST, "Client connected");
-          commThreads.add(commThread);
-          Log.e("DEBUG Server", "new client added. number of comthreads: " +
-              ""+commThreads.size());
-          commThread.start();
+          if (commThreads.size() == 0) {
+            commThreads.add(commThread);
+            Log.e("DEBUG Server", "new client added. number of comthreads: " +
+                "" + commThreads.size());
+            commThread.start();
+          }
 
           Log.d(tagST, "Connection Handler started");
         } catch (IOException e1) {
@@ -177,8 +257,22 @@ public class Server {
         } catch (NullPointerException e2) {
           System.err.println("Caught NullPointerException: "
               + e2.getMessage());
+        }*/
+      }
+    }
+
+    private void setNewSocket(InetAddress clientInetAdress, Socket socket) {
+      for (CommunicationThread communicationThread:commThreads) {
+        if (communicationThread.getSocket().getInetAddress().equals
+            (clientInetAdress)) {
+          communicationThread.setSocket(socket);
+          break;
         }
       }
+    }
+
+    public void setOutputString(String outputString) {
+      this.outputString = outputString;
     }
   }
 

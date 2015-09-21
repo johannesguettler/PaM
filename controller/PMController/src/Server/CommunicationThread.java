@@ -45,8 +45,9 @@ class CommunicationThread extends Thread {
   private final Object lockDiscovery = new Object();
   private int clientPort = 0;
   private InetAddress clientIp;
+	private boolean exitThread;
 
-  // -- GETTER / SETTER --
+	// -- GETTER / SETTER --
 
 	public Socket getSocket() {
 		return socket;
@@ -82,6 +83,8 @@ class CommunicationThread extends Thread {
 	CommunicationThread(Socket socket, Server server) {
 		this.socket = socket;
     this.server = server;
+		clientPort = socket.getPort();
+		clientIp = socket.getInetAddress();
 /*		this.discoverThread = new Thread(new DiscoveryThread());
 		this.discoverThread.start();
     this.doNotifyOnDiscovery();*/
@@ -145,13 +148,16 @@ class CommunicationThread extends Thread {
         Log.e("DEBUG CommThread.run", "Unknown Host");
       }
     }
+		if(exitThread) {
+			this.interrupt();
+		}
   }
   /**
    * Sets socket after a socket connection was established
    * closes socket if a socket exists before and creates a new one
    * @param socket Established socket connection to Controller
    */
-  private synchronized void setSocket(Socket socket) {
+  public synchronized void setSocket(Socket socket) {
 
     if (socket == null) {
 
@@ -181,6 +187,8 @@ class CommunicationThread extends Thread {
 
 			while ((inStr = inMessage.readLine()) != null) {
 				completeString.append(inStr);
+				if (inStr.contains("}"))
+					break;
 			}
 /*      dataInputStream = new DataInputStream(
           socket.getInputStream());
@@ -216,6 +224,10 @@ class CommunicationThread extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void exit() {
+		exitThread = true;
 	}
 
 

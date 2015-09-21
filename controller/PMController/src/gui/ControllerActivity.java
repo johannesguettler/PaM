@@ -147,6 +147,13 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
   List<Event> eventList_scenario = null;
   List<Event> eventList_protocoll = null;
   ScenarioHelper scenarioHelper = null;
+  private DefiReactionDialogFragment reactionDialog;
+
+  // fields to handle defi
+  private boolean defiOpen = false;
+  private boolean onShockReactionSet = false;
+  private int onShockHeartrateSpinnerPosition;
+  private boolean shockFiredBeforeReaction = false;
 
 
   /*
@@ -1112,12 +1119,10 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
 
   public void handleMonitorEvent(JSONObject inObject) {
 
-    if (inObject.has("defi_shock")) {
-
-      DefiReactionDialogFragment reactionDialog = new
-          DefiReactionDialogFragment();
+    if (inObject.has("defi_open")) {
+      reactionDialog = new DefiReactionDialogFragment();
       try {
-        int power = inObject.getInt("defi_shock");
+        int power = inObject.getInt("defi_open");
         Bundle args = new Bundle();
         args.putInt("energy", power);
         reactionDialog.setArguments(args);
@@ -1125,48 +1130,60 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
         e.printStackTrace();
       }
       reactionDialog.show(getSupportFragmentManager(), "DefiReactionDialogFragment");
-    }
-    /*try {
-      if (inObject.has("defi_shock")) {
-        int power = inObject.getInt("defi_shock");
-
-        Log.e("DEBUG handle defi", "defi fired with energy: " + power);
-
-        View defiReactionPopupView = getLayoutInflater().inflate(R.layout
-            .defibrillation_reaction_popup, null);
-        final PopupWindow popupWindow = new PopupWindow
-            (defiReactionPopupView, ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        Button btnDismiss = (Button) defiReactionPopupView.findViewById(R.id.dismiss);
-        View parentView = findViewById(R.id.background_view).getRootView();
-        ViewGroup viewGroup = (ViewGroup) findViewById(R.id.background_view);
-
-
-
-        btnDismiss.setOnClickListener(new Button.OnClickListener() {
-
-          @Override
-          public void onClick(View v) {
-            // TODO Auto-generated method stub
-            popupWindow.dismiss();
-          }
-        });
-
-        new PopupThread(this).run();
-
+    } else if (inObject.has("defi_energy_change") && reactionDialog != null){
+      try {
+        reactionDialog.changeEnergy(inObject.getInt("defi_energy_change"));
+      } catch (JSONException e) {
+        e.printStackTrace();
       }
-    } catch (JSONException e) {
-      e.printStackTrace();
+    } else if (inObject.has("defi_shock")) {
+      if (onShockReactionSet){
+        applyShockReaction();
+      } else {
+        shockFiredBeforeReaction = true;
+      }
+      if (reactionDialog != null) {
+        try {
+          reactionDialog.defiFired(inObject.getInt("defi_shock"));
 
-    }*/
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+      }
 
+      //TODO: set heartrhythm to new
+    } else if (inObject.has("defi_closed") && reactionDialog != null){
+      reactionDialog.dismiss();
+      reactionDialog = null;
+      onShockReactionSet = false;
+      shockFiredBeforeReaction = false;
+      //TODO: dismiss on-shock-reaction?
+    }
+  }
+
+  private void applyShockReaction() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        spinner_heart_rate.setSelection(onShockHeartrateSpinnerPosition);
+      }
+    });
+    //spinner_heart_rate.setSelection(onShockHeartrateSpinnerPosition);
+    apply_button.callOnClick();
+    onShockReactionSet = false;
+    shockFiredBeforeReaction = false;
   }
 
   @Override
   public void onDefiReactionDialogPositiveClick(DefiReactionDialogFragment dialog) {
     int heartRateSpinnerPosition = dialog.getHeartRhythmSpinnerItemPosition();
-    spinner_heart_rate.setSelection(heartRateSpinnerPosition);
-    apply_button.callOnClick();
+    onShockHeartrateSpinnerPosition = heartRateSpinnerPosition;
+    if(shockFiredBeforeReaction) {
+      applyShockReaction();
+    } else {
+      onShockReactionSet = true;
+    }
+
   }
 
   @Override
