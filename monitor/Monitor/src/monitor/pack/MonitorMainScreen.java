@@ -49,7 +49,7 @@ public class MonitorMainScreen extends Activity {
   // PRIVATE:
 
   private enum ControllerInfoType {
-    CHANGED_TO_DEFI_SCREEN, DEFI_ENERGY_CHANGE, DEFI_CLOSED, DEFI_FIRED
+    CHANGED_TO_DEFI_SCREEN, DEFI_ENERGY_CHANGE, DEFI_CLOSED, DEFI_CHARGING, DEFI_DISCHARGED, DEFI_FIRED
   }
   //FINAL MEMBERS:
   // private final boolean DEBUG = false;  // De(Activate) the debug-messages.
@@ -693,7 +693,7 @@ public class MonitorMainScreen extends Activity {
    * Opens the settings-view via its weight-factor.
    *
    */
-  public void openSettings() {
+  public void openSettings(View view) {
     // new: settingsActivity
     startActivity(new Intent(this, SettingsActivity.class).putExtra
         (PreferenceActivity.EXTRA_SHOW_FRAGMENT_TITLE, true));
@@ -1983,6 +1983,7 @@ public class MonitorMainScreen extends Activity {
       soundHandler.playDefiCharge(this.getBaseContext());
       handler = new Handler();
       defiCharging = true;
+      sendControllerInfo(ControllerInfoType.DEFI_CHARGING);
       handler.postDelayed(new Runnable() {
 
         @Override
@@ -2034,6 +2035,7 @@ public class MonitorMainScreen extends Activity {
     defiCharging = false;
     changeShockButton();
     soundHandler.stopDefiReady(getBaseContext());
+    sendControllerInfo(ControllerInfoType.DEFI_DISCHARGED);
   }
 
   /**
@@ -2219,6 +2221,15 @@ public class MonitorMainScreen extends Activity {
       case DEFI_CLOSED:
         key = "defi_closed";
         infoObject.put(key, "");
+        break;
+      case DEFI_CHARGING:
+        key = "defi_charging";
+        infoObject.put(key, defiEnergy);
+        break;
+      case DEFI_DISCHARGED:
+        key = "defi_discharged";
+        infoObject.put(key, "");
+        break;
       default:
         return;
     }

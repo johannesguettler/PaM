@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center_vertical|center_horizontal">
+
+    <LinearLayout
+        android:layout_width="550sp"
+        android:layout_height="250sp"
+        android:background="@android:drawable/alert_light_frame"
+        android:orientation="vertical"
+        android:gravity="bottom">
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/protocol_flag_crm_dialog_title"
+                android:textSize="@dimen/text_size_30sp"
+                android:layout_gravity="center"
+                android:textColor="@color/background_color"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/protocol_flag_crm_dialog_radio_group"
+                android:background="@color/gray">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_button_communication_text"
+                    android:id="@+id/radio_button_communication"
+                    android:textColor="@color/background_color"
+                    android:enabled="false"
+                    />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_button_team_text"
+                    android:id="@+id/radio_button_team"
+                    android:textColor="@color/background_color"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_button_organisation_text"
+                    android:id="@+id/radio_button_organisation"
+                    android:textColor="@color/background_color"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_button_other_text"
+                    android:id="@+id/radio_button_other"
+                    android:textColor="@color/background_color"/>
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/protocol_flag_crm_edit_text"
+                android:layout_weight="1"
+                style="@style/box_text_style"
+                android:textColor="@color/background_color"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="bottom">
+
+            <Button
+                android:id="@+id/protocol_flag_crm_negative_button"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/space"
+                android:layout_alignLeft="@+id/heart_rate_spinner"
+                android:layout_alignParentLeft="true"
+                android:layout_column="19"
+                android:layout_gravity="left|bottom"
+                android:layout_marginLeft="50dp"
+                android:layout_row="11"
+                android:text="@string/defi_reaction_negative_button_text"/>
+
+            <Button
+                android:id="@+id/protocol_flag_crm_positive_button"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/space"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_column="20"
+                android:layout_gravity="bottom|right"
+                android:layout_marginRight="50dp"
+                android:layout_row="11"
+                android:singleLine="false"
+                android:text="@string/defi_reaction_positive_button_text"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</LinearLayout>

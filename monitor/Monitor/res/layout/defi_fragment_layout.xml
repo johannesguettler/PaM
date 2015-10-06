@@ -99,8 +99,8 @@
 
             <Button
                 android:id="@+id/defiChargeButton"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_width="200sp"
+                android:layout_height="80sp"
 
 
                 android:background="@drawable/yellow_button"
@@ -108,11 +108,15 @@
 
                 android:onClick="defiCharge"
                 android:text="@string/defiChargeText"
-                android:layout_centerVertical="true"/>
+                android:layout_marginRight="41dp"
+                android:layout_marginEnd="41dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="false"
+                />
             <Button
                 android:id="@+id/defiDischargeButton"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_width="200sp"
+                android:layout_height="80sp"
 
 
                 android:background="@drawable/blue_button"
@@ -120,10 +124,10 @@
 
                 android:onClick="defiDischarge"
                 android:text="@string/defiDischargeText"
-                android:layout_below="@+id/defiChargeButton"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"/>
+                android:layout_centerVertical="true"
+                android:layout_alignLeft="@+id/defiChargeButton"
+                android:layout_alignStart="@+id/defiChargeButton"
+                />
         </RelativeLayout>
     </RelativeLayout>
 

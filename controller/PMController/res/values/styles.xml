@@ -63,8 +63,8 @@
   
    <!-- The style of the flag button -->
    <style name="flag_button" >
-    <item name="android:layout_width" >fill_parent</item>
-    <item name="android:layout_height" >wrap_content</item>
+    <item name="android:layout_width" >wrap_content</item>
+    <item name="android:layout_height" >45sp</item>
     <item name="android:textColor" >#ffffff</item>
     <item name="android:gravity" >center</item>
     <item name="android:layout_marginLeft" >10dp</item>
@@ -156,6 +156,13 @@
     <item name="android:textSize" >@dimen/medium_text_size</item>
     <item name="android:textColor" >@color/slider_text_color</item>
   </style>
+    <style name="edit_text_style" >
+        <item name="android:layout_width" >wrap_content</item>
+        <item name="android:layout_height" >match_parent</item>
+        <item name="android:layout_marginRight" >20sp</item>
+        <item name="android:textSize" >@dimen/medium_text_size</item>
+        <item name="android:textColor" >@color/background_color</item>
+    </style>
    
    
    

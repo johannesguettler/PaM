@@ -243,6 +243,7 @@ public void changeColor(String key, String value) {
       localMonitorMainScreen.getGlActivity().SetColor(GLRenderer.LineType
               .Background, 255, 255,
           255);
+
     } else {
       color = Color.WHITE;
       defiEnergyColor = Color.BLACK;
@@ -251,6 +252,8 @@ public void changeColor(String key, String value) {
       localMonitorMainScreen.getGlActivity().SetColor(GLRenderer.LineType
           .Background, 0, 0, 0); //TODO change to zero
     }
+    //check if lines have another color than the background
+    checkLineColorVisibility(value, localMonitorMainScreen);
     // Set the new color in all relevant layout-elements.
     ekgParamLayout.setBackgroundResource(drawable);
     ibpParamLayout.setBackgroundResource(drawable);
@@ -274,6 +277,22 @@ public void changeColor(String key, String value) {
     defiTitletextView.setTextColor(color);
     defiEnergy.setBackgroundColor(color);
     defiEnergy.setTextColor(defiEnergyColor);
+  }
+
+  private static void checkLineColorVisibility(String value, MonitorMainScreen
+      localMonitorMainScreen) {
+    /*SharedPreferences sharedPreferences = PreferenceManager
+        .getDefaultSharedPreferences(localMonitorMainScreen);
+    String newValue = (value.equals("white"))? "black": "grey";
+    String key = localMonitorMainScreen.getString(R.string
+        .key_ecg_color);
+    Log.e("DEBUG SettingsFragment", "check line color after backgroud " +
+        "change: back-value: "+value+"; line value:"+sharedPreferences
+        .getString(key, "FAIL")+"; new value: "+newValue );
+    if (sharedPreferences.getString(key, "").equals(value)) {
+      changeLineColor(localMonitorMainScreen, localMonitorMainScreen
+          .getGlActivity(), localMonitorMainScreen.getResources(), key, value);
+    }*/
   }
 
   public static int getColorIdFromValue(String value) {

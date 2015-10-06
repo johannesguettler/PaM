@@ -27,6 +27,8 @@ public class DefiReactionDialogFragment extends DialogFragment {
   DefiReactionDialogListener dialogListener;
   // has to be a field to be editable after the dialog has shown up
   private TextView dialogTitle = null;
+  private String dialogTitleFirstLine = "";
+  private String dialogTitleLastLine = "";
 
 
 
@@ -79,7 +81,11 @@ public class DefiReactionDialogFragment extends DialogFragment {
         .defi_reaction_positive_button);
 
     // set Element functions
-    setDialogTitleEnergy(energy);
+    String openOrCharge = getArguments().getString("eventType", "open");
+    openOrCharge = openOrCharge.equals("open")? "opened": "charging";
+    dialogTitleFirstLine = "Defibrillator "+openOrCharge+".";
+    dialogTitleLastLine = "Reaction on shock?";
+    setDialogTitle(energy);
     ImageArrayAdapter heartRateImageArrayAdapter= new ImageArrayAdapter(getActivity(),
         new Integer[]{R.drawable.hr_sine,
             R.drawable.hr_absolute_arrhythmie,
@@ -117,28 +123,26 @@ public class DefiReactionDialogFragment extends DialogFragment {
     return heartRhythmSpinner.getSelectedItemPosition();
   }
   public void changeEnergy(int newValue) {
-    setDialogTitleEnergy(newValue);
+    setDialogTitle(newValue);
   }
-  private void setDialogTitleEnergy(int energy){
+  private void setDialogTitle(int energy){
     getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        dialogTitle.setText("Defibrillator opened.\nEnergy: " + Integer.toString
-            (energy) + " Joule.\n" + "Reaction on shock?");
+        dialogTitle.setText(dialogTitleFirstLine + "\nEnergy: " + Integer
+            .toString(energy) + " Joule.\n" + dialogTitleLastLine);
       }
     });
   }
   public void defiFired(int energy) {
-
-    getActivity().runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        dialogTitle.setText("Defibrillator fired.\nEnergy: " + Integer.toString
-            (energy) + " Joule.\n" + "Reaction?");
-      }
-    });
-    /*dialogTitle.setText("Defibrillator fired.\nEnergy: " + Integer.toString
-        (energy) + " Joule.\n" + "Reaction?");*/
-
+    dialogTitleFirstLine = "Defibrillator fired.";
+    dialogTitleLastLine = "Reaction?";
+    setDialogTitle(energy);
   }
+  public void defiLoading(int energy) {
+    dialogTitleFirstLine = "Defibrillator loading.";
+    dialogTitleLastLine = "Reaction on shock?";
+    setDialogTitle(energy);
+  }
+
 }

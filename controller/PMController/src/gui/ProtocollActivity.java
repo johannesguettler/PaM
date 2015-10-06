@@ -23,14 +23,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.pmcontroller1.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Scenario.Event;
@@ -113,8 +116,9 @@ public class ProtocollActivity extends Activity {
       }
     });
 
+    //TODO(Jo): remove (new protocol format)
     // Set the on item click listener for the event list.
-    listViewEvents = (ListView) findViewById(R.id.listViewEvents);
+    /*listViewEvents = (ListView) findViewById(R.id.listViewEvents);
     listViewEvents.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapter, View v,
@@ -123,7 +127,7 @@ public class ProtocollActivity extends Activity {
         currentPositionEvent = position;
         currentEvent = chosenEvent;
       }
-    });
+    });*/
   }
 
   /*
@@ -231,12 +235,18 @@ public class ProtocollActivity extends Activity {
    * @author Johannes
    */
   public void readEventsToList(Scenario chosenScenario) {
-    // Get the events from the chosen scenario.
+    /*// Get the events from the chosen scenario.
     Event[] eventList = (Event[]) chosenScenario.getEventList().toArray(new Event[0]);
     eventAdapter = new EventAdapter(this, R.layout.event_item, eventList);
     ListView listViewEvents = (ListView) findViewById(R.id.listViewEvents);
     listViewEvents.setAdapter(eventAdapter);
-    currentPositionEvent = 0;
+    currentPositionEvent = 0;*/
+    List<Event> eventList = chosenScenario.getEventList();
+    ProtocolView protocolView = new ProtocolView(this, 30, eventList);
+
+    LinearLayout test = (LinearLayout) findViewById(R.id
+        .protocol_container_linear_layout);
+    test.addView(protocolView);
   }
 
   /**

@@ -287,11 +287,11 @@
                 android:layout_gravity="center"
 		        android:background="@drawable/border_box"
                 android:orientation="vertical" >
-	                
+
 		        <TextView
 		            style="@style/box_text_style"
 		            android:text="@string/protocoll_box_text"/>
-	
+
 	            <TextView
 	                android:id="@+id/timer_text_view"
 	                android:layout_width="wrap_content"
@@ -301,7 +301,7 @@
 	                android:text="@string/timer_init_text"
 	                android:textColor="@color/slider_text_color"
 	                android:textSize="@dimen/large_text_size" />
-	
+
 	            <!-- The Timer Start Stop Button -->
 	            <LinearLayout
 	                android:layout_width="fill_parent"
@@ -328,39 +328,127 @@
 	                    android:text="@string/reset_timer_button" />
 	            </LinearLayout>
 
-	            <Button
-	                android:id="@+id/flag_button"
-	                style="@style/flag_button"
-	                android:background="@drawable/red_button"
-	                android:drawableLeft="@drawable/ic_action_flag"
-	                android:onClick="flagPressed"
-	                android:text="@string/flag_button" />
+                 <Button
+                     style="@style/reset_button"
+                     android:id="@+id/protocol_screen_button"
+                     android:background="@drawable/timer_button"
+                     android:onClick="changeToProtocol"
+                     android:text="@string/change_to_protocoll_screen_button_text"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"/>
+
+             </LinearLayout>
+
+
+
+            <!-- The Attached checkboxes -->
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_box"
+                >
+
+                <TextView
+                    style="@style/box_text_style"
+                    android:text="@string/flags_box_text"
+                    android:id="@+id/textView"
+                    />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/flag_button_AB_positive"
+                        style="@style/flag_button"
+                        android:background="@drawable/green_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_AB_text"/>
+
+                    <Button
+                        style="@style/flag_button"
+                        android:id="@+id/flag_button_AB_negative"
+                        android:background="@drawable/red_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_AB_text"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        style="@style/flag_button"
+                        android:id="@+id/flag_button_C_positive"
+                        android:background="@drawable/green_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_C_text"/>
+
+                    <Button
+                        style="@style/flag_button"
+                        android:id="@+id/flag_button_C_negative"
+                        android:background="@drawable/red_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_C_text"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        style="@style/flag_button"
+                        android:id="@+id/flag_button_DE_positive"
+                        android:background="@drawable/green_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_DE_text"/>
+
+                    <Button
+                        style="@style/flag_button"
+                        android:id="@+id/flag_button_DE_negative"
+                        android:background="@drawable/red_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_DE_text"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_box">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <Button
+                        style="@style/flag_button"
+                        android:id="@+id/flag_button_CRM_positive"
+                        android:background="@drawable/green_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_CRM_text"
+                        android:layout_marginTop="10dp"/>
+
+                    <Button
+                        style="@style/flag_button"
+                        android:id="@+id/flag_button_CRM_negative"
+                        android:background="@drawable/red_button"
+                        android:onClick="flagPressed"
+                        android:text="@string/flag_button_CRM_text"
+                        android:layout_marginTop="10dp"/>
+                </LinearLayout>
 
             </LinearLayout>
-		            
-            <!-- The Add Scenario Button -->
-		    <LinearLayout
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:background="@drawable/border_box"
-		        android:orientation="vertical" >
-		
-		        <TextView
-		            style="@style/box_text_style"
-		            android:text="@string/scenario_box_text"/>
-	            
-	            <Button
-	                android:id="@+id/scenario_button"
-	                style="@style/scenario_button"
-	                android:background="@drawable/yellow_button"
-	                android:drawableLeft="@drawable/ic_action_new"
-	                android:onClick="startStopScenario"
-	                android:text="@string/scenario_start_button" />
-	            
-            </LinearLayout>
-            
-		    <!-- The Attached checkboxes -->
-		  	<LinearLayout
+
+            <LinearLayout
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 			    android:orientation="vertical" >
@@ -368,7 +456,7 @@
 		        <TextView
 		            style="@style/box_text_style"
 		            android:text="@string/attachments_box_text"/>
-		        
+
 	            <CheckBox
 	                android:id="@+id/cuff_checkBox"
 	                android:layout_width="wrap_content"
@@ -376,8 +464,9 @@
 	                android:layout_gravity="left"
 	                android:onClick="sliderButtonClicked"
 	                android:text="@string/cuff_checkBox" />
-	            
+
         	</LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 

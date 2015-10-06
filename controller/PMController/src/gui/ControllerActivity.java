@@ -13,17 +13,13 @@ package gui;
 // Import stuff goes here
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
@@ -32,7 +28,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -41,7 +36,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -67,9 +61,13 @@ import Scenario.ScenarioHelper;
  * Controller Class that handles every user interaction like button presses or slider changes
  * Displaying all values correct
  */
-public class ControllerActivity extends FragmentActivity implements DefiReactionDialogFragment.DefiReactionDialogListener{
+public class ControllerActivity extends FragmentActivity implements
+    DefiReactionDialogFragment.DefiReactionDialogListener,
+    ProtocolFlagCrmDialogFragment.ProtocolFlagCrmDialogListener{
   // Debug mode shows debug messages all over the application
   private static final boolean DEBUG = false;
+
+  private UpdateHandler updateHandler;
 
   // Set this to true if you want to shortly show which patterns are set
   private static final boolean SHOW_PATTERN_TOAST = false;
@@ -120,8 +118,8 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
 
   // Integer values holding the SEEKBAR value (range 0 to maxvalue - minvalue .. e.g. heart rate range (20-250) -> heart rate value (0-230))
   // To get the correct value, add the minimum value
-  private Integer scheduler_value, heart_rate_value, o2_rate_value, co2_rate_value, blood_pressure_systolic_value,
-      blood_pressure_diastolic_value, raspiration_rate_value = 0;
+  private Integer scheduler_value, heartRateValue, o2RateValue, co2RateValue, bloodPressureSystolicValue,
+      bloodPressureDiastolicValue, respirationRateValue = 0;
 
   // If health information should be visible at the monitor
   private boolean heart_rate_value_active, o2_rate_value_active, co2_rate_value_active, blood_pressure_value_active, cuff_active,
@@ -154,7 +152,15 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
   private boolean onShockReactionSet = false;
   private int onShockHeartrateSpinnerPosition;
   private boolean shockFiredBeforeReaction = false;
+  private boolean reactionDialogIsShown;
 
+
+  //enum for different protocol flags
+  public enum Flag {
+    A_B_POS, A_B_NEG, C_POS, C_NEG, D_E_POS, D_E_NEG, CRM_COMM_POS, CRM_COMM_NEG,
+    CRM_TEAM_POS, CRM_TEAM_NEG, CRM_ORG_POS, CRM_ORG_NEG, CRM_OTHER_POS,
+    CRM_OTHER_NEG
+  }
 
   /*
    * (non-Javadoc)
@@ -168,9 +174,10 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     // Overlay action bar and content, so that the content does not get shrinked if the action bar is visible
     this.getWindow();
     requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE); // TODO: hide
+    // action bar
     // Set up the actionbar correct
-    setupActionBar();
+    //setupActionBar();
 
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -178,19 +185,19 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     setContentView(R.layout.activity_controller);
 
     // Make the statusbar disappear after initial delay
-    delayedHide(AUTO_HIDE_DELAY_MILLIS);
+    //delayedHide(AUTO_HIDE_DELAY_MILLIS);
 
     // Set up the back view for onclicklistener
     final View backView = findViewById(R.id.background_view);
     // If the background is clicked, the status bar should appear
-    backView.setOnClickListener(new View.OnClickListener() {
+/*    backView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         getActionBar().show();
         // Hide it again after delay if not yet scheduled
         if (!WILL_HIDE) delayedHide(AUTO_HIDE_DELAY_MILLIS);
       }
-    });
+    });*/
 
     // register Activity in MainActivity (used for incoming communication)
     MainActivity.setControllerActivity(this);
@@ -213,6 +220,7 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
 
     // Open scenario data base
     scenarioHelper = new ScenarioHelper(getBaseContext());
+    updateHandler = new UpdateHandler(this);
   }
 
 
@@ -225,6 +233,7 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
   public void onDestroy() {
     if (DEBUG)
       Toast.makeText(getApplicationContext(), "Closed Controller Activity", Toast.LENGTH_SHORT).show();
+    updateHandler.onDestroy();
     super.onDestroy();
   }
 
@@ -392,13 +401,13 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
    */
   public void applyPressed(View view) {
     // Store current slider values
-    blood_pressure_systolic_value = Integer.valueOf
+    bloodPressureSystolicValue = Integer.valueOf
         (blood_pressure_systolic_slider.getProgress());
-    blood_pressure_diastolic_value = Integer.valueOf(blood_pressure_diastolic_slider.getProgress());
-    heart_rate_value = Integer.valueOf(heart_rate_slider.getProgress());
-    o2_rate_value = Integer.valueOf(o2_rate_slider.getProgress());
-    co2_rate_value = Integer.valueOf(co2_rate_slider.getProgress());
-    raspiration_rate_value = Integer.valueOf(raspiration_rate_slider.getProgress());
+    bloodPressureDiastolicValue = Integer.valueOf(blood_pressure_diastolic_slider.getProgress());
+    heartRateValue = Integer.valueOf(heart_rate_slider.getProgress());
+    o2RateValue = Integer.valueOf(o2_rate_slider.getProgress());
+    co2RateValue = Integer.valueOf(co2_rate_slider.getProgress());
+    respirationRateValue = Integer.valueOf(raspiration_rate_slider.getProgress());
     scheduler_value = Integer.valueOf(scheduler_slider.getProgress());
 
     // Store current patterns
@@ -444,20 +453,20 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
                 /* Scheduler value */
         scheduler_value + getResources().getInteger(R.integer.min_scheduler_slider),
                 /* Heart rate value and pattern */
-        heart_rate_value + getResources().getInteger(R.integer.min_heart_rate_slider),
+        heartRateValue + getResources().getInteger(R.integer.min_heart_rate_slider),
         Scenario.intToHeartPattern(heart_rate_pattern),
                 /* Blood pressure systolic, diastolic and pattern */
-        blood_pressure_systolic_value + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider),
-        blood_pressure_diastolic_value + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider),
+        bloodPressureSystolicValue + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider),
+        bloodPressureDiastolicValue + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider),
         Scenario.intToBpPattern(blood_pressure_pattern),
                 /* Oxygen value and pattern */
-        o2_rate_value + getResources().getInteger(R.integer.min_o2_rate_slider),
+        o2RateValue + getResources().getInteger(R.integer.min_o2_rate_slider),
         Scenario.intToO2Pattern(o2_rate_pattern),
                 /* Raspiration value and pattern */
-        raspiration_rate_value + getResources().getInteger(R.integer.min_raspiration_rate_slider),
+        respirationRateValue + getResources().getInteger(R.integer.min_raspiration_rate_slider),
         Scenario.intToRespPattern(raspiration_rate_pattern),
                 /* CO2 value */
-        co2_rate_value + getResources().getInteger(R.integer.min_co2_rate_slider),
+        co2RateValue + getResources().getInteger(R.integer.min_co2_rate_slider),
         Scenario.intToCarbPattern(co2_rate_pattern),
                 /* Timestamp */
         timer,
@@ -492,7 +501,7 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     }
 
     // Display toasti
-    if (DEBUG) {
+    /*if (DEBUG) {
       new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
           .setTitle("(DEBUG) Event generated:")
           .setMessage("Date: " + hours + ":" + minutes + ":" + seconds
@@ -503,13 +512,15 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
               // Get the typed name
             }
           }).show();
-    }
+    }*/
 
 
     // Send to Server if it was not just a flag
     if (!flag) {
       if (MainActivity.server != null) {
-        MainActivity.server.out(event.toJson().toString());
+        // set new values in the update handler
+        updateHandler.handleEvent(event);
+        /*MainActivity.server.out(event.toJson().toString());*/
       } else {
         if (MainActivity.CHECK_WIFI) {
           // Show connection alert
@@ -538,16 +549,16 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
       toast.show();
     }
     // Revert the slider values to their last applied position
-    blood_pressure_systolic_slider.setProgress(blood_pressure_systolic_value.intValue());
-    blood_pressure_diastolic_slider.setProgress(blood_pressure_diastolic_value.intValue());
+    blood_pressure_systolic_slider.setProgress(bloodPressureSystolicValue.intValue());
+    blood_pressure_diastolic_slider.setProgress(bloodPressureDiastolicValue.intValue());
     // Again the value of the systolic slider because the constraints of the slider maximum and minimum values
     // not calling this again causes dependency problems if the systolic slider needs to be setted to a lower
     // value than the current value of the diastolic slider
-    blood_pressure_systolic_slider.setProgress(blood_pressure_systolic_value.intValue());
-    heart_rate_slider.setProgress(heart_rate_value.intValue());
-    o2_rate_slider.setProgress(o2_rate_value);
-    co2_rate_slider.setProgress(co2_rate_value);
-    raspiration_rate_slider.setProgress(raspiration_rate_value);
+    blood_pressure_systolic_slider.setProgress(bloodPressureSystolicValue.intValue());
+    heart_rate_slider.setProgress(heartRateValue.intValue());
+    o2_rate_slider.setProgress(o2RateValue);
+    co2_rate_slider.setProgress(co2RateValue);
+    raspiration_rate_slider.setProgress(respirationRateValue);
     scheduler_slider.setProgress(scheduler_value);
 
     // Revert the spinner patterns to their last applied position
@@ -700,10 +711,10 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
         toast.show();
       }
       // Change button appearance to be orange and display stop message
-      scenario_button.setBackground(getResources().getDrawable(R.drawable.orange_button));
+      /*scenario_button.setBackground(getResources().getDrawable(R.drawable.orange_button));
       scenario_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_save, 0, 0, 0);
       scenario_button.setText(getResources().getString(R.string.scenario_stop_button));
-
+*/
       // start Scenario
       eventList_scenario = new ArrayList<Event>();
 
@@ -712,9 +723,9 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
       new_scenario = false;
 
       // Change button appearance to be yellow and display new scenario message
-      scenario_button.setText(getResources().getString(R.string.scenario_start_button));
+      /*scenario_button.setText(getResources().getString(R.string.scenario_start_button));
       scenario_button.setBackground(getResources().getDrawable(R.drawable.yellow_button));
-      scenario_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_new, 0, 0, 0);
+      scenario_button.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_new, 0, 0, 0);*/
 
       // Open an alert dialog where the name of the scenario should be entered
       final EditText input = new EditText(this);
@@ -835,7 +846,7 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
    *  Called when the user clicks the Flag button
    */
   public void flagPressed(View view) {
-    // Show toasti
+    /*// Show toasti
     if (DEBUG) {
       Toast toast = Toast.makeText(this, "Flag pressed", Toast.LENGTH_SHORT);
       toast.setGravity(Gravity.CENTER, toast.getXOffset() / 2, toast.getYOffset() / 2);
@@ -843,7 +854,88 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     }
 
     // Create an event to show the flag without sending the event
-    createAndSendEvent(0, true);
+    createAndSendEvent(0, true);*/
+    Flag flagType;
+    switch (view.getId()) {
+      case R.id.flag_button_AB_positive:
+        flagType = Flag.A_B_POS;
+        break;
+      case R.id.flag_button_AB_negative:
+        flagType = Flag.A_B_NEG;
+        break;
+      case R.id.flag_button_C_positive:
+        flagType = Flag.C_POS;
+        break;
+      case R.id.flag_button_C_negative:
+        flagType = Flag.C_NEG;
+        break;
+      case R.id.flag_button_DE_positive:
+        flagType = Flag.D_E_POS;
+        break;
+      case R.id.flag_button_DE_negative:
+        flagType = Flag.D_E_NEG;
+        break;
+      case R.id.flag_button_CRM_positive:
+        openProtocolCrmFlagDialog(true);
+        return;
+      case R.id.flag_button_CRM_negative:
+        openProtocolCrmFlagDialog(false);
+        return;
+      default:
+        return;
+    }
+    setFlag(flagType);
+  }
+  private void openProtocolCrmFlagDialog(boolean isPositiveRating){
+    ProtocolFlagCrmDialogFragment crmDialog = new
+        ProtocolFlagCrmDialogFragment();
+    Bundle args = new Bundle();
+    args.putBoolean("positiveRating", isPositiveRating);
+    crmDialog.setArguments(args);
+    crmDialog.show(getSupportFragmentManager(), "Open CRM-Flag DialogFragment");
+  }
+  @Override
+  public void onProtocolFlagCrmDialogPositiveClick(ProtocolFlagCrmDialogFragment dialog) {
+    Flag flagType;
+    boolean isPositiveRating = dialog.isPositiveRating();
+    switch(dialog.getRadioGroupSelectetButtonId()) {
+      case R.id.radio_button_communication:
+        if (isPositiveRating) {
+          flagType = Flag.CRM_COMM_POS;
+        } else {
+          flagType = Flag.CRM_COMM_NEG;
+        }
+        break;
+      case R.id.radio_button_team:
+        if (isPositiveRating) {
+          flagType = Flag.CRM_TEAM_POS;
+        } else {
+          flagType = Flag.CRM_TEAM_NEG;
+        }
+        break;
+      case R.id.radio_button_organisation:
+        if(isPositiveRating){
+          flagType = Flag.CRM_ORG_POS;
+        }else{
+          flagType = Flag.CRM_ORG_NEG;
+        }
+        break;
+      default:
+        if(isPositiveRating){
+          flagType = Flag.CRM_OTHER_POS;
+        }else{
+          flagType = Flag.CRM_OTHER_NEG;
+        }
+    }
+    setFlag(flagType);
+  }
+
+  @Override
+  public void onProtocolFlagCrmDialogNegativeClick(ProtocolFlagCrmDialogFragment dialog) {
+
+  }
+  private void setFlag(Flag flag){
+
   }
 
   /*
@@ -956,7 +1048,7 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     // Get button views
     apply_button = (ImageButton) findViewById(R.id.apply_button);
     dismiss_button = (ImageButton) findViewById(R.id.dismiss_button);
-    scenario_button = (Button) findViewById(R.id.scenario_button);
+    //scenario_button = (Button) findViewById(R.id.scenario_button);
     reset_timer_button = (Button) findViewById(R.id.reset_timer_button);
     pause_timer_button = (Button) findViewById(R.id.pause_timer_button);
     heart_rate_active_button = (Button) findViewById(R.id.heart_rate_slider_text);
@@ -1012,12 +1104,12 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     scheduler_slider.setProgress(getResources().getInteger(R.integer.init_scheduler_slider));
 
     // And to the variables
-    blood_pressure_systolic_value = Integer.valueOf(blood_pressure_systolic_slider.getProgress());
-    blood_pressure_diastolic_value = Integer.valueOf(blood_pressure_diastolic_slider.getProgress());
-    heart_rate_value = Integer.valueOf(heart_rate_slider.getProgress());
-    o2_rate_value = Integer.valueOf(o2_rate_slider.getProgress());
-    co2_rate_value = Integer.valueOf(co2_rate_slider.getProgress());
-    raspiration_rate_value = Integer.valueOf(raspiration_rate_slider.getProgress());
+    bloodPressureSystolicValue = Integer.valueOf(blood_pressure_systolic_slider.getProgress());
+    bloodPressureDiastolicValue = Integer.valueOf(blood_pressure_diastolic_slider.getProgress());
+    heartRateValue = Integer.valueOf(heart_rate_slider.getProgress());
+    o2RateValue = Integer.valueOf(o2_rate_slider.getProgress());
+    co2RateValue = Integer.valueOf(co2_rate_slider.getProgress());
+    respirationRateValue = Integer.valueOf(raspiration_rate_slider.getProgress());
     scheduler_value = Integer.valueOf(scheduler_slider.getProgress());
   }
 
@@ -1118,19 +1210,42 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
   }
 
   public void handleMonitorEvent(JSONObject inObject) {
+    Log.e("DEBUG ControllerAct.hME", "in object: " + inObject
+        .toString() + "; reactionDialogIsShown? " + reactionDialogIsShown);
+    //TODO: wenn reaction schon gesetzt, nicht nochmal!
+    if ((inObject.has("defi_open") || inObject.has("defi_charging")) && !reactionDialogIsShown) {
 
-    if (inObject.has("defi_open")) {
-      reactionDialog = new DefiReactionDialogFragment();
       try {
-        int power = inObject.getInt("defi_open");
+        int power = 0;
+        String eventType = "";
+        if (inObject.has("defi_open")) {
+          power = inObject.getInt("defi_open");
+          eventType = "open";
+        } else {
+          power = inObject.getInt("defi_charging");
+          eventType = "charging";
+        }
+
+        reactionDialog = new DefiReactionDialogFragment();
         Bundle args = new Bundle();
         args.putInt("energy", power);
+        args.putString("eventType", eventType);
         reactionDialog.setArguments(args);
       } catch (JSONException e) {
         e.printStackTrace();
       }
       reactionDialog.show(getSupportFragmentManager(), "DefiReactionDialogFragment");
-    } else if (inObject.has("defi_energy_change") && reactionDialog != null){
+      reactionDialogIsShown = true;
+    } else if (inObject.has("defi_charging")) {
+      // reaction dialog is already shown
+      try {
+        reactionDialog.defiLoading(inObject.getInt("defi_charging"));
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+    } else if (inObject.has("defi_energy_change") && reactionDialog
+        !=
+        null){
       try {
         reactionDialog.changeEnergy(inObject.getInt("defi_energy_change"));
       } catch (JSONException e) {
@@ -1139,6 +1254,7 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     } else if (inObject.has("defi_shock")) {
       if (onShockReactionSet){
         applyShockReaction();
+        dismissShockReaction();
       } else {
         shockFiredBeforeReaction = true;
       }
@@ -1152,13 +1268,19 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
       }
 
       //TODO: set heartrhythm to new
-    } else if (inObject.has("defi_closed") && reactionDialog != null){
-      reactionDialog.dismiss();
-      reactionDialog = null;
-      onShockReactionSet = false;
-      shockFiredBeforeReaction = false;
-      //TODO: dismiss on-shock-reaction?
+    } else if (inObject.has("defi_closed")){
+      dismissShockReaction();
     }
+  }
+
+  private void dismissShockReaction() {
+    if (reactionDialog != null) {
+      reactionDialog.dismiss();
+    }
+    reactionDialog = null;
+    onShockReactionSet = false;
+    shockFiredBeforeReaction = false;
+    reactionDialogIsShown = false;
   }
 
   private void applyShockReaction() {
@@ -1166,10 +1288,11 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
       @Override
       public void run() {
         spinner_heart_rate.setSelection(onShockHeartrateSpinnerPosition);
+        apply_button.callOnClick();
       }
     });
-    //spinner_heart_rate.setSelection(onShockHeartrateSpinnerPosition);
-    apply_button.callOnClick();
+
+
     onShockReactionSet = false;
     shockFiredBeforeReaction = false;
   }
@@ -1183,13 +1306,22 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
     } else {
       onShockReactionSet = true;
     }
-
+    reactionDialogIsShown = false;
   }
 
   @Override
   public void onDefiReactionDialogNegativeClick(DefiReactionDialogFragment dialog) {
-
+    dismissShockReaction();
   }
+
+  /**
+   * change to protocol screen
+   * @param view
+   */
+  public void changeToProtocol(View view) {
+     ProtocollActivity.scenarioHelper = scenarioHelper;
+     startActivity(new Intent(this, ProtocollActivity.class));
+   }
 
   /**
    * Class for the SeekBar. Methods get called when changes to the sliders are applied
@@ -1337,5 +1469,30 @@ public class ControllerActivity extends FragmentActivity implements DefiReaction
         blood_pressure_systolic_slider.setProgress(0);
       }
     }
+  }
+
+
+  public Integer getHeartRateValue() {
+    return heartRateValue;
+  }
+
+  public Integer getO2RateValue() {
+    return o2RateValue;
+  }
+
+  public Integer getCo2RateValue() {
+    return co2RateValue;
+  }
+
+  public Integer getBloodPressureSystolicValue() {
+    return bloodPressureSystolicValue;
+  }
+
+  public Integer getBloodPressureDiastolicValue() {
+    return bloodPressureDiastolicValue;
+  }
+
+  public Integer getRespirationRateValue() {
+    return respirationRateValue;
   }
 }

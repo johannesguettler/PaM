@@ -10,32 +10,37 @@
     
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="6"
+        android:layout_height="0sp"
+        android:layout_weight="7"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="65dp"
         android:orientation="horizontal" >
 
         <ListView
             android:id="@+id/listViewScenario"
-            android:layout_width="200dp"
+            android:layout_width="130sp"
             android:layout_height="match_parent"
             android:choiceMode="singleChoice" 
         	android:background="@color/bar_color">
         </ListView>
 
 	    <Space
-	        android:layout_width="50dp"
+	        android:layout_width="5sp"
 	        android:layout_height="match_parent"
 	        android:background="@color/background_color" />
 
-	    <ListView
+		<LinearLayout
+			android:id="@+id/protocol_container_linear_layout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="horizontal"></LinearLayout>
+<!--	    <ListView
 	        android:id="@+id/listViewEvents"
 	        android:layout_width="match_parent"
 	        android:layout_height="match_parent"
 	        android:choiceMode="singleChoice" 
         	android:background="@color/bar_color">
-	    </ListView>
+	    </ListView>-->
 
     </LinearLayout>
 	    
@@ -118,28 +123,5 @@
 	            android:layout_height="wrap_content" />
 	        
     	</LinearLayout>
-    	
-	<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:background="@color/bar_color">
-
-		<Button
-	            android:id="@+id/changeToScenarioButton"
-	            style="@style/apply_button"
-	            android:layout_width="300dp"
-	            android:layout_height="wrap_content"
-	            android:layout_marginTop="5dp"
-	            android:layout_marginLeft="10dp"
-	            android:background="@drawable/yellow_button_grad"
-	            android:text="@string/createScenario"
-	            android:contentDescription="@string/changeToScenarioButton"
-	            android:onClick="changeToScenario"
-	            android:drawableLeft="@android:drawable/stat_notify_sync_noanim" />
-	    <Space
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content" />		
-
-	</LinearLayout>
 
 </LinearLayout>

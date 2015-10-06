@@ -126,7 +126,7 @@ public class Server {
           return;//TODO: wenn ein monitor verschweindet wird das system
           // lahmgelegt?
         }
-        Log.d(tagS, "Controller sends: " + jsonString);
+        //Log.d(tagS, "Controller sends: " + jsonString);
         commThread.out(jsonString);
       } catch (IOException e) {
         System.err.println("Caught IOException: " + e.getMessage());

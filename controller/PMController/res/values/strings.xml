@@ -123,5 +123,15 @@
     <string name="defi_reaction_negative_button_text">Cancel</string>
     <string name="defi_reaction_dialog_title_text">Defibrillator
         opened.\nEnergy: ???Joule\nReaction on shock?</string>
+    <string name="flag_button_AB_text">A / B</string>
+    <string name="flag_button_C_text">C</string>
+    <string name="flag_button_DE_text">D / E</string>
+    <string name="flags_box_text">Flags:</string>
+    <string name="flag_button_CRM_text">CRM</string>
+    <string name="radio_button_communication_text">Communication</string>
+    <string name="radio_button_other_text">Other</string>
+    <string name="radio_button_organisation_text">Organisation</string>
+    <string name="radio_button_team_text">Team</string>
+    <string name="change_to_protocoll_screen_button_text">Saved protocols</string>
 
 </resources>
