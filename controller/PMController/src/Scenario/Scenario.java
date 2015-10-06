@@ -21,7 +21,7 @@ import Scenario.Event.TimerState;
 public class Scenario {
 	private boolean runnable;
 	private String name;
-	private List<Event> eventList;
+	private List<ProtocolEvent> eventList;
 
 	/**
 	 * Constructor
@@ -39,7 +39,8 @@ public class Scenario {
 	 * @param runnable
 	 * @param eventList
 	 */
-	public Scenario(String name, boolean runnable, List<Event> eventList) {
+	public Scenario(String name, boolean runnable, List<ProtocolEvent>
+			eventList) {
 		this.name = name;
 		this.runnable = runnable;
 		this.eventList = eventList;
@@ -166,9 +167,9 @@ public class Scenario {
 	}
 
 	// Add an event to a scenario
-	public void addEvent(Event e) {
+	public void addEvent(ProtocolEvent e) {
 		if(this.eventList == null)
-			this.eventList = new ArrayList<Event>();
+			this.eventList = new ArrayList<ProtocolEvent>();
 		this.eventList.add(e);
 	}
 
@@ -178,12 +179,12 @@ public class Scenario {
 	}
 
 	// Get for the event list
-	public List<Event> getEventList() {
+	public List<ProtocolEvent> getEventList() {
 		return this.eventList;
 	}
 
 	// Set event list
-	public void setEventList(List<Event> theEventList) {
+	public void setEventList(List<ProtocolEvent> theEventList) {
 		this.eventList = theEventList;
 	}
 

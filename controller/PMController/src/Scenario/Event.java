@@ -37,7 +37,7 @@ public class Event {
     NORMAL, BP2
   }
 
-  public BloodPressPattern bpPattern;
+  public BloodPressPattern bloodPressurePattern;
   public boolean bpOn;
   public boolean cuffOn;
 
@@ -121,7 +121,7 @@ public class Event {
     this.heartPattern = heartPattern;
     this.bloodPressureSys = bloodPressureSys;
     this.bloodPressureDias = bloodPressureDias;
-    this.bpPattern = bloodPressurePattern;
+    this.bloodPressurePattern = bloodPressurePattern;
     this.oxygenTo = oxygenTo;
     this.oxyPattern = oxyPattern;
     this.respRate = respRate;
@@ -150,7 +150,7 @@ public class Event {
     String string = "Scheduler: " + this.time.toString() + "\n" +
         "BPSys: " + this.bloodPressureSys.toString() + ",  " +
         "BPDias: " + this.bloodPressureDias.toString() + ",  " +
-        "Pattern: " + this.bpPattern.toString() + ",  " +
+        "Pattern: " + this.bloodPressurePattern.toString() + ",  " +
         "Curve BP: " + ((this.bpOn) ? "On" : "Off") + "\n" +
         "HR: " + this.heartRateTo.toString() + ",  " +
         "Pattern: " + this.heartPattern.toString() + ",  " +
@@ -180,7 +180,7 @@ public class Event {
     GsonBuilder builder = new GsonBuilder();
     builder.setPrettyPrinting().serializeNulls();
     Gson gson = builder.create();
-    System.out.println(gson.toJson(this));
+    //System.out.println(gson.toJson(this));
     return gson.toJson(this);
   }
 

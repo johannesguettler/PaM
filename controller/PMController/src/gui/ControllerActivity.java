@@ -53,6 +53,8 @@ import java.util.List;
 
 import Scenario.Event;
 import Scenario.Event.TimerState;
+import Scenario.ProtocolEvent;
+import Scenario.ProtocolEvent.Flag;
 import Scenario.Scenario;
 import Scenario.ScenarioHelper;
 
@@ -142,8 +144,8 @@ public class ControllerActivity extends FragmentActivity implements
   long start_time = 0L;
 
   // DATABASE for scenario and protocoll
-  List<Event> eventList_scenario = null;
-  List<Event> eventList_protocoll = null;
+  List<ProtocolEvent> eventList_scenario = null;
+  List<ProtocolEvent> eventList_protocoll = null;
   ScenarioHelper scenarioHelper = null;
   private DefiReactionDialogFragment reactionDialog;
 
@@ -154,13 +156,6 @@ public class ControllerActivity extends FragmentActivity implements
   private boolean shockFiredBeforeReaction = false;
   private boolean reactionDialogIsShown;
 
-
-  //enum for different protocol flags
-  public enum Flag {
-    A_B_POS, A_B_NEG, C_POS, C_NEG, D_E_POS, D_E_NEG, CRM_COMM_POS, CRM_COMM_NEG,
-    CRM_TEAM_POS, CRM_TEAM_NEG, CRM_ORG_POS, CRM_ORG_NEG, CRM_OTHER_POS,
-    CRM_OTHER_NEG
-  }
 
   /*
    * (non-Javadoc)
@@ -432,10 +427,7 @@ public class ControllerActivity extends FragmentActivity implements
     disableButtons();
   }
 
-  /*
-   * create and event and Send it if needed. Pass if the timer needs to be synced or the flag needs to be set in the protocoll
-   */
-  void createAndSendEvent(int timerSync, boolean flag) {
+  private Event createEvent(int timerSync, boolean flag) {
     Calendar c = Calendar.getInstance();
     Integer seconds = c.get(Calendar.SECOND);
     Integer minutes = c.get(Calendar.MINUTE);
@@ -478,42 +470,24 @@ public class ControllerActivity extends FragmentActivity implements
         flag,
 				/* Timer state */
         timerState);
+    return event;
+  }
+  /*
+   * create and event and Send it if needed. Pass if the timer needs to be synced or the flag needs to be set in the protocoll
+   */
+  void createAndSendEvent(int timerSync, boolean flag) {
+    Event event = createEvent(timerSync, flag);
 
 
     // If a new scenario is being recorded, create event object and store it
-    if (new_scenario) {
+    /*if (new_scenario) {
       // Add event to list
       eventList_scenario.add(event);
       if (DEBUG) {
         System.out.println("Scenario: new Event added:");
         System.out.println(event.toJson().toString());
       }
-    }
-
-    // If protocoll is activated create event object and store it
-    if (new_protocoll) {
-      // Add event to list
-      eventList_protocoll.add(event);
-      if (DEBUG) {
-        System.out.println("Protocoll: new Event added:");
-        System.out.println(event.toJson().toString());
-      }
-    }
-
-    // Display toasti
-    /*if (DEBUG) {
-      new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
-          .setTitle("(DEBUG) Event generated:")
-          .setMessage("Date: " + hours + ":" + minutes + ":" + seconds
-              + " " + day + "/" + month + "/" + year + "\n" + event.toString())
-              // If Save button is pressed on the alert dialog
-          .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-              // Get the typed name
-            }
-          }).show();
     }*/
-
 
     // Send to Server if it was not just a flag
     if (!flag) {
@@ -536,6 +510,13 @@ public class ControllerActivity extends FragmentActivity implements
       }
     }
 
+  }
+  private void addProtocolEvent(boolean isFlagEvent, Flag flagType, String
+      flagComment) {
+    Event event = createEvent(0, isFlagEvent);
+    ProtocolEvent protocolEvent = new ProtocolEvent(event,flagType,
+        flagComment);
+    eventList_protocoll.add(protocolEvent);
   }
 
   /*
@@ -679,7 +660,7 @@ public class ControllerActivity extends FragmentActivity implements
       // Start protocoll
       new_protocoll = true;
       // Init arraylist carrying the events
-      eventList_protocoll = new ArrayList<Event>();
+      eventList_protocoll = new ArrayList<>();
 
       // Start time is set to the current system clock
       start_time = SystemClock.uptimeMillis();
@@ -716,7 +697,7 @@ public class ControllerActivity extends FragmentActivity implements
       scenario_button.setText(getResources().getString(R.string.scenario_stop_button));
 */
       // start Scenario
-      eventList_scenario = new ArrayList<Event>();
+      eventList_scenario = new ArrayList<>();
 
       // If a new scenario is finished and should get stored
     } else {
@@ -884,7 +865,7 @@ public class ControllerActivity extends FragmentActivity implements
       default:
         return;
     }
-    setFlag(flagType);
+    setFlag(flagType, null);
   }
   private void openProtocolCrmFlagDialog(boolean isPositiveRating){
     ProtocolFlagCrmDialogFragment crmDialog = new
@@ -927,15 +908,15 @@ public class ControllerActivity extends FragmentActivity implements
           flagType = Flag.CRM_OTHER_NEG;
         }
     }
-    setFlag(flagType);
+    setFlag(flagType, dialog.getTextfieldText());
   }
 
   @Override
   public void onProtocolFlagCrmDialogNegativeClick(ProtocolFlagCrmDialogFragment dialog) {
 
   }
-  private void setFlag(Flag flag){
-
+  private void setFlag(Flag flagType, String flagComment){
+    addProtocolEvent(true, flagType, flagComment);
   }
 
   /*

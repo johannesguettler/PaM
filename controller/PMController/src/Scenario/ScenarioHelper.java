@@ -207,7 +207,7 @@ public class ScenarioHelper extends SQLiteOpenHelper {
     values.put(KEY_HEARTPATTERN, e.heartPattern.ordinal());
     values.put(KEY_BPSYS, e.bloodPressureSys);
     values.put(KEY_BPDIAS, e.bloodPressureDias);
-    values.put(KEY_BPPATTERN, e.bpPattern.ordinal());
+    values.put(KEY_BPPATTERN, e.bloodPressurePattern.ordinal());
     values.put(KEY_OXYTO, e.oxygenTo);
     values.put(KEY_OXYPATTERN, e.oxyPattern.ordinal());
     values.put(KEY_RESPTO, e.respRate);

@@ -17,12 +17,13 @@ import java.util.Date;
 import java.util.List;
 
 import Scenario.Event;
+import Scenario.ProtocolEvent;
 
 /**
  * Created by Jo on 05.10.2015.
  */
 public class ProtocolView extends View {
-  private final List<Event> entries;
+  private final List<ProtocolEvent> entries;
   private final int entryDistanceInSeconds;
   private int xDimension;
   private int yDimensionTable;
@@ -31,9 +32,11 @@ public class ProtocolView extends View {
   private final int flagBandHeight;
   private int columnDistance;
   private final int maxValue;
+  private final int protocolEntries;
 
 
-  public ProtocolView(Context context, int entryDistanceInSeconds, List<Event>
+  public ProtocolView(Context context, int entryDistanceInSeconds,
+                      List<ProtocolEvent>
       entries) {
     super(context);
     this.entryDistanceInSeconds = entryDistanceInSeconds;
@@ -44,6 +47,15 @@ public class ProtocolView extends View {
     topCaptionHeight = 30;
     columnDistance = 20;
     maxValue = 250;
+
+    // count protocol entries
+    int counter = 0;
+    for(ProtocolEvent event: entries){
+      if(!event.flag){
+        counter++;
+      }
+    }
+    protocolEntries = counter;
   }
 
 
