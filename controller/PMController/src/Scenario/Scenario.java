@@ -207,4 +207,9 @@ public class Scenario {
 	public void setRunnable(boolean runnable) {
 		this.runnable = runnable;
 	}
+
+  public static ProtocolEvent.Flag intToFlagType(int i) {
+		if(i >= 100) return null;
+    return ProtocolEvent.Flag.from(i);
+  }
 }

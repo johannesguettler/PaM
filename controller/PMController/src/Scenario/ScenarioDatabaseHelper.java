@@ -87,7 +87,7 @@ public class ScenarioDatabaseHelper extends SQLiteOpenHelper {
               .getName());
           // Get the event list to the scenario and set it.
           if (tmpScenario != null) {
-            List<Event> eventList = scenarioHelper.loadScenario(
+            List<ProtocolEvent> eventList = scenarioHelper.loadScenario(
                 tmpScenario.getName()).getEventList();
             scenario.setEventList(eventList);
             scenarioList.add(scenario);

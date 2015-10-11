@@ -18,10 +18,11 @@
 
         <ListView
             android:id="@+id/listViewScenario"
-            android:layout_width="130sp"
+            android:layout_width="140sp"
             android:layout_height="match_parent"
             android:choiceMode="singleChoice" 
-        	android:background="@color/bar_color">
+        	android:background="@color/bar_color"
+			>
         </ListView>
 
 	    <Space
@@ -31,9 +32,24 @@
 
 		<LinearLayout
 			android:id="@+id/protocol_container_linear_layout"
-			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:orientation="horizontal"></LinearLayout>
+			android:orientation="horizontal"
+			android:layout_gravity="center_horizontal"
+			android:layout_weight="4"
+			android:layout_width="wrap_content"></LinearLayout>
+		<Space
+			android:layout_width="5sp"
+			android:layout_height="match_parent"
+			android:background="@color/background_color" />
+		<ListView
+			android:id="@+id/listViewFlags"
+			android:layout_width="200sp"
+			android:layout_height="match_parent"
+			android:choiceMode="singleChoice"
+			android:background="@color/bar_color"
+			android:spinnerMode="dialog"
+			android:layout_weight="1">
+		</ListView>
 <!--	    <ListView
 	        android:id="@+id/listViewEvents"
 	        android:layout_width="match_parent"

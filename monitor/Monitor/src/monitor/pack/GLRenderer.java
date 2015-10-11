@@ -1,7 +1,6 @@
 package monitor.pack;
 
 
-import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
@@ -207,18 +206,33 @@ public class GLRenderer implements Renderer {
   public void ToogleLine(LineType line, boolean draw) {
     if (line == LineType.AF) {
       lineAF.setDrawAble(draw);
+      if(!draw) {
+        lineAF.reset();
+      }
     }
     if (line == LineType.Blood) {
       lineBlood.setDrawAble(draw);
+      if(!draw) {
+        lineBlood.reset();
+      }
     }
     if (line == LineType.CO2) {
       lineCO2.setDrawAble(draw);
+      if(!draw) {
+        lineCO2.reset();
+      }
     }
     if (line == LineType.Heart) {
       lineHeart.setDrawAble(draw);
+      if(!draw) {
+        lineHeart.reset();
+      }
     }
     if (line == LineType.O2) {
       lineO2.setDrawAble(draw);
+      if(!draw) {
+        lineO2.reset();
+      }
     }
   }
 

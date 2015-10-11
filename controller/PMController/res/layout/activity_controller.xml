@@ -54,12 +54,26 @@
                 style="@style/vertical_slider_style"
                 android:max="@integer/range_heart_rate_slider" />
 
-            <TextView
-                android:id="@+id/heart_rate_slider_value"
-                style="@style/slider_value_style"
-                android:text="@string/heart_rate_slider_value" />
+         <LinearLayout
+             android:orientation="vertical"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+             <TextView
+                 android:id="@+id/heart_rate_slider_value"
+                 style="@style/slider_value_style"
+                 android:text="@string/heart_rate_slider_value"
+                 android:layout_height="wrap_content"
+                 android:textSize="@dimen/small_text_size"/>
 
-            <Space
+             <TextView
+                 style="@style/slider_value_style"
+                 android:id="@+id/heart_rate_current_value"
+                 android:layout_height="wrap_content"/>
+         </LinearLayout>
+
+
+
+         <Space
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="@integer/vertical_space_weight" />
@@ -100,11 +114,21 @@
                 style="@style/vertical_slider_style"
                 android:max="@integer/range_o2_rate_slider" />
 
-            <TextView
-                android:id="@+id/o2_rate_slider_value"
-                style="@style/slider_value_style"
-                android:text="@string/o2_rate_slider_value" />
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/o2_rate_slider_value"
+                    style="@style/slider_value_style"
+                    android:text="@string/o2_rate_slider_value" />
+
+                <TextView
+                    style="@style/slider_value_style"
+                    android:id="@+id/o2_rate_current_value"
+                    />
+            </LinearLayout>
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
@@ -145,10 +169,21 @@
                 style="@style/vertical_slider_style"
                 android:max="@integer/range_co2_rate_slider" />
 
-            <TextView
-                android:id="@+id/co2_rate_slider_value"
-                style="@style/slider_value_style"
-                android:text="@string/co2_rate_slider_value" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/co2_rate_slider_value"
+                    style="@style/slider_value_style"
+                    android:text="@string/co2_rate_slider_value" />
+
+                <TextView
+                    style="@style/slider_value_style"
+                    android:id="@+id/co2_rate_current_value"
+                    />
+            </LinearLayout>
 
             <Space
                 android:layout_width="wrap_content"
@@ -184,17 +219,28 @@
                 android:id="@+id/raspiration_rate_slider_text"
                 style="@style/slider_active_button_style"
                 android:onClick="sliderButtonClicked"
-                android:text="@string/raspiration_rate_slider_text" />
+                android:text="@string/respiration_rate_slider_text" />
 
             <gui.VerticalSeekBar
                 android:id="@+id/raspiration_rate_slider"
                 style="@style/vertical_slider_style"
                 android:max="@integer/range_raspiration_rate_slider" />
 
-            <TextView
-                android:id="@+id/raspiration_rate_slider_value"
-                style="@style/slider_value_style"
-                android:text="@string/raspiration_rate_slider_value" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/respiration_rate_slider_value"
+                    style="@style/slider_value_style"
+                    android:text="@string/respiration_rate_slider_value" />
+
+                <TextView
+                    style="@style/slider_value_style"
+                    android:id="@+id/respiration_rate_current_value"
+                    />
+            </LinearLayout>
 
             <Space
                 android:layout_width="wrap_content"
@@ -247,10 +293,21 @@
                     android:max="@integer/range_blood_pressure_systolic_slider" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/blood_pressure_slider_value"
-                style="@style/slider_value_style"
-                android:text="@string/blood_pressure_slider_value" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/blood_pressure_slider_value"
+                    style="@style/slider_value_style"
+                    />
+
+                <TextView
+                    style="@style/slider_value_style"
+                    android:id="@+id/blood_pressure_current_value"
+                    android:text="@string/blood_pressure_slider_value"/>
+            </LinearLayout>
 
             <Space
                 android:layout_width="wrap_content"

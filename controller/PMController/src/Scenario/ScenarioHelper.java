@@ -56,9 +56,12 @@ public class ScenarioHelper extends SQLiteOpenHelper {
   private static final String KEY_TIMESTAMP = "TIMESTAMP";
   private static final String KEY_FLAG = "FLAG";
   private static final String KEY_SYNCTIMER = "SYNCTIMER";
+  private static final String KEY_FLAG_TYPE = "FLAGTYPE";
+  private static final String KEY_FLAG_COMMENT = "FLAGCOMMENT";
   private static final String KEY_TIMERSTATE = "TIMERSTATE";
 
   private static final String INTEGER = " INTEGER,";
+  private static final String STRING = " STRING,";
 
   private static String DATABASE_NAME = "ScenarioDatabase";
   private static final String KEY_INDEX = "_id";
@@ -105,11 +108,13 @@ public class ScenarioHelper extends SQLiteOpenHelper {
           KEY_RESPON + INTEGER +
           KEY_SYNCTIMER + INTEGER +
           KEY_FLAG + INTEGER +
+          KEY_FLAG_TYPE + INTEGER +
+          KEY_FLAG_COMMENT + STRING +
           KEY_TIMERSTATE + " INTEGER" + ");";
       SQLiteDatabase db = this.getWritableDatabase();
       db.execSQL(CREATE_EVENTS_TABLE);
       // And fill it.
-      ListIterator<Event> it = theScenario.getEventList().listIterator();
+      ListIterator<ProtocolEvent> it = theScenario.getEventList().listIterator();
       while (it.hasNext())
         addEvent(it.next(), db, theScenario.getName());
       db.close(); // Closing database connection
@@ -143,7 +148,7 @@ public class ScenarioHelper extends SQLiteOpenHelper {
    */
   public Scenario loadScenario(String scenarioName) {
     Scenario theScenario = null;
-    List<Event> eventList = new ArrayList<Event>();
+    List<ProtocolEvent> eventList = new ArrayList<>();
     boolean badQuery = false;
     // Select All Query, to get all events.
     String selectQuery = "SELECT * FROM " + scenarioName;
@@ -153,7 +158,7 @@ public class ScenarioHelper extends SQLiteOpenHelper {
       // looping through all rows and adding the events to the list.
       if (cursor.moveToFirst()) {
         do {
-          Event event = new Event(cursor.getInt(1),        //TIME
+          ProtocolEvent event = new ProtocolEvent(cursor.getInt(1),        //TIME
               cursor.getInt(2),                // HRTO
               Scenario.intToHeartPattern(cursor.getInt(3)),  // HPATTERN
               cursor.getInt(4),                // BPSYS
@@ -174,7 +179,10 @@ public class ScenarioHelper extends SQLiteOpenHelper {
               ((cursor.getInt(19) == 1) ? true : false),    // RESPON
               ((cursor.getInt(20) == 1) ? true : false),    // SYNCTIMER
               ((cursor.getInt(21) == 1) ? true : false),    // FLAG
-              Scenario.intToTimerState(cursor.getInt(22)));  // TIMER STATE
+              Scenario.intToFlagType(cursor.getInt(22)),
+              ((cursor.getString(23) == null || (cursor.getString(23).equals
+                  ("null")))? null: cursor.getString(23)),
+              Scenario.intToTimerState(cursor.getInt(24)));  // TIMER STATE
           eventList.add(event);
         } while (cursor.moveToNext());
       }
@@ -199,7 +207,8 @@ public class ScenarioHelper extends SQLiteOpenHelper {
    * @param db The SQLite database
    * @param tableName The name of the scenario.
    */
-  public static void addEvent(Event e, SQLiteDatabase db, String tableName) {
+  public static void addEvent(ProtocolEvent e, SQLiteDatabase db, String
+      tableName) {
     // Put all the values of the event to the database.
     ContentValues values = new ContentValues();
     values.put(KEY_TIME, e.time);
@@ -223,6 +232,8 @@ public class ScenarioHelper extends SQLiteOpenHelper {
     values.put(KEY_RESPON, (e.respOn) ? 1 : 0);
     values.put(KEY_SYNCTIMER, (e.syncTimer) ? 1 : 0);
     values.put(KEY_FLAG, (e.flag) ? 1 : 0);
+    values.put(KEY_FLAG_TYPE, (e.flagType == null)? 100: e.flagType.ordinal());
+    values.put(KEY_FLAG_COMMENT, e.flagComment);
     values.put(KEY_TIMERSTATE, e.timerState.ordinal());
     db.insert(tableName, null, values);
   }

@@ -16,6 +16,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,7 +66,7 @@ import Scenario.ScenarioHelper;
  */
 public class ControllerActivity extends FragmentActivity implements
     DefiReactionDialogFragment.DefiReactionDialogListener,
-    ProtocolFlagCrmDialogFragment.ProtocolFlagCrmDialogListener{
+    ProtocolFlagCrmDialogFragment.ProtocolFlagCrmDialogListener {
   // Debug mode shows debug messages all over the application
   private static final boolean DEBUG = false;
 
@@ -104,10 +105,13 @@ public class ControllerActivity extends FragmentActivity implements
   private SeekBar scheduler_slider = null;
   // All vertical Seekbars for the health information values
   private VerticalSeekBar heart_rate_slider, blood_pressure_systolic_slider,
-      blood_pressure_diastolic_slider, o2_rate_slider, co2_rate_slider, raspiration_rate_slider = null;
+      blood_pressure_diastolic_slider, o2_rate_slider, co2_rate_slider, respiration_rate_slider = null;
   // The Text views showing the current value of the sliders
   private TextView scheduler_slider_value, heart_rate_slider_value, blood_pressure_slider_value,
       o2_rate_slider_value, co2_rate_slider_value, raspiration_rate_slider_value = null;
+  // TextViews that show the current (send-)values
+  private TextView heart_rate_current_value, blood_pressure_current_value,
+      o2_rate_current_value, co2_rate_current_value, respiration_rate_current_value = null;
   // The Text view displaying the timer value
   private TextView timer_value = null;
 
@@ -226,8 +230,9 @@ public class ControllerActivity extends FragmentActivity implements
    */
   @Override
   public void onDestroy() {
-    if (DEBUG)
+    if (DEBUG) {
       Toast.makeText(getApplicationContext(), "Closed Controller Activity", Toast.LENGTH_SHORT).show();
+    }
     updateHandler.onDestroy();
     super.onDestroy();
   }
@@ -387,7 +392,7 @@ public class ControllerActivity extends FragmentActivity implements
     scheduler_value = Integer.valueOf(scheduler_slider.getProgress());
 
     // Create and send the event with old slider values leave apply and dismiss buttons as they are
-    createAndSendEvent(0, false);
+    createAndSendEvent(0, false, false);
   }
 
 
@@ -398,11 +403,14 @@ public class ControllerActivity extends FragmentActivity implements
     // Store current slider values
     bloodPressureSystolicValue = Integer.valueOf
         (blood_pressure_systolic_slider.getProgress());
+
     bloodPressureDiastolicValue = Integer.valueOf(blood_pressure_diastolic_slider.getProgress());
     heartRateValue = Integer.valueOf(heart_rate_slider.getProgress());
+    Log.e("DEBUG controllerA.applypressed", "new heartRatevalue: " +
+        ""+heartRateValue);
     o2RateValue = Integer.valueOf(o2_rate_slider.getProgress());
     co2RateValue = Integer.valueOf(co2_rate_slider.getProgress());
-    respirationRateValue = Integer.valueOf(raspiration_rate_slider.getProgress());
+    respirationRateValue = Integer.valueOf(respiration_rate_slider.getProgress());
     scheduler_value = Integer.valueOf(scheduler_slider.getProgress());
 
     // Store current patterns
@@ -421,10 +429,25 @@ public class ControllerActivity extends FragmentActivity implements
     cuff_last_active = cuff_active;
 
     // Create and send the event
-    createAndSendEvent(0, false);
+    createAndSendEvent(0, false, true);
 
     // Disable apply and dismiss button till next slider or pattern change
     disableButtons();
+  }
+
+  public void setValues(Event event) {
+    heartRateValue = event.heartRateTo - getResources().getInteger(R.integer
+        .min_heart_rate_slider);
+    bloodPressureSystolicValue = event.bloodPressureSys - getResources()
+        .getInteger(R.integer.min_blood_pressure_diastolic_slider);
+    bloodPressureDiastolicValue = event.bloodPressureDias - getResources()
+        .getInteger(R.integer.min_blood_pressure_diastolic_slider);
+    o2RateValue = event.oxygenTo - getResources().getInteger(R.integer
+        .min_o2_rate_slider);
+    respirationRateValue = event.respRate - getResources().getInteger(R.integer
+        .min_respiration_rate_slider);
+    co2RateValue = event.carbTo - getResources().getInteger(R.integer
+        .min_co2_rate_slider);
   }
 
   private Event createEvent(int timerSync, boolean flag) {
@@ -438,7 +461,9 @@ public class ControllerActivity extends FragmentActivity implements
     Integer timer = (int) (final_time / 1000);
 
     boolean syncTimer = false;
-    if (timerSync != 0) syncTimer = true;
+    if (timerSync != 0) {
+      syncTimer = true;
+    }
     TimerState timerState = Scenario.intToTimerState(timerSync);
 
     Event event = new Event(
@@ -455,7 +480,7 @@ public class ControllerActivity extends FragmentActivity implements
         o2RateValue + getResources().getInteger(R.integer.min_o2_rate_slider),
         Scenario.intToO2Pattern(o2_rate_pattern),
                 /* Raspiration value and pattern */
-        respirationRateValue + getResources().getInteger(R.integer.min_raspiration_rate_slider),
+        respirationRateValue + getResources().getInteger(R.integer.min_respiration_rate_slider),
         Scenario.intToRespPattern(raspiration_rate_pattern),
                 /* CO2 value */
         co2RateValue + getResources().getInteger(R.integer.min_co2_rate_slider),
@@ -464,18 +489,21 @@ public class ControllerActivity extends FragmentActivity implements
         timer,
         /* Active buttons */
         heart_rate_value_active, blood_pressure_value_active, cuff_active, o2_rate_value_active, co2_rate_value_active, raspiration_rate_value_active,
-				/* Sync Timer */
+        /* Sync Timer */
         syncTimer,
-				/* Flag */
+        /* Flag */
         flag,
-				/* Timer state */
+        /* Timer state */
         timerState);
+
     return event;
   }
+
   /*
    * create and event and Send it if needed. Pass if the timer needs to be synced or the flag needs to be set in the protocoll
    */
-  void createAndSendEvent(int timerSync, boolean flag) {
+  void createAndSendEvent(int timerSync, boolean flag, boolean
+      valaueWriteEvent) {
     Event event = createEvent(timerSync, flag);
 
 
@@ -493,7 +521,7 @@ public class ControllerActivity extends FragmentActivity implements
     if (!flag) {
       if (MainActivity.server != null) {
         // set new values in the update handler
-        updateHandler.handleEvent(event);
+        updateHandler.handleEvent(event, valaueWriteEvent);
         /*MainActivity.server.out(event.toJson().toString());*/
       } else {
         if (MainActivity.CHECK_WIFI) {
@@ -511,11 +539,20 @@ public class ControllerActivity extends FragmentActivity implements
     }
 
   }
-  private void addProtocolEvent(boolean isFlagEvent, Flag flagType, String
-      flagComment) {
+
+  public void addProtocolEvent(boolean isFlagEvent,
+                               Flag flagType, String flagComment) {
     Event event = createEvent(0, isFlagEvent);
-    ProtocolEvent protocolEvent = new ProtocolEvent(event,flagType,
+    addProtocolEvent(event, isFlagEvent, flagType, flagComment);
+    String flagTypeString = (flagType == null? "null": flagType.toString());
+  }
+
+  public void addProtocolEvent(Event currentValuesEvent, boolean isFlagEvent,
+                               Flag flagType, String flagComment) {
+
+    ProtocolEvent protocolEvent = new ProtocolEvent(currentValuesEvent, flagType,
         flagComment);
+    protocolEvent.flag = isFlagEvent;
     eventList_protocoll.add(protocolEvent);
   }
 
@@ -539,7 +576,7 @@ public class ControllerActivity extends FragmentActivity implements
     heart_rate_slider.setProgress(heartRateValue.intValue());
     o2_rate_slider.setProgress(o2RateValue);
     co2_rate_slider.setProgress(co2RateValue);
-    raspiration_rate_slider.setProgress(respirationRateValue);
+    respiration_rate_slider.setProgress(respirationRateValue);
     scheduler_slider.setProgress(scheduler_value);
 
     // Revert the spinner patterns to their last applied position
@@ -608,6 +645,7 @@ public class ControllerActivity extends FragmentActivity implements
       storeProtocol();
       // Stop protocoll
       new_protocoll = false;
+      updateHandler.endProtocol();
       // The timer is paused on a reset
       timer_paused = true;
       // Set the text of the pause button to display "Start"
@@ -623,7 +661,7 @@ public class ControllerActivity extends FragmentActivity implements
       // Reset Final Time
       final_time = 0;
       // Create an event to sync the timer
-      createAndSendEvent(4, false);
+      createAndSendEvent(4, false, false);
     }
   }
 
@@ -647,8 +685,10 @@ public class ControllerActivity extends FragmentActivity implements
       // Set text of button to "Resume"
       pause_timer_button.setText(getResources().getString(R.string.resume_timer_button));
 
+      // pause protocol
+      updateHandler.pauseProtocol();
       // Create an event to sync the timer
-      createAndSendEvent(2, false);
+      createAndSendEvent(2, false, false);
       // If the timer is paused
     } else {
       // Display toasti
@@ -657,8 +697,7 @@ public class ControllerActivity extends FragmentActivity implements
         toast.setGravity(Gravity.CENTER, toast.getXOffset() / 2, toast.getYOffset() / 2);
         toast.show();
       }
-      // Start protocoll
-      new_protocoll = true;
+
       // Init arraylist carrying the events
       eventList_protocoll = new ArrayList<>();
 
@@ -671,7 +710,11 @@ public class ControllerActivity extends FragmentActivity implements
       reset_timer_button.setBackground(getResources().getDrawable(R.drawable.timer_button));
       reset_timer_button.setEnabled(true);
       // Create an event to sync the timer
-      createAndSendEvent(1, false);
+      createAndSendEvent(1, false, false);
+
+      // Start protocoll after event was created
+      new_protocoll = true;
+      updateHandler.startProtocol();
     }
     // Toggle timer paused
     timer_paused = !timer_paused;
@@ -867,7 +910,8 @@ public class ControllerActivity extends FragmentActivity implements
     }
     setFlag(flagType, null);
   }
-  private void openProtocolCrmFlagDialog(boolean isPositiveRating){
+
+  private void openProtocolCrmFlagDialog(boolean isPositiveRating) {
     ProtocolFlagCrmDialogFragment crmDialog = new
         ProtocolFlagCrmDialogFragment();
     Bundle args = new Bundle();
@@ -875,11 +919,12 @@ public class ControllerActivity extends FragmentActivity implements
     crmDialog.setArguments(args);
     crmDialog.show(getSupportFragmentManager(), "Open CRM-Flag DialogFragment");
   }
+
   @Override
   public void onProtocolFlagCrmDialogPositiveClick(ProtocolFlagCrmDialogFragment dialog) {
     Flag flagType;
     boolean isPositiveRating = dialog.isPositiveRating();
-    switch(dialog.getRadioGroupSelectetButtonId()) {
+    switch (dialog.getRadioGroupSelectetButtonId()) {
       case R.id.radio_button_communication:
         if (isPositiveRating) {
           flagType = Flag.CRM_COMM_POS;
@@ -895,16 +940,16 @@ public class ControllerActivity extends FragmentActivity implements
         }
         break;
       case R.id.radio_button_organisation:
-        if(isPositiveRating){
+        if (isPositiveRating) {
           flagType = Flag.CRM_ORG_POS;
-        }else{
+        } else {
           flagType = Flag.CRM_ORG_NEG;
         }
         break;
       default:
-        if(isPositiveRating){
+        if (isPositiveRating) {
           flagType = Flag.CRM_OTHER_POS;
-        }else{
+        } else {
           flagType = Flag.CRM_OTHER_NEG;
         }
     }
@@ -915,7 +960,8 @@ public class ControllerActivity extends FragmentActivity implements
   public void onProtocolFlagCrmDialogNegativeClick(ProtocolFlagCrmDialogFragment dialog) {
 
   }
-  private void setFlag(Flag flagType, String flagComment){
+
+  private void setFlag(Flag flagType, String flagComment) {
     addProtocolEvent(true, flagType, flagComment);
   }
 
@@ -1056,7 +1102,7 @@ public class ControllerActivity extends FragmentActivity implements
     blood_pressure_diastolic_slider = (VerticalSeekBar) findViewById(R.id.blood_pressure_diastolic_slider);
     o2_rate_slider = (VerticalSeekBar) findViewById(R.id.o2_rate_slider);
     co2_rate_slider = (VerticalSeekBar) findViewById(R.id.co2_rate_slider);
-    raspiration_rate_slider = (VerticalSeekBar) findViewById(R.id.raspiration_rate_slider);
+    respiration_rate_slider = (VerticalSeekBar) findViewById(R.id.raspiration_rate_slider);
 
     // Init text views
     scheduler_slider_value = (TextView) findViewById(R.id.scheduler_slider_value);
@@ -1064,7 +1110,14 @@ public class ControllerActivity extends FragmentActivity implements
     blood_pressure_slider_value = (TextView) findViewById(R.id.blood_pressure_slider_value);
     o2_rate_slider_value = (TextView) findViewById(R.id.o2_rate_slider_value);
     co2_rate_slider_value = (TextView) findViewById(R.id.co2_rate_slider_value);
-    raspiration_rate_slider_value = (TextView) findViewById(R.id.raspiration_rate_slider_value);
+    raspiration_rate_slider_value = (TextView) findViewById(R.id.respiration_rate_slider_value);
+
+    // init current value textviews
+    heart_rate_current_value = (TextView) findViewById(R.id.heart_rate_current_value);
+    blood_pressure_current_value = (TextView) findViewById(R.id.blood_pressure_current_value);
+    o2_rate_current_value = (TextView) findViewById(R.id.o2_rate_current_value);
+    co2_rate_current_value = (TextView) findViewById(R.id.co2_rate_current_value);
+    respiration_rate_current_value = (TextView) findViewById(R.id.respiration_rate_current_value);
 
     // Make this class react to seekbar changes
     scheduler_slider.setOnSeekBarChangeListener(new SeekBarChangeListener());
@@ -1073,7 +1126,7 @@ public class ControllerActivity extends FragmentActivity implements
     blood_pressure_diastolic_slider.setOnSeekBarChangeListener(new SeekBarChangeListener());
     o2_rate_slider.setOnSeekBarChangeListener(new SeekBarChangeListener());
     co2_rate_slider.setOnSeekBarChangeListener(new SeekBarChangeListener());
-    raspiration_rate_slider.setOnSeekBarChangeListener(new SeekBarChangeListener());
+    respiration_rate_slider.setOnSeekBarChangeListener(new SeekBarChangeListener());
 
     // Set initial values to the sliders
     blood_pressure_systolic_slider.setProgress(getResources().getInteger(R.integer.init_blood_pressure_systolic_slider));
@@ -1081,7 +1134,7 @@ public class ControllerActivity extends FragmentActivity implements
     heart_rate_slider.setProgress(getResources().getInteger(R.integer.init_heart_rate_slider));
     o2_rate_slider.setProgress(getResources().getInteger(R.integer.init_o2_rate_slider));
     co2_rate_slider.setProgress(getResources().getInteger(R.integer.init_co2_rate_slider));
-    raspiration_rate_slider.setProgress(getResources().getInteger(R.integer.init_raspiration_rate_slider));
+    respiration_rate_slider.setProgress(getResources().getInteger(R.integer.init_raspiration_rate_slider));
     scheduler_slider.setProgress(getResources().getInteger(R.integer.init_scheduler_slider));
 
     // And to the variables
@@ -1090,7 +1143,7 @@ public class ControllerActivity extends FragmentActivity implements
     heartRateValue = Integer.valueOf(heart_rate_slider.getProgress());
     o2RateValue = Integer.valueOf(o2_rate_slider.getProgress());
     co2RateValue = Integer.valueOf(co2_rate_slider.getProgress());
-    respirationRateValue = Integer.valueOf(raspiration_rate_slider.getProgress());
+    respirationRateValue = Integer.valueOf(respiration_rate_slider.getProgress());
     scheduler_value = Integer.valueOf(scheduler_slider.getProgress());
   }
 
@@ -1226,14 +1279,14 @@ public class ControllerActivity extends FragmentActivity implements
       }
     } else if (inObject.has("defi_energy_change") && reactionDialog
         !=
-        null){
+        null) {
       try {
         reactionDialog.changeEnergy(inObject.getInt("defi_energy_change"));
       } catch (JSONException e) {
         e.printStackTrace();
       }
     } else if (inObject.has("defi_shock")) {
-      if (onShockReactionSet){
+      if (onShockReactionSet) {
         applyShockReaction();
         dismissShockReaction();
       } else {
@@ -1249,7 +1302,7 @@ public class ControllerActivity extends FragmentActivity implements
       }
 
       //TODO: set heartrhythm to new
-    } else if (inObject.has("defi_closed")){
+    } else if (inObject.has("defi_closed")) {
       dismissShockReaction();
     }
   }
@@ -1282,7 +1335,7 @@ public class ControllerActivity extends FragmentActivity implements
   public void onDefiReactionDialogPositiveClick(DefiReactionDialogFragment dialog) {
     int heartRateSpinnerPosition = dialog.getHeartRhythmSpinnerItemPosition();
     onShockHeartrateSpinnerPosition = heartRateSpinnerPosition;
-    if(shockFiredBeforeReaction) {
+    if (shockFiredBeforeReaction) {
       applyShockReaction();
     } else {
       onShockReactionSet = true;
@@ -1297,12 +1350,76 @@ public class ControllerActivity extends FragmentActivity implements
 
   /**
    * change to protocol screen
+   *
    * @param view
    */
   public void changeToProtocol(View view) {
-     ProtocollActivity.scenarioHelper = scenarioHelper;
-     startActivity(new Intent(this, ProtocollActivity.class));
-   }
+    ProtocollActivity.scenarioHelper = scenarioHelper;
+    startActivity(new Intent(this, ProtocollActivity.class));
+  }
+
+  public void setCurrentValuesTextFields(Event event) {
+    int textColor = Color.GREEN;
+    int sliderValues[] = {
+        heart_rate_slider.getProgress() + getResources().getInteger(R.integer
+            .min_heart_rate_slider),
+        o2_rate_slider.getProgress() + getResources().getInteger(R.integer.min_o2_rate_slider),
+        co2_rate_slider.getProgress() + getResources().getInteger(R.integer
+            .min_co2_rate_slider),
+        respiration_rate_slider.getProgress() + getResources().getInteger(R
+            .integer.min_respiration_rate_slider),
+        blood_pressure_systolic_slider.getProgress() + getResources()
+            .getInteger(R.integer.min_blood_pressure_systolic_slider)
+            - getResources().getInteger(R.integer
+            .min_blood_pressure_diastolic_slider),
+        blood_pressure_diastolic_slider.getProgress() + getResources()
+            .getInteger(R.integer
+            .min_blood_pressure_diastolic_slider)
+    };
+    int unitIds[] = {
+        R.string.heart_rate_slider_value,
+        R.string.o2_rate_slider_value,
+        R.string.co2_rate_slider_value,
+        R.string.respiration_rate_slider_value,
+        R.string.blood_pressure_slider_value
+    };
+    int currentValues[] = {
+        event.heartRateTo,
+        event.oxygenTo,
+        event.carbTo,
+        event.respRate,
+        event.bloodPressureSys,
+        event.bloodPressureDias
+    };
+    TextView textViews[] = {heart_rate_current_value,
+         o2_rate_current_value,co2_rate_current_value,
+        respiration_rate_current_value,blood_pressure_current_value,
+        };
+    int i;
+    for (i=0; i<currentValues.length-2;i++){
+      String text = "";
+      if (sliderValues[i] != currentValues[i]){
+        text = Integer.toString(currentValues[i]) + " " + getResources()
+            .getString(unitIds[i]);
+      }
+      textViews[i].setText(text);
+      textViews[i].setTextColor(textColor);
+    }
+    if(sliderValues[i] != currentValues[i] || sliderValues[i+1] !=
+        currentValues[i+1]){
+      Log.e("DEBUG ContrAct","sysslider: " +
+          ""+sliderValues[i]+"syscurr:"+currentValues[i]+"diaslider: " +
+          ""+sliderValues[i+1]+"diacurr:"+currentValues[i+1]);
+      textViews[i].setTextColor(textColor);
+      textViews[i].setText(currentValues[i]+"/"+currentValues[i+1]);
+    } else {
+      textViews[i].setTextColor(Color.WHITE);
+      textViews[i].setText(getResources()
+          .getString(unitIds[i]));
+    }
+
+
+  }
 
   /**
    * Class for the SeekBar. Methods get called when changes to the sliders are applied
@@ -1339,7 +1456,7 @@ public class ControllerActivity extends FragmentActivity implements
           break;
         // If it was the co2 rate slider
         case R.id.raspiration_rate_slider:
-          raspiration_rate_slider_value.setText(Integer.valueOf(progress + getResources().getInteger(R.integer.min_raspiration_rate_slider)).toString() + " " + getResources().getString(R.string.raspiration_rate_slider_value));
+          raspiration_rate_slider_value.setText(Integer.valueOf(progress + getResources().getInteger(R.integer.min_respiration_rate_slider)).toString() + " " + getResources().getString(R.string.respiration_rate_slider_value));
           break;
         // If it was the systolic blood pressure slider
         case R.id.blood_pressure_systolic_slider:
@@ -1355,8 +1472,8 @@ public class ControllerActivity extends FragmentActivity implements
             stringBuilder.append(Integer.valueOf(progress + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider)).toString());
             stringBuilder.append("/");
             stringBuilder.append(Integer.valueOf(blood_pressure_diastolic_slider.getProgress() + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider)).toString());
-            stringBuilder.append(" ");
-            stringBuilder.append(getResources().getString(R.string.blood_pressure_slider_value));
+/*            stringBuilder.append(" ");
+            stringBuilder.append(getResources().getString(R.string.blood_pressure_slider_value));*/
             blood_pressure_slider_value.setText(stringBuilder.toString());
           }
           break;
@@ -1374,8 +1491,8 @@ public class ControllerActivity extends FragmentActivity implements
             stringBuilder2.append(Integer.valueOf(blood_pressure_systolic_slider.getProgress() + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider)).toString());
             stringBuilder2.append("/");
             stringBuilder2.append(Integer.valueOf(progress + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider)).toString());
-            stringBuilder2.append(" ");
-            stringBuilder2.append(getResources().getString(R.string.blood_pressure_slider_value));
+            /*stringBuilder2.append(" ");
+            stringBuilder2.append(getResources().getString(R.string.blood_pressure_slider_value));*/
             blood_pressure_slider_value.setText(stringBuilder2.toString());
           }
           break;
@@ -1454,11 +1571,11 @@ public class ControllerActivity extends FragmentActivity implements
 
 
   public Integer getHeartRateValue() {
-    return heartRateValue;
+    return heartRateValue + getResources().getInteger(R.integer.min_heart_rate_slider);
   }
 
   public Integer getO2RateValue() {
-    return o2RateValue;
+    return o2RateValue + getResources().getInteger(R.integer.min_o2_rate_slider);
   }
 
   public Integer getCo2RateValue() {
@@ -1466,14 +1583,14 @@ public class ControllerActivity extends FragmentActivity implements
   }
 
   public Integer getBloodPressureSystolicValue() {
-    return bloodPressureSystolicValue;
+    return bloodPressureSystolicValue + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider);
   }
 
   public Integer getBloodPressureDiastolicValue() {
-    return bloodPressureDiastolicValue;
+    return bloodPressureDiastolicValue + getResources().getInteger(R.integer.min_blood_pressure_diastolic_slider);
   }
 
   public Integer getRespirationRateValue() {
-    return respirationRateValue;
+    return respirationRateValue + getResources().getInteger(R.integer.min_respiration_rate_slider);
   }
 }

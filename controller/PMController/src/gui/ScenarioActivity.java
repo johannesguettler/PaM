@@ -37,6 +37,7 @@ import java.util.List;
 
 import Scenario.Event;
 import Scenario.Event.TimerState;
+import Scenario.ProtocolEvent;
 import Scenario.EventAdapter;
 import Scenario.Scenario;
 import Scenario.ScenarioHelper;
@@ -56,7 +57,7 @@ public class ScenarioActivity extends Activity {
   public static ScenarioHelper scenarioHelper;
   public static EventAdapter eventAdapter;
   public static List<Scenario> currentScenarios;
-  public static List<Event> currentEvents;
+  public static List<ProtocolEvent> currentEvents;
   public static Scenario currentScenario;
   public static Event currentEvent;
   public static Integer currentPositionEvent = 0;

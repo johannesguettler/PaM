@@ -90,7 +90,7 @@ public class ProtocolFlagCrmDialogFragment extends DialogFragment {
     applyButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        dialogListener.onProtocolFlagCrmDialogNegativeClick(instance);
+        dialogListener.onProtocolFlagCrmDialogPositiveClick(instance);
         instance.dismiss();
       }
     });
@@ -98,6 +98,7 @@ public class ProtocolFlagCrmDialogFragment extends DialogFragment {
     cancelButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+        dialogListener.onProtocolFlagCrmDialogNegativeClick(instance);
         instance.dismiss();
       }
     });

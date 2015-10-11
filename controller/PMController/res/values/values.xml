@@ -14,7 +14,7 @@
 	<item type="integer" name="init_co2_rate_slider" format="integer">20</item>
 	
 	<item type="integer" name="range_raspiration_rate_slider" format="integer">50</item>
-	<item type="integer" name="min_raspiration_rate_slider" format="integer">0</item>
+	<item type="integer" name="min_respiration_rate_slider" format="integer">0</item>
 	<item type="integer" name="init_raspiration_rate_slider" format="integer">18</item>
 	
 	<item type="integer" name="range_blood_pressure_systolic_slider" format="integer">240</item>

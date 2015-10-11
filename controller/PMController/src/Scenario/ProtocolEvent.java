@@ -1,7 +1,15 @@
 package Scenario;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
+
+import com.example.pmcontroller1.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Jo on 06.10.2015.
@@ -11,11 +19,30 @@ public class ProtocolEvent extends Event {
   public String flagComment;
   public Flag flagType;
 
+
   //enum for different protocol flags
   public enum Flag {
     A_B_POS, A_B_NEG, C_POS, C_NEG, D_E_POS, D_E_NEG, CRM_COMM_POS, CRM_COMM_NEG,
     CRM_TEAM_POS, CRM_TEAM_NEG, CRM_ORG_POS, CRM_ORG_NEG, CRM_OTHER_POS,
-    CRM_OTHER_NEG
+    CRM_OTHER_NEG;
+
+    // Mapping to id
+    private static final HashMap<Integer, Flag> map = new HashMap<>();
+    static
+    {
+      for (Flag flag : Flag.values())
+        map.put(flag.ordinal(), flag);
+    }
+
+    /**
+     * get Flag associated with de inv value (ordinal)
+     * @param value
+     * @return
+     */
+    public static Flag from(int value)
+    {
+      return map.get(value);
+    }
   }
   /**
    * Constructor
@@ -61,6 +88,7 @@ public class ProtocolEvent extends Event {
     this.flagType = flagType;
     this.flagComment = flagComment;
   }
+
   public ProtocolEvent(Event event, Flag flagType, String flagComment) {
     super(event.time, event.heartRateTo, event.heartPattern, event.bloodPressureSys,
         event.bloodPressureDias, event.bloodPressurePattern, event.oxygenTo,
@@ -68,6 +96,7 @@ public class ProtocolEvent extends Event {
         event.carbPattern, event.timeStamp, event.heartOn, event.bpOn, event
             .cuffOn, event.oxyOn, event.carbOn, event.respOn, event.syncTimer, event.flag, event
             .timerState);
+
     this.flagType = flagType;
     this.flagComment = flagComment;
   }
@@ -123,5 +152,69 @@ public class ProtocolEvent extends Event {
   static public Event fromJsonEvent(String g) {
     Gson gson = new Gson();
     return gson.fromJson(g, ProtocolEvent.class);
+  }
+
+  public static String getEventText(ProtocolEvent event, Context context) {
+    int id;
+    switch (event.flagType){
+      case A_B_POS:
+      case A_B_NEG:
+        id = R.string.flag_button_AB_text;
+        break;
+      case C_NEG:
+      case C_POS:
+        id = R.string.flag_button_C_text;
+        break;
+      case D_E_NEG:
+      case D_E_POS:
+        id = R.string.flag_button_DE_text;
+        break;
+      default:
+        id = R.string.flag_button_CRM_text;
+    }
+
+    return context.getString(id);
+  }
+  public static String getFullFlagDescription(Flag flagType, Context context) {
+    int id;
+    switch (flagType){
+      case A_B_POS:
+      case A_B_NEG:
+        id = R.string.flag_AB_description;
+        break;
+      case C_NEG:
+      case C_POS:
+        id = R.string.flag_C_description;
+        break;
+      case D_E_NEG:
+      case D_E_POS:
+        id = R.string.flag_DE_description;
+        break;
+      case CRM_COMM_POS:
+      case CRM_COMM_NEG:
+        id = R.string.flag_CRM_communication_description;
+        break;
+      case CRM_ORG_NEG:
+      case CRM_ORG_POS:
+      id = R.string.flag_CRM_organisation_description;
+      break;
+      case CRM_TEAM_NEG:
+      case CRM_TEAM_POS:
+      id = R.string.flag_CRM_team_description;
+      break;
+      default:
+        id = R.string.flag_CRM_other_description;
+    }
+
+    return context.getString(id);
+  }
+  public static int getEventColor(ProtocolEvent event) {
+    Flag flagType = event.flagType;
+    if (flagType == Flag.A_B_POS || flagType == Flag.C_POS || flagType ==
+        Flag.D_E_POS || flagType == Flag.CRM_COMM_POS || flagType == Flag
+        .CRM_ORG_POS || flagType == Flag.CRM_TEAM_POS || flagType == Flag.CRM_OTHER_POS){
+      return Color.GREEN;
+    }
+    return Color.RED;
   }
 }

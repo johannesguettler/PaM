@@ -196,7 +196,7 @@ public final class R {
         public static final int protocoll_background_view=0x7f0a0025;
         public static final int raspiration_rate_slider=0x7f0a000f;
         public static final int raspiration_rate_slider_text=0x7f0a000e;
-        public static final int raspiration_rate_slider_value=0x7f0a0010;
+        public static final int respiration_rate_slider_value =0x7f0a0010;
         public static final int raspiration_rate_spinner=0x7f0a000d;
         public static final int redLine=0x7f0a0033;
         public static final int reset_timer_button=0x7f0a0018;
@@ -241,7 +241,7 @@ public final class R {
         public static final int min_co2_rate_slider=0x7f080007;
         public static final int min_heart_rate_slider=0x7f080001;
         public static final int min_o2_rate_slider=0x7f080004;
-        public static final int min_raspiration_rate_slider=0x7f08000a;
+        public static final int min_respiration_rate_slider =0x7f08000a;
         public static final int min_scheduler_slider=0x7f080013;
         public static final int range_blood_pressure_diastolic_slider=0x7f08000f;
         public static final int range_blood_pressure_systolic_slider=0x7f08000c;
@@ -353,8 +353,8 @@ public final class R {
         /**  Textviews of boxes (headlines) 
          */
         public static final int protocoll_box_text=0x7f060053;
-        public static final int raspiration_rate_slider_text=0x7f06003d;
-        public static final int raspiration_rate_slider_value=0x7f06003e;
+        public static final int respiration_rate_slider_text =0x7f06003d;
+        public static final int respiration_rate_slider_value =0x7f06003e;
         public static final int reset_timer_button=0x7f06000c;
         public static final int respPattern=0x7f060023;
         public static final int respText=0x7f06004a;

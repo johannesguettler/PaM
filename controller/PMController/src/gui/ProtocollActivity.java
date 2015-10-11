@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,8 +39,10 @@ import java.util.List;
 
 import Scenario.Event;
 import Scenario.EventAdapter;
+import Scenario.ProtocolEvent;
 import Scenario.Scenario;
 import Scenario.ScenarioHelper;
+import Scenario.FlagListAdapter;
 
 public class ProtocollActivity extends Activity {
 
@@ -55,7 +58,7 @@ public class ProtocollActivity extends Activity {
   public static ScenarioHelper scenarioHelper;
   public static EventAdapter eventAdapter;
   public static List<Scenario> currentScenarios;
-  public static List<Event> currentEvents;
+  public static List<ProtocolEvent> currentEvents;
   public static Scenario currentScenario;
   public static Event currentEvent;
   public static Integer currentPositionEvent;
@@ -241,12 +244,31 @@ public class ProtocollActivity extends Activity {
     ListView listViewEvents = (ListView) findViewById(R.id.listViewEvents);
     listViewEvents.setAdapter(eventAdapter);
     currentPositionEvent = 0;*/
-    List<Event> eventList = chosenScenario.getEventList();
+
+    List<ProtocolEvent> eventList = chosenScenario.getEventList();
     ProtocolView protocolView = new ProtocolView(this, 30, eventList);
 
     LinearLayout test = (LinearLayout) findViewById(R.id
         .protocol_container_linear_layout);
+    test.removeAllViews();
     test.addView(protocolView);
+
+    ArrayList<ProtocolEvent> flagEvents = new ArrayList<>();
+    for(ProtocolEvent event: eventList) {
+      if(event.flag) {
+        flagEvents.add(event);
+        Log.e("DEBUG PrAct: ", "add flag event: "+ProtocolEvent
+            .getFullFlagDescription(event.flagType, this));
+      }
+    }
+
+    ProtocolEvent flagEventArray[] = new ProtocolEvent[flagEvents.size()];
+    flagEvents.toArray(flagEventArray);
+    FlagListAdapter flagListAdapter = new FlagListAdapter(this, R.layout
+        .flag_list_item,
+        flagEventArray);
+    ListView flagListView = (ListView) findViewById(R.id.listViewFlags);
+    flagListView.setAdapter(flagListAdapter);
   }
 
   /**

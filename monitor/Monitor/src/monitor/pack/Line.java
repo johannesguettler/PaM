@@ -26,8 +26,10 @@ public class Line {
           "void main() {" +
           "  gl_FragColor = vColor;" +
           "}";
+  private final int vertexShader;
+  private final int fragmentShader;
   private FloatBuffer vertexBuffer;
-  private final int program;
+  private int program;
   private int positionHandle;
   private int colorHandle;
   private int mvPMatrixHandle;
@@ -72,14 +74,30 @@ public class Line {
     // set the buffer to read the first coordinate
     vertexBuffer.position(0);
     // prepare shaders and OpenGL program
-    int vertexShader = GLRenderer.loadShader(
+    vertexShader = GLRenderer.loadShader(
         GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-    int fragmentShader = GLRenderer.loadShader(
+    fragmentShader = GLRenderer.loadShader(
         GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
     program = GLES20.glCreateProgram();             // create empty OpenGL Program
     GLES20.glAttachShader(program, vertexShader);   // add the vertex shader to program
     GLES20.glAttachShader(program, fragmentShader); // add the fragment shader to program
     GLES20.glLinkProgram(program);                  // create OpenGL program executables
+  }
+  public void reset(){
+
+   /* GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+    GLES20.glDeleteShader(vertexShader);
+    GLES20.glDeleteShader(fragmentShader);
+    GLES20.glDeleteProgram(program);*/
+
+
+    for (int i = 0; i < lineCoords.length; i++) {
+      if (i%3 == 1)
+      lineCoords[i]=0f;
+    }/*
+    vertexBuffer.put(lineCoords);
+    vertexBuffer.position(0);
+    pos = 0;*/
   }
 
   //Set Color of Line
@@ -111,6 +129,7 @@ public class Line {
    */
   public void draw(float[] mvpMatrix) {
     if (!draw) {
+
       return;
     }
     // Add program to OpenGL environment
