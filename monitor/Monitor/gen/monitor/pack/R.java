@@ -1892,7 +1892,7 @@ containing a value of this type.
         public static final int defiwavready=0x7f050002;
     }
     public static final class string {
-        public static final int OnButtonDesc=0x7f0b0014;
+        public static final int OnButtonActiveDesc =0x7f0b0014;
         public static final int OnOffButtonTitle=0x7f0b0034;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */

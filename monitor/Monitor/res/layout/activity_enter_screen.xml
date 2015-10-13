@@ -45,37 +45,73 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="0dp"
 	   	android:layout_weight="2">
-	    	
 
-		<ImageButton
-		    android:id="@+id/onButtonActiveMonitor"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_centerInParent="true"
-		    android:adjustViewBounds="true"
-		    android:scaleType="centerInside"
-		    android:background="@null"
-		    android:src="@drawable/onbuttonr_gray"
-		    android:contentDescription="@string/OnButtonDesc"
-		    android:onClick="openMonitorMainActive"
-			android:focusableInTouchMode="true"/>
 
-		<ImageButton
-			android:id="@+id/onButtonPassiveMonitor"
+		<LinearLayout
+			android:orientation="horizontal"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:adjustViewBounds="true"
-			android:scaleType="centerInside"
-			android:background="@null"
-			android:src="@drawable/onbuttonr_gray"
-			android:contentDescription="@string/OnButtonDesc"
-			android:onClick="openMonitorMainPassive"
-			android:layout_centerVertical="true"
-			android:layout_toRightOf="@+id/onButtonActiveMonitor"
-			android:layout_toEndOf="@+id/onButtonActiveMonitor"
-			android:layout_marginLeft="38dp"
-			android:layout_marginStart="38dp"/>
+			android:layout_height="match_parent"
+			android:layout_centerHorizontal="true">
 
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:text="@string/passive_monitor_button_description_text"
+				android:id="@+id/textView"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				/>
+
+			<Space
+				android:layout_width="20px"
+				android:layout_height="20px"
+				/>
+
+			<ImageButton
+				android:id="@+id/onButtonPassiveMonitor"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:adjustViewBounds="true"
+				android:scaleType="centerInside"
+				android:background="@null"
+				android:src="@drawable/onbuttonr_gray"
+				android:contentDescription="@string/OnButtonPassiveDesc"
+				android:onClick="openMonitorMainPassive"
+				android:layout_centerVertical="true"
+				android:layout_toRightOf="@+id/onButtonActiveMonitor"
+				android:layout_toEndOf="@+id/onButtonActiveMonitor"
+				/>
+
+			<Space
+				android:layout_width="40sp"
+				android:layout_height="fill_parent"
+				/>
+
+			<ImageButton
+				android:id="@+id/onButtonActiveMonitor"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true"
+				android:adjustViewBounds="true"
+				android:scaleType="centerInside"
+				android:background="@null"
+				android:src="@drawable/onbuttonr_gray"
+				android:contentDescription="@string/OnButtonActiveDesc"
+				android:onClick="openMonitorMainActive"
+				android:focusableInTouchMode="true"/>
+
+			<Space
+				android:layout_width="20px"
+				android:layout_height="20px"
+				/>
+
+			<TextView
+				android:layout_width="@dimen/onButtonDescriptionDimension"
+				android:layout_height="match_parent"
+				android:text="@string/active_monitor_button_description_text"
+				android:id="@+id/textView2"
+				android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+		</LinearLayout>
 	</RelativeLayout>
     
     <!-- Layout with the for the "waiting for a connection"-progressBar. Height controlled with weight-factor. -->	

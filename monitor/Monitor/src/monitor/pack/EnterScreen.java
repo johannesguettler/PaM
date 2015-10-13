@@ -252,8 +252,9 @@ public class EnterScreen extends Activity {
   public void openMonitorMain(View view, boolean activeMonitor) {
     if (connectionAvailable) {
       final Intent mainMonitorIntent = new Intent(this, MonitorMainScreen.class);
+      client.setActiveClient(activeMonitor);
       startActivity(mainMonitorIntent);
-      //TODO: set active/passive monitor
+
     }
   }
 
@@ -261,11 +262,11 @@ public class EnterScreen extends Activity {
     openMonitorMain(view, true);
   }
   public void openMonitorMainActive(View view) {
-    //TODO: set client field active/passive monitor
+
     openMonitorMain(view, true);
   }
   public void openMonitorMainPassive(View view) {
-    //TODO: set client field active/passive monitor
+
     openMonitorMain(view, false);
   }
 
@@ -291,17 +292,20 @@ public class EnterScreen extends Activity {
       public void run() {
         TextView waitForConTextView = (TextView) findViewById(R.id.waitForConTextView);
         ProgressBar waitForConProgressBar = (ProgressBar) findViewById(R.id.waitForConProgressBar);
-        ImageButton onButton = (ImageButton) findViewById(R.id.onButtonActiveMonitor);
+        ImageButton onButtonActive = (ImageButton) findViewById(R.id.onButtonActiveMonitor);
+        ImageButton onButtonPassive = (ImageButton) findViewById(R.id.onButtonPassiveMonitor);
         if (value) {
           connectionAvailable = true;
           waitForConTextView.setVisibility(View.INVISIBLE);
           waitForConProgressBar.setVisibility(View.INVISIBLE);
-          onButton.setImageResource(R.drawable.onbuttonr_green);
+          onButtonActive.setImageResource(R.drawable.onbuttonr_green);
+          onButtonPassive.setImageResource(R.drawable.onbuttonr_red);
         } else {
           connectionAvailable = false;
           waitForConTextView.setVisibility(View.VISIBLE);
           waitForConProgressBar.setVisibility(View.VISIBLE);
-          onButton.setImageResource(R.drawable.onbuttonr_gray);
+          onButtonActive.setImageResource(R.drawable.onbuttonr_gray);
+          onButtonPassive.setImageResource(R.drawable.onbuttonr_gray);
         }
       }
     });

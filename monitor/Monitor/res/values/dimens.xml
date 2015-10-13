@@ -3,4 +3,5 @@
     <dimen name="defi_layout_hight">410dp</dimen>
     <dimen name="arrowSize">60dp</dimen>
     <dimen name="arrowSizeSmall">35dp</dimen>
+    <dimen name="onButtonDescriptionDimension">170sp</dimen>
 </resources>

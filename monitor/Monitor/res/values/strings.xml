@@ -10,7 +10,7 @@
     <string name="waitForConText">Waiting for a connection to controller...</string>
     <string name="title_activity_monitor_main_screen">MonitorMainScreen</string>
 
-    <string name="OnButtonDesc">The main on button to start the monitor.</string>
+    <string name="OnButtonActiveDesc">The main on button to start the monitor.</string>
     <string name="settingsTitle">Settings</string>
     <string name="statusBarTitle">Timer:   00:00</string>
     <string name="openCloseSettingsButtonTitle">Settings &gt;</string>
@@ -130,4 +130,7 @@
     <string name="settings_summ_etco2_alarm_off">EtCO2-alarm disabled</string>
     <string name="key_etco2_upper_threshold">key_etco2_upper_threshold</string>
     <string name="key_etco2_lower_threshold">key_etco2_lower_threshold</string>
+    <string name="OnButtonPassiveDesc">Start passive monitor (display only)</string>
+    <string name="passive_monitor_button_description_text">Passive monitor\n(display only)</string>
+    <string name="active_monitor_button_description_text">Active monitor\n(send feedback to controller)</string>
 </resources>

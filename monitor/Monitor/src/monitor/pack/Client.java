@@ -37,8 +37,7 @@ import android.util.Log;
 
 class Client {
 
-
-  private final boolean ACTIVE_CLIENT;
+	private boolean activeClient;
   private EnterScreen es;
 	private MonitorMainScreen mms;
 
@@ -147,9 +146,9 @@ class Client {
 	 * 
 	 * @param e EnterScreen handover from Main Activity
 	 */
-	Client(EnterScreen e, boolean isActiveClient) {
+	Client(EnterScreen e, boolean activeClient) {
 		this.es = e;
-    this.ACTIVE_CLIENT = isActiveClient;
+    this.activeClient = activeClient;
 		// API 16 (Jelly Bean) required for NSDManager
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			this.setmServiceName("PaM_Session");
@@ -515,5 +514,12 @@ class Client {
 				e.printStackTrace();
 			}
 		}
+	}
+	public void setActiveClient(boolean isActiveClient) {
+		this.activeClient = isActiveClient;
+	}
+
+	public boolean isActiveClient() {
+		return activeClient;
 	}
 }

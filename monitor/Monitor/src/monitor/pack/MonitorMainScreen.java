@@ -2203,6 +2203,10 @@ public class MonitorMainScreen extends Activity {
    * @param infoType
    */
   private void sendControllerInfo(ControllerInfoType infoType) {
+    // if this is a passive monitor don't send anything
+    if (!EnterScreen.client.isActiveClient()) {
+      return;
+    }
     String key = "";
     JSONObject infoObject = new JSONObject();
     try {switch(infoType) {
