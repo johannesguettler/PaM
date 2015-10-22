@@ -544,7 +544,10 @@ public class ControllerActivity extends FragmentActivity implements
                                Flag flagType, String flagComment) {
     Event event = createEvent(0, isFlagEvent);
     addProtocolEvent(event, isFlagEvent, flagType, flagComment);
-    String flagTypeString = (flagType == null? "null": flagType.toString());
+    if(isFlagEvent && flagType != Flag.SHOCK){
+      Toast.makeText(this, getString(R.string.flag_set_toast).concat(ProtocolEvent
+          .getFullFlagDescription(flagType, this)), Toast.LENGTH_SHORT).show();
+    }
   }
 
   public void addProtocolEvent(Event currentValuesEvent, boolean isFlagEvent,
@@ -870,15 +873,15 @@ public class ControllerActivity extends FragmentActivity implements
    *  Called when the user clicks the Flag button
    */
   public void flagPressed(View view) {
-    /*// Show toasti
-    if (DEBUG) {
-      Toast toast = Toast.makeText(this, "Flag pressed", Toast.LENGTH_SHORT);
-      toast.setGravity(Gravity.CENTER, toast.getXOffset() / 2, toast.getYOffset() / 2);
+// if no protocol is running show toast and return
+    if (!new_protocoll) {
+      Toast toast = Toast.makeText(this, getString(R.string
+          .flag_without_protocol_toast), Toast.LENGTH_SHORT);
+      //toast.setGravity(Gravity.CENTER, toast.getXOffset() / 2, toast.getYOffset() / 2);
       toast.show();
+      return;
     }
 
-    // Create an event to show the flag without sending the event
-    createAndSendEvent(0, true);*/
     Flag flagType;
     switch (view.getId()) {
       case R.id.flag_button_AB_positive:
@@ -963,6 +966,7 @@ public class ControllerActivity extends FragmentActivity implements
 
   private void setFlag(Flag flagType, String flagComment) {
     addProtocolEvent(true, flagType, flagComment);
+
   }
 
   /*
@@ -1286,8 +1290,32 @@ public class ControllerActivity extends FragmentActivity implements
         e.printStackTrace();
       }
     } else if (inObject.has("defi_shock")) {
+      String energy = null;
+      try {
+
+        energy = Integer
+            .toString(inObject.getInt("defi_shock"))+"J";
+        ControllerActivity thisAct = this;
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            try {
+              Toast.makeText(thisAct, getString(R.string.defi_fired_toast) +
+                      Integer
+                      .toString(inObject.getInt("defi_shock"))+"J",
+                  Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+              e.printStackTrace();
+            }
+          }
+        });
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      setFlag(Flag.SHOCK,energy);
       if (onShockReactionSet) {
         applyShockReaction();
+
         dismissShockReaction();
       } else {
         shockFiredBeforeReaction = true;

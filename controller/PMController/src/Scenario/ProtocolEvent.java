@@ -24,7 +24,7 @@ public class ProtocolEvent extends Event {
   public enum Flag {
     A_B_POS, A_B_NEG, C_POS, C_NEG, D_E_POS, D_E_NEG, CRM_COMM_POS, CRM_COMM_NEG,
     CRM_TEAM_POS, CRM_TEAM_NEG, CRM_ORG_POS, CRM_ORG_NEG, CRM_OTHER_POS,
-    CRM_OTHER_NEG;
+    CRM_OTHER_NEG, SHOCK;
 
     // Mapping to id
     private static final HashMap<Integer, Flag> map = new HashMap<>();
@@ -157,6 +157,8 @@ public class ProtocolEvent extends Event {
   public static String getEventText(ProtocolEvent event, Context context) {
     int id;
     switch (event.flagType){
+      case SHOCK:
+        return "";
       case A_B_POS:
       case A_B_NEG:
         id = R.string.flag_button_AB_text;
@@ -178,6 +180,9 @@ public class ProtocolEvent extends Event {
   public static String getFullFlagDescription(Flag flagType, Context context) {
     int id;
     switch (flagType){
+      case SHOCK:
+        id = R.string.flag_SHOCK_description;
+        break;
       case A_B_POS:
       case A_B_NEG:
         id = R.string.flag_AB_description;
@@ -214,6 +219,8 @@ public class ProtocolEvent extends Event {
         Flag.D_E_POS || flagType == Flag.CRM_COMM_POS || flagType == Flag
         .CRM_ORG_POS || flagType == Flag.CRM_TEAM_POS || flagType == Flag.CRM_OTHER_POS){
       return Color.GREEN;
+    } else if (flagType == Flag.SHOCK){
+      return Color.YELLOW;
     }
     return Color.RED;
   }

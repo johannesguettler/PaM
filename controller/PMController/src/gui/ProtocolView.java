@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 
@@ -14,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import Scenario.Event;
 import Scenario.ProtocolEvent;
 import Scenario.ProtocolEvent.Flag;
 
@@ -34,7 +35,7 @@ public class ProtocolView extends View {
   private final int maxValue;
   private final int protocolEntries;
   private double pixelsPerValueUnit;
-  private int lastEventXcenter = - 100;
+  private int lastEventXcenter = -100;
   private boolean lastFlagInSecondline = false;
 
 
@@ -109,29 +110,29 @@ public class ProtocolView extends View {
     int y1 = topCaptionHeight;
     int x2 = leftCaptionWidth;
     int y2 = yDimensionTable + topCaptionHeight;
-    for (int i = 0; i< entries.size(); i++) {
+    for (int i = 0; i < entries.size(); i++) {
       ProtocolEvent event = entries.get(i);
       if (event.flag) {
         drawFlag(event, canvas);
         addFlagToList(event);
-        String flagTypeString = (event.flagType == null? "null": event
+        String flagTypeString = (event.flagType == null ? "null" : event
             .flagType.toString());
-        Log.e("ProtocolView.drawEvent", "draw flag. flag?: "+event.flag+" " +
-            "flagType"+flagTypeString+"; flag Comment: "+event.flagComment );
+        Log.e("ProtocolView.drawEvent", "draw flag. flag?: " + event.flag + " " +
+            "flagType" + flagTypeString + "; flag Comment: " + event.flagComment);
       } else {
 
-        Log.e("ProtocolView.drawEvent", "draw event. heartrate: "+event
+        Log.e("ProtocolView.drawEvent", "draw event. heartrate: " + event
             .heartRateTo);
         drawBloodPressure(x1, event.bloodPressureSys, event.bloodPressureDias,
             canvas, paint);
         drawHeartRate(x1, event.heartRateTo, canvas, paint);
         paint.setTextAlign(Paint.Align.CENTER);
-        y2+=valueBandHeight/3;
-        canvas.drawText(Integer.toString(event.oxygenTo), x1, y2-5, paint);
-        y2+=valueBandHeight/3;
-        canvas.drawText(Integer.toString(event.carbTo), x1, y2-5, paint);
-        y2+=valueBandHeight/3;
-        canvas.drawText(Integer.toString(event.respRate), x1, y2-5, paint);
+        y2 += valueBandHeight / 3;
+        canvas.drawText(Integer.toString(event.oxygenTo), x1, y2 - 5, paint);
+        y2 += valueBandHeight / 3;
+        canvas.drawText(Integer.toString(event.carbTo), x1, y2 - 5, paint);
+        y2 += valueBandHeight / 3;
+        canvas.drawText(Integer.toString(event.respRate), x1, y2 - 5, paint);
         x1 += columnDistance;
         y2 = yDimensionTable + topCaptionHeight;
       }
@@ -164,7 +165,7 @@ public class ProtocolView extends View {
     for (int i = 0; i <= protocolEntries; i++) {
       canvas.drawLine(x1, y1, x1, y2, paint);
       //Integer.toString(i * entryDistanceInSeconds)
-      if(i%2 == 0) {
+      if (i % 2 == 0) {
         time.setTime((i * entryDistanceInSeconds) * 1000);
         canvas.drawText(simpleDateFormat.format(time), x1 - 15,
             topCaptionHeight - 3, paint);
@@ -189,23 +190,21 @@ public class ProtocolView extends View {
 
     y1 = yDimensionTable + topCaptionHeight;
     for (int i = 0; i < valueCaptions.length; i++) {
-      y1 += valueBandHeight/valueCaptions.length;
+      y1 += valueBandHeight / valueCaptions.length;
       canvas.drawLine(x1 - lineOffsetLeft, y1, x2, y1, paint);
       int currentValue = maxValue - (i * 50);
       canvas.drawText(valueCaptions[i], leftCaptionWidth - (lineOffsetLeft +
               40),
-          y1-5, paint);
+          y1 - 5, paint);
     }
   }
-
-
 
 
   private void addFlagToList(ProtocolEvent event) {
 
   }
 
-  private void drawSpO2(int x, int y,  int spO2Value, Canvas canvas, Paint
+  private void drawSpO2(int x, int y, int spO2Value, Canvas canvas, Paint
       paint) {
     /*Paint paint = new Paint();
     paint.setColor(Color.BLACK);
@@ -242,36 +241,47 @@ public class ProtocolView extends View {
   }
 
   private void drawFlag(ProtocolEvent event, Canvas canvas) {
+    //TODO shockflag!
     int eventTime = event.timeStamp;
     int halfFlagSize = columnDistance / 4;
-    if((halfFlagSize*4) > flagBandHeight) {
+    if ((halfFlagSize * 4) > flagBandHeight) {
       halfFlagSize = flagBandHeight / 4;
     }
-    int eventXcenter = leftCaptionWidth + (int)(((float)columnDistance /
-        entryDistanceInSeconds)*eventTime);
-    int eventYTop = topCaptionHeight +yDimensionTable + valueBandHeight + 8;
+    int eventXcenter = leftCaptionWidth + (int) (((float) columnDistance /
+        entryDistanceInSeconds) * eventTime);
+    int eventYTop = topCaptionHeight + yDimensionTable + valueBandHeight + 8;
 
     int x1 = eventXcenter - halfFlagSize;
     int x2 = eventXcenter + halfFlagSize;
     int y1 = eventYTop;
-    int y2 = eventYTop + 2*halfFlagSize;
-    if (((eventXcenter - lastEventXcenter) < (2 * halfFlagSize)) && !lastFlagInSecondline){
-      lastFlagInSecondline = true;
-      y1 = topCaptionHeight +yDimensionTable + valueBandHeight +
-          (flagBandHeight/2);
-      y2 = y1 + 2* halfFlagSize;
-    } else {
-      lastFlagInSecondline = false;
-    }
-    lastEventXcenter = eventXcenter;
+    int y2 = eventYTop + 2 * halfFlagSize;
     Paint paint = new Paint();
     paint.setStyle(Paint.Style.FILL_AND_STROKE);
-    paint.setColor(ProtocolEvent.getEventColor(event));
-    paint.setTextAlign(Paint.Align.CENTER);
-    String text = ProtocolEvent.getEventText(event, getContext());
-    canvas.drawRoundRect(new RectF(x1,y1,x2, y2),(halfFlagSize/4),
-        (halfFlagSize/4),paint);
-    paint.setColor(Color.WHITE);
-    canvas.drawText(text,eventXcenter,y1+halfFlagSize+(halfFlagSize/4),paint);
+    if (event.flagType != Flag.SHOCK) {
+      if (((eventXcenter - lastEventXcenter) < (2 * halfFlagSize)) && !lastFlagInSecondline) {
+        lastFlagInSecondline = true;
+        y1 = topCaptionHeight + yDimensionTable + valueBandHeight +
+            (flagBandHeight / 2);
+        y2 = y1 + 2 * halfFlagSize;
+      } else {
+        lastFlagInSecondline = false;
+      }
+      lastEventXcenter = eventXcenter;
+      paint.setColor(ProtocolEvent.getEventColor(event));
+      paint.setTextAlign(Paint.Align.CENTER);
+      String text = ProtocolEvent.getEventText(event, getContext());
+      canvas.drawRoundRect(new RectF(x1, y1, x2, y2), (halfFlagSize / 4),
+          (halfFlagSize / 4), paint);
+      paint.setColor(Color.WHITE);
+      canvas.drawText(text, eventXcenter, y1 + halfFlagSize + (halfFlagSize / 4), paint);
+    } else {
+      // draw shockflag
+      y2 = topCaptionHeight + yDimensionTable;
+      y1 = y2 - 2*halfFlagSize;
+      Drawable shockImage = getContext().getResources().getDrawable(R
+          .drawable.flag_shock);
+      shockImage.setBounds(x1,y1,x2,y2);
+      shockImage.draw(canvas);
+    }
   }
 }

@@ -144,5 +144,9 @@
     <string name="flag_CRM_organisation_description">CRM: Organisation</string>
     <string name="flag_CRM_team_description">CRM: Team</string>
     <string name="flag_CRM_other_description">CRM: Other</string>
+    <string name="flag_without_protocol_toast">Start a protocol to set flags</string>
+    <string name="flag_set_toast">Flag added:</string>
+    <string name="defi_fired_toast">Defi fired:</string>
+    <string name="flag_SHOCK_description">Shock</string>
 
 </resources>
